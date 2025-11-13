@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية آل عبد اللطيف الطرشوبي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ---------------------------------- */
+        /* 1. General & Layout Styles - ألوان صيدلية آل عبداللطيف */
+        /* ---------------------------------- */
+        :root {
+            --primary-color: #800000;   /* Deep Maroon / Primary Action */
+            --accent-color: #333333;    /* Dark Charcoal / Secondary & Highlight */
+            --success-color: #28a745;   /* Green for success */
+            --bg-light: #FAFAFA;        /* Light Background */
+            --card-bg: #FFFFFF;         /* White Card Background */
+            --text-dark: #1A1A1A;       /* Dark Text */
+            --text-light: #555555;      /* Secondary Text */
+            --border-color: #E0E0E0;    /* Light Border */
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05); /* Soft Shadow */
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            direction: rtl;
+            text-align: right;
+            padding-bottom: 50px; 
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* ---------------------------------- */
+        /* 2. Fixed Header & Title */
+        /* ---------------------------------- */
+
+        /* الـ Wrapper الثابت بالخلفية الفاتحة */
+        .fixed-header-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: var(--bg-light); 
+            padding: 10px 0 0 0; /* مسافة علوية لجعله يطفو */
+        }
+        
+        /* المحتوى الفعلي داخل الـ Wrapper والمحدود بالعرض 900px */
+        .header-content {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0; 
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); 
+            border-radius: 12px; /* كل الزوايا مستديرة لمظهر ناعم */
+            overflow: hidden; 
+        }
+
+        .header-content h1 {
+            font-size: 1.8em;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        /* عنصر وهمي ليدفع المحتوى الأساسي إلى الأسفل */
+        .header-placeholder {
+            height: 105px; 
+            margin-bottom: 25px; 
+        }
+        
+        /* ---------------------------------- */
+        /* 3. Tool Card & Inputs */
+        /* ---------------------------------- */
+
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: 12px; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); 
+            padding: 35px; 
+            border: 1px solid var(--border-color);
+            margin-top: 0; 
+        }
+
+        .tool-card h2 {
+            color: var(--accent-color);
+            font-size: 1.5em;
+            margin-bottom: 25px; 
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+             margin-bottom: 25px; 
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* لـ Dropdown و TextArea */
+        textarea, select {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Tajawal', sans-serif; 
+            color: var(--text-dark);
+            transition: border-color 0.2s;
+        }
+        
+        textarea:focus, select:focus {
+             border-color: var(--primary-color);
+             outline: none;
+        }
+
+        /* تكبير حجم حقل النصوص الرأسي */
+        textarea {
+            min-height: 200px; 
+            resize: vertical;
+        }
+
+        select {
+            height: 50px;
+            appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 15px center; 
+            background-size: 18px;
+            padding-left: 40px; 
+        }
+
+        /* ---------------------------------- */
+        /* 4. Action Button */
+        /* ---------------------------------- */
+        .action-button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 20px; 
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em; 
+            font-weight: 700;
+            transition: background-color var(--transition-speed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px; 
+        }
+        
+        .action-button:hover {
+            background-color: #a00000;
+        }
+
+        /* ---------------------------------- */
+        /* 5. Results Area */
+        /* ---------------------------------- */
+        
+        #results-area {
+            margin-top: 35px; 
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        #breakdown-header {
+             font-size: 1.3em;
+             color: var(--accent-color);
+             margin-bottom: 25px; 
+             font-weight: 700;
+        }
+
+        #breakdown-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #f0f0f0;
+            font-size: 1.05em;
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none; 
+        }
+        
+        .breakdown-item .price-label {
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .breakdown-item .status {
+            font-weight: 600; 
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            min-width: 130px;
+            text-align: center;
+        }
+        
+        /* تنسيقات حالات الريسيت */
+        .status.receipt-primary {
+            background-color: #ffe0b2; 
+            color: #e65100; 
+        }
+        .status.receipt-deferred {
+            background-color: #c8e6c9; 
+            color: var(--success-color); 
+        }
+        
+        /* ---------------------------------- */
+        /* 6. Footer Styles (تذييل الصفحة) */
+        /* ---------------------------------- */
+        .footer {
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 50px; 
+            background-color: var(--bg-light); 
+            color: var(--text-light); 
+            font-size: 1em;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        /* ---------------------------------- */
+        /* 7. Responsive (التعديلات لملائمة الموبايل) */
+        /* ---------------------------------- */
+
+        @media (max-width: 600px) {
+            /* 1. ضبط حجم الهيدر المثبت */
+            .fixed-header-wrapper {
+                padding: 5px 0 0 0; /* تقليل المسافة العلوية */
+            }
+            .header-content {
+                padding: 10px 0; /* تقليل البادينج العمودي للتقليص */
+            }
+             .header-content h1 {
+                font-size: 1.6em; /* خط أصغر قليلاً */
+            }
+            .header-placeholder {
+                height: 95px; /* ارتفاع معدل لتعويض المساحة المأخوذة من الهيدر الجديد */
+                margin-bottom: 20px;
+            }
+
+            /* 2. ضبط بطاقة الحاسبة */
+            .tool-card {
+                padding: 20px 15px; /* تقليل البادينج الداخلي */
+            }
+
+            /* 3. ضبط تفاصيل النتائج */
+            .breakdown-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .breakdown-item .status {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="fixed-header-wrapper">
+        <div class="container">
+            <div class="header-content">
+                <h1>آل عبد اللطيف الطرشوبي</h1>
+            </div>
+        </div>
+    </div>
+    <div class="header-placeholder"></div> 
+
+    <div class="container">
+        <div class="tool-card">
+            <h2><i class="fas fa-calculator"></i>حاسبة تطبيق العروض</h2>
+            <p style="margin-bottom: 30px; color: var(--text-light); font-size: 0.9em;">
+                لضمان أقصى استفادة للعميل، أدخل أسعار المنتجات (كل سعر في سطر) واختر نوع العرض.
+            </p>
+
+            <div class="input-group">
+                <label for="offer-type"><i class="fas fa-tags"></i> اختيار نوع العرض</label>
+                <select id="offer-type">
+                    <option value="none">-- اختر العرض --</option>
+                    <optgroup label="عروض الأزواج (Buy 1 Get X)">
+                        <option value="1+1">1+1 مجاناً</option>
+                        <option value="1+50">1 + 50% خصم على الثانية</option>
+                        <option value="1+70">1 + 70% خصم على الثانية</option>
+                        <option value="1+90">1 + 90% خصم على الثانية</option>
+                        <option value="1+40">1 + 40% خصم على الثانية</option>
+                        <option value="1+35">1 + 35% خصم على الثانية</option>
+                        <option value="1+30">1 + 30% خصم على الثانية</option>
+                    </optgroup>
+                    <optgroup label="عروض المجموعات (Set Offers)">
+                        <option value="2+2">2+2 مجاناً</option>
+                        <option value="2+1">2+1 مجاناً</option>
+                    </optgroup>
+                    <optgroup label="خصم على كل قطعة">
+                        <option value="discount-50">خصم 50% على القطعة</option>
+                        <option value="discount-35">خصم 35% على القطعة</option>
+                        <option value="discount-30">خصم 30% على القطعة</option>
+                        <option value="discount-15">خصم 15% على القطعة</option>
+                        <option value="discount-10">خصم 10% على القطعة</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="prices-input"><i class="fas fa-list-ol"></i> أسعار القطع (كل سعر في سطر منفصل)</label>
+                <textarea id="prices-input" placeholder="مثال:
+500
+300
+120
+90"></textarea>
+            </div>
+
+            <button id="calculate-button" class="action-button">
+                <i class="fas fa-cogs"></i> تطبيق العرض
+            </button>
+            
+            <div id="results-area" style="display: none;">
+                
+                <h3 id="breakdown-header"><i class="fas fa-receipt"></i> تفصيل حالة كل قطعة (ريسيت)</h3>
+
+                <ul id="breakdown-list">
+                    </ul>
+            </div>
+            
+            <div id="error-message" style="display: none; color: #dc3545; font-weight: 700; margin-top: 20px;"></div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        WHATSAPP TEAM
+    </footer>
+
+    <script>
+        const pricesInput = document.getElementById('prices-input');
+        const offerType = document.getElementById('offer-type');
+        const calculateButton = document.getElementById('calculate-button');
+        const resultsArea = document.getElementById('results-area');
+        const breakdownList = document.getElementById('breakdown-list');
+        const errorMessage = document.getElementById('error-message');
+        const breakdownHeader = document.getElementById('breakdown-header');
+
+        // وظيفة مساعدة لتحويل النص إلى مصفوفة أسعار مرتبة تنازلياً
+        function getSortedPrices() {
+            const rawText = pricesInput.value;
+            const prices = rawText.split('\n')
+                                  .map(line => {
+                                      const price = parseFloat(line.trim());
+                                      return isNaN(price) || price <= 0 ? null : price;
+                                  })
+                                  .filter(price => price !== null);
+
+            // الترتيب التنازلي هو الأساس لتطبيق العروض (الأغلى يدفع أولاً)
+            return prices.sort((a, b) => b - a);
+        }
+
+        // الوظيفة الرئيسية لتطبيق المنطق
+        function calculateTotal() {
+            const prices = getSortedPrices();
+            const offer = offerType.value;
+            let total = 0; 
+            const breakdown = [];
+            
+            // إخفاء النتائج والخطأ في البداية
+            resultsArea.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            if (prices.length === 0) {
+                errorMessage.textContent = 'الرجاء إدخال أسعار المنتجات في الحقل المخصص.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (offer === 'none') {
+                 errorMessage.textContent = 'الرجاء اختيار نوع العرض أولاً.';
+                 // إذا لم يتم اختيار عرض، الكل ريسيت أساسي ومدفوع بالكامل
+                 total = prices.reduce((sum, price) => sum + price, 0);
+                 renderBreakdown(prices.map(p => ({ price: p, status: 'receipt-primary', label: 'ريسيت أساسي (مدفوع بالكامل)' })));
+                 // تحديث العنوان بالإجمالي
+                 const finalTotal = total.toFixed(2);
+                 breakdownHeader.innerHTML = `<i class="fas fa-receipt"></i> تفصيل حالة كل قطعة (ريسيت) | الإجمالي: ${finalTotal} جنيه`;
+                 resultsArea.style.display = 'block';
+                 return;
+            }
+            
+            const numItems = prices.length;
+            let percentMatch, singleDiscountMatch;
+            
+            if (offer === '1+1') {
+                if (numItems % 2 !== 0 && numItems > 1) {
+                     errorMessage.textContent = `ملاحظة: عدد القطع المدخل (${numItems}) فردي. تم دفع القطعة المتبقية (${prices[numItems - 1].toFixed(2)} جنيه) بالكامل لعدم وجود زوج لها.`;
+                     errorMessage.style.display = 'block';
+                }
+                
+                for (let i = 0; i < numItems; i += 2) {
+                    const price1 = prices[i]; 
+                    const price2 = prices[i + 1];
+                    
+                    if (price2 === undefined) {
+                        total += price1;
+                        breakdown.push({ price: price1, status: 'receipt-primary', label: 'ريسيت أساسي (فردي)' });
+                    } else {
+                        total += price1;
+                        breakdown.push({ price: price1, status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى)' });
+                        breakdown.push({ price: price2, status: 'receipt-deferred', label: 'ريسيت آجل (مجاني)' });
+                    }
+                }
+            
+            } else if (percentMatch = offer.match(/^1\+(\d+)$/)) {
+                const discountPercent = parseInt(percentMatch[1]) / 100;
+                const paidPercent = 1 - discountPercent; 
+                
+                if (numItems % 2 !== 0 && numItems > 1) {
+                     errorMessage.textContent = `ملاحظة: عدد القطع المدخل (${numItems}) فردي. تم دفع القطعة المتبقية (${prices[numItems - 1].toFixed(2)} جنيه) بالكامل لعدم وجود زوج لها.`;
+                     errorMessage.style.display = 'block';
+                }
+
+                 for (let i = 0; i < numItems; i += 2) {
+                    const price1 = prices[i]; 
+                    const price2 = prices[i + 1]; 
+                    
+                    if (price2 === undefined) {
+                        total += price1;
+                        breakdown.push({ price: price1, status: 'receipt-primary', label: 'ريسيت أساسي (فردي)' });
+                    } else {
+                        const discountedPrice = price2 * paidPercent;
+                        total += price1 + discountedPrice;
+                        
+                        breakdown.push({ price: price1, status: 'receipt-primary', label: 'ريسيت أساسي (مدفوع بالكامل)' });
+                        breakdown.push({ price: price2, status: 'receipt-deferred', label: `ريسيت آجل (${(discountPercent*100).toFixed(0)}% خصم, يدفع ${discountedPrice.toFixed(2)})` });
+                    }
+                }
+
+            } else if (offer === '2+2') {
+                 if (numItems % 4 !== 0 && numItems >= 4) {
+                     errorMessage.textContent = `تنبيه: عرض 2+2 يتطلب عدد قطع يقبل القسمة على 4. القطع المتبقية (${numItems % 4}) تم دفعها بالكامل.`;
+                     errorMessage.style.display = 'block';
+                }
+                
+                for (let i = 0; i < numItems; i += 4) {
+                    const group = prices.slice(i, i + 4);
+                    
+                    if (group.length === 4) {
+                        total += group[0] + group[1];
+                        
+                        breakdown.push({ price: group[0], status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى 1)' });
+                        breakdown.push({ price: group[1], status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى 2)' });
+                        breakdown.push({ price: group[2], status: 'receipt-deferred', label: 'ريسيت آجل (مجاني 1)' });
+                        breakdown.push({ price: group[3], status: 'receipt-deferred', label: 'ريسيت آجل (مجاني 2)' });
+                        
+                    } else {
+                        group.forEach(price => {
+                            total += price;
+                            breakdown.push({ price: price, status: 'receipt-primary', label: 'ريسيت أساسي (لم يكتمل العرض)' });
+                        });
+                    }
+                }
+            
+            } else if (offer === '2+1') {
+                 if (numItems % 3 !== 0 && numItems >= 3) {
+                     errorMessage.textContent = `تنبيه: عرض 2+1 يتطلب عدد قطع يقبل القسمة على 3. القطع المتبقية (${numItems % 3}) تم دفعها بالكامل.`;
+                     errorMessage.style.display = 'block';
+                }
+                
+                for (let i = 0; i < numItems; i += 3) {
+                    const group = prices.slice(i, i + 3);
+                    
+                    if (group.length === 3) {
+                        total += group[0] + group[1];
+                        
+                        breakdown.push({ price: group[0], status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى 1)' });
+                        breakdown.push({ price: group[1], status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى 2)' });
+                        breakdown.push({ price: group[2], status: 'receipt-deferred', label: 'ريسيت آجل (مجاني)' });
+                        
+                    } else {
+                        group.forEach(price => {
+                            total += price;
+                            breakdown.push({ price: price, status: 'receipt-primary', label: 'ريسيت أساسي (لم يكتمل العرض)' });
+                        });
+                    }
+                }
+            } else if (singleDiscountMatch = offer.match(/^discount-(\d+)$/)) {
+                const discountPercent = parseInt(singleDiscountMatch[1]) / 100;
+                const paidPercent = 1 - discountPercent;
+                
+                prices.forEach(price => {
+                    const discountedPrice = price * paidPercent;
+                    total += discountedPrice;
+                    
+                    breakdown.push({ 
+                        price: price, 
+                        status: 'receipt-primary', 
+                        label: `ريسيت أساسي (${(discountPercent*100).toFixed(0)}% خصم, يدفع ${discountedPrice.toFixed(2)})` 
+                    });
+                });
+            }
+
+
+            // عرض النتائج
+            renderBreakdown(breakdown);
+            
+            // تحديث العنوان بالإجمالي
+            const finalTotal = total.toFixed(2);
+            breakdownHeader.innerHTML = `<i class="fas fa-receipt"></i> تفصيل حالة كل قطعة (ريسيت) | الإجمالي: ${finalTotal} جنيه`;
+            
+            resultsArea.style.display = 'block';
+        }
+
+        // وظيفة عرض تفاصيل الخصم
+        function renderBreakdown(breakdown) {
+            breakdownList.innerHTML = '';
+            breakdown.forEach(item => {
+                let statusClass = item.status === 'receipt-primary' ? 'receipt-primary' : 'receipt-deferred';
+                
+                const listItem = document.createElement('li');
+                listItem.className = 'breakdown-item';
+                
+                listItem.innerHTML = `
+                    <span class="price-label">
+                        <i class="fas fa-tag" style="margin-left: 5px; color: ${item.status === 'receipt-deferred' ? 'var(--success-color)' : 'var(--text-dark)'}"></i>
+                        ${item.price.toFixed(2)} جنيه
+                    </span>
+                    <span class="status ${statusClass}">${item.label}</span>
+                `;
+                
+                breakdownList.appendChild(listItem);
+            });
+        }
+
+        // ربط حدث النقر والمدخلات
+        calculateButton.addEventListener('click', calculateTotal);
+        pricesInput.addEventListener('input', calculateTotal);
+        offerType.addEventListener('change', calculateTotal);
+
+        // تشغيل الحساب عند التحميل الأولي
+        document.addEventListener('DOMContentLoaded', calculateTotal);
+    </script>
+</body>
+</html>
