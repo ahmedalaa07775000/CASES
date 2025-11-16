@@ -1,0 +1,4097 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية آل عبد اللطيف الطرشوبي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ---------------------------------- */
+        /* 1. General & Core Layout */
+        /* ---------------------------------- */
+        :root {
+            --primary-color: #800000;
+            --accent-color: #333333;
+            --bg-app: #f0f2f5; 
+            --bg-page: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-light: #555555;
+            --border-color: #E0E0E0;
+            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.07);
+            --sidebar-width: 280px;
+            --header-height: 145px;
+            --main-container-width: 1600px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-app);
+            color: var(--text-dark);
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* ---------------------------------- */
+        /* 2. Fixed Header (from CASES file) - UPDATED FOR ALIGNMENT */
+        /* ---------------------------------- */
+        .fixed-header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            background-color: var(--bg-page);
+            border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
+
+        .header-content-wrapper {
+            max-width: var(--main-container-width);
+            margin: 0 auto;
+            padding: 0 25px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .header-main-content {
+            flex-grow: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-main-content h1 {
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        #sidebar-toggle-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .search-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-app);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+        .search-bar:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.2);
+        }
+        #searchInput {
+            flex-grow: 1; border: none; font-size: 1.1em; outline: none; background: transparent;
+        }
+        .search-bar i { color: var(--text-light); margin-left: 10px; }
+
+        #open-calculator-btn {
+            background-color: var(--primary-color); color: white; border: none; padding: 10px 18px;
+            border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 700; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap;
+        }
+        #open-calculator-btn:hover { background-color: #a00000; transform: translateY(-2px); }
+
+        .current-category-info {
+             font-size: 0.9em; color: var(--text-light); padding: 10px; border-radius: 8px;
+             background-color: var(--bg-app); border: 1px solid var(--border-color); white-space: nowrap;
+        }
+        .current-category-info strong { color: var(--primary-color); font-weight: 700; }
+
+        .header-placeholder {
+            height: var(--header-height);
+        }
+
+        /* ---------------------------------- */
+        /* 3. Centered Site Body (Sidebar + Content) */
+        /* ---------------------------------- */
+        .site-body-wrapper {
+            max-width: var(--main-container-width);
+            margin: 20px auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 0 25px;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: calc(var(--header-height) + 20px); /* Stick below the header */
+            height: calc(100vh - var(--header-height) - 40px); /* Fill remaining height */
+            background-color: var(--bg-page);
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .sidebar-header {
+            font-size: 1.5em; font-weight: 800; color: var(--primary-color); padding: 20px;
+            text-align: center; border-bottom: 2px solid var(--border-color); flex-shrink: 0;
+        }
+        .category-nav { flex-grow: 1; overflow-y: auto; padding: 10px; }
+        .category-list { list-style: none; }
+        .category-item {
+            cursor: pointer; border-radius: 8px; padding: 0 15px; font-size: 1em;
+            font-weight: 600; color: var(--text-dark); transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 5px;
+            width: 100%; height: 55px; text-align: right; border: 1px solid transparent;
+            background-color: #f8f9fa;
+        }
+        .category-item:hover { background-color: #e9ecef; border-color: var(--border-color); }
+        .category-item.active {
+            background-color: var(--primary-color); color: var(--card-bg); font-weight: 700;
+            box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3); border-color: var(--primary-color);
+        }
+        .category-item.active i, .category-item.active span { color: var(--card-bg) !important; }
+        .category-item i {
+            color: var(--primary-color); font-size: 1.4em; width: 30px;
+            text-align: center; transition: color 0.2s ease;
+        }
+        .category-item span { flex-grow: 1; white-space: normal; line-height: 1.3; }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            min-width: 0; /* Prevents flexbox overflow */
+        }
+        .main-content-area {
+            padding: 25px;
+            background-color: var(--bg-page);
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+        }
+        
+        /* Spacing between categories */
+        .main-category-separator {
+            font-size: 1.8em; font-weight: 800; color: var(--card-bg); background-color: var(--primary-color);
+            padding: 15px 20px; border-radius: 10px; box-shadow: var(--shadow-light);
+            margin-bottom: 25px; display: flex; align-items: center;
+            margin-top: 40px; /* Increased top margin */
+        }
+        .main-category-separator:first-child {
+            margin-top: 0; /* No extra margin for the very first one */
+        }
+        .main-category-separator i { margin-left: 15px; }
+
+        .sub-category-title {
+            font-size: 1.5em; font-weight: 700; color: var(--text-dark); margin: 30px 0 15px 0;
+            border-bottom: 3px solid var(--accent-color); padding-bottom: 5px;
+        }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .product-card {
+            background-color: var(--card-bg); padding: 20px; border-radius: 12px;
+            box-shadow: var(--shadow-light); transition: all 0.3s;
+            border-top: 5px solid var(--accent-color); display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); border-color: var(--primary-color); }
+        .product-card-header { font-weight: 800; font-size: 1.2em; color: var(--text-dark); margin-bottom: 10px; }
+        .product-card-details {
+            border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: auto;
+            font-size: 1em; color: var(--text-light); display: flex; flex-direction: column; gap: 10px;
+        }
+        .product-card-details strong { color: var(--primary-color); font-weight: 700; }
+        .product-code {
+            font-family: 'Consolas', monospace; background-color: #fcebeb; padding: 4px 10px;
+            border-radius: 6px; color: var(--primary-color); font-weight: 700; user-select: all;
+        }
+        .usage-section { display: flex; flex-direction: column; gap: 8px; }
+        .usage-content { display: flex; flex-direction: column; gap: 5px; }
+        .complex-usage-badge {
+            color: #d9534f; font-weight: 700; background-color: #fdd; padding: 5px 8px;
+            border-radius: 6px; border: 1px solid #d9534f; display: inline-block; align-self: flex-start;
+        }
+        .main-usage-text { color: var(--text-dark); line-height: 1.5; }
+        .copy-button {
+            background-color: var(--accent-color); color: var(--card-bg); border: none; padding: 8px 15px;
+            border-radius: 25px; cursor: pointer; font-weight: 700; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 8px; margin-top: 15px; align-self: flex-start;
+        }
+        .copy-button:hover { background-color: #1A1A1A; transform: translateY(-2px); }
+        .copy-button.copied { background-color: var(--primary-color); } /* Changed to primary color */
+
+        .no-results { text-align: center; padding: 50px; font-size: 1.3em; color: var(--text-light); }
+        .main-footer {
+            margin-top: 40px; padding: 20px; border-top: 2px solid var(--border-color); text-align: center;
+            color: var(--text-light); font-weight: 700;
+        }
+        
+        /* ---------------------------------- */
+        /* 4. Calculator Modal & Responsive Sidebar */
+        /* ---------------------------------- */
+        #calculator-modal, #sidebar-overlay {
+            position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 2000;
+            display: none; /* Hidden by default */
+        }
+        #calculator-modal { align-items: center; justify-content: center; padding: 15px; }
+        #calculator-modal.is-visible, #sidebar-overlay.is-visible { display: block; }
+        .calc-wrapper {
+            background-color: var(--bg-app); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            width: 100%; max-width: 800px; max-height: 90vh; display: flex; flex-direction: column;
+            margin: auto; /* For vertical centering when overlay is block */
+            position: relative; top: 50%; transform: translateY(-50%);
+        }
+        .calc-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .calc-header h2 { font-size: 1.6em; color: var(--accent-color); font-weight: 700; }
+        #calc-close-btn { background: none; border: none; font-size: 1.8em; cursor: pointer; color: var(--text-light); }
+        .calc-content { padding: 25px; overflow-y: auto; }
+        .calc-input-group { margin-bottom: 20px; }
+        .calc-input-group label { display: block; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; }
+        .calc-content textarea, .calc-content select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; }
+        .calc-content textarea:focus, .calc-content select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.2); }
+        .calc-content textarea { min-height: 150px; resize: vertical; }
+        #calc-results-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        #calc-breakdown-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        #calc-breakdown-header h3 { font-size: 1.3em; color: var(--accent-color); }
+        #calc-total-display { background-color: var(--primary-color); color: white; padding: 8px 15px; border-radius: 8px; font-size: 1.2em; font-weight: 800; }
+        .calc-breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #f0f0f0; background-color: var(--card-bg); }
+        .calc-status { font-weight: 600; padding: 5px 10px; border-radius: 6px; font-size: 0.9em; text-align: center; }
+        .status-receipt-primary { background-color: #ffe0b2; color: #e65100; }
+        .status-receipt-deferred { background-color: #c8e6c9; color: #28a745; }
+        #calc-error-message { color: #dc3545; font-weight: 700; margin-top: 15px; text-align: center; background-color: #fdd; padding: 10px; border-radius: 8px; }
+
+        /* ---------------------------------- */
+        /* 5. Responsive Design */
+        /* ---------------------------------- */
+        @media (max-width: 1200px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                transform: translateX(100%);
+                z-index: 3000;
+                border-radius: 0;
+                border-left: 1px solid var(--border-color);
+            }
+            #sidebar.is-visible { transform: translateX(0); }
+            #sidebar-toggle-btn { display: block; }
+            .site-body-wrapper { padding: 0 15px; } /* Add some padding on mobile */
+            .main-content { border-radius: 0; }
+        }
+
+        @media (max-width: 768px) {
+            :root { --header-height: 190px; } /* Header stacks, so it's taller */
+            
+            .header-content-wrapper {
+                 padding: 0 15px;
+                 display: block;
+            }
+            .header-main-content {
+                gap: 10px;
+            }
+            .logo-title-wrapper {
+                justify-content: center;
+            }
+             .header-main-content h1 { font-size: 1.5em; text-align: center; }
+
+            .header-top-row { justify-content: center; position: relative; }
+            #sidebar-toggle-btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+
+            .search-actions-row { flex-direction: column; align-items: stretch; }
+            .product-grid { grid-template-columns: 1fr; }
+            .main-category-separator { font-size: 1.4em; }
+            .sub-category-title { font-size: 1.2em; }
+            .site-body-wrapper { padding: 0; }
+            .main-content-area { border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="fixed-header-wrapper">
+        <div class="header-content-wrapper">
+             <div class="header-main-content">
+                <div class="header-top-row">
+                    <div class="logo-title-wrapper">
+                        <h1>آل عبد اللطيف الطرشوبي</h1>
+                    </div>
+                    <button id="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+                </div>
+                <div class="search-actions-row">
+                    <div class="current-category-info">
+                        الفئة: <strong id="currentCategoryTitle">جميع الأصناف</strong>
+                    </div>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="ابحث باسم الفئة أو المنتج...">
+                    </div>
+                    <button id="open-calculator-btn">
+                        <i class="fas fa-calculator"></i>
+                        <span>حاسبة العروض</span>
+                    </button>
+                </div>
+             </div>
+        </div>
+    </header>
+    <div class="header-placeholder"></div>
+
+    <div class="site-body-wrapper">
+        <aside id="sidebar">
+            <div class="sidebar-header">الفئات</div>
+            <nav class="category-nav">
+                <ul id="categoryList" class="category-list"></ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="main-content-area">
+                <div id="productsDisplay" class="products-display"></div>
+                <footer class="main-footer">WHATSAPP TEAM</footer>
+            </div>
+        </main>
+    </div>
+
+    <div id="sidebar-overlay"></div>
+
+    <div id="calculator-modal">
+        <div class="calc-wrapper">
+            <div class="calc-header">
+                <h2><i class="fas fa-calculator"></i> حاسبة العروض</h2>
+                <button id="calc-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="calc-content">
+                <p style="margin-bottom: 20px; color: var(--text-light); font-size: 0.9em;">
+                    لضمان أقصى استفادة للعميل، أدخل أسعار المنتجات (كل سعر في سطر) واختر نوع العرض.
+                </p>
+                <div class="calc-input-group">
+                    <label for="calc-offer-type"><i class="fas fa-tags"></i> اختيار نوع العرض</label>
+                    <select id="calc-offer-type">
+                        <option value="none">-- اختر العرض --</option>
+                        <optgroup label="عروض الأزواج (Buy 1 Get X)">
+                            <option value="1+1">1+1 مجاناً</option>
+                            <option value="1+50">1 + 50% خصم على الثانية</option>
+                            <option value="1+70">1 + 70% خصم على الثانية</option>
+                            <option value="1+90">1 + 90% خصم على الثانية</option>
+                            <option value="1+40">1 + 40% خصم على الثانية</option>
+                            <option value="1+35">1 + 35% خصم على الثانية</option>
+                            <option value="1+30">1 + 30% خصم على الثانية</option>
+                        </optgroup>
+                        <optgroup label="عروض المجموعات (Set Offers)">
+                            <option value="2+2">2+2 مجاناً</option>
+                            <option value="2+1">2+1 مجاناً</option>
+                        </optgroup>
+                        <optgroup label="خصم على كل قطعة">
+                            <option value="discount-50">خصم 50% على القطعة</option>
+                            <option value="discount-35">خصم 35% على القطعة</option>
+                            <option value="discount-30">خصم 30% على القطعة</option>
+                            <option value="discount-15">خصم 15% على القطعة</option>
+                            <option value="discount-10">خصم 10% على القطعة</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label for="calc-prices-input"><i class="fas fa-list-ol"></i> أسعار القطع (كل سعر في سطر منفصل)</label>
+                    <textarea id="calc-prices-input" placeholder="مثال:&#10;500&#10;300&#10;120&#10;90"></textarea>
+                </div>
+                <div id="calc-results-area" style="display: none;">
+                    <div id="calc-breakdown-header">
+                        <h3><i class="fas fa-receipt"></i> تفصيل حالة كل قطعة</h3>
+                        <div id="calc-total-display"></div>
+                    </div>
+                    <ul id="calc-breakdown-list"></ul>
+                </div>
+                <div id="calc-error-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             // START: Product data (sorted alphabetically for easier editing)
+            const appData = {
+    "الاظافر": {
+        "الزوائد الجلدية حول الأظافر": [
+            {
+                "name": "EVASILINE CUTICLE REMOVER13G",
+                "code": "52749",
+                "usage": "دهان للاظافر والجلد حولها مرتين يوميا"
+            },
+            {
+                "name": "NAIL & CUTICLE OIL 15ML AL ABD ELLATIF",
+                "code": "104612",
+                "usage": "دهان للاظافر والجلد حولها مرتين يوميا"
+            },
+            {
+                "name": "YOLO (13) SERUM CUTICLE NAIL CARE10ML",
+                "code": "112471",
+                "usage": "دهان للاظافر والجلد حولها مرتين يوميا"
+            }
+        ],
+        "تقوية وإطالة الأظافر": [
+            {
+                "name": "DERMACUTIX NAIL CARE LOTION 4GM",
+                "code": "110012",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "INFINITY NATU NAIL&CUT HEALTH BLEND4ML",
+                "code": "118415",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "LEAVES NAIL & CUTICLE SERUM 5ML",
+                "code": "126512",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "NAIL & CUTICLE OIL 15ML AL ABD ELLATIF",
+                "code": "104612",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "NAIL LOTION 15 ML",
+                "code": "127204",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "SEE-LITE NAIL RESCUE SERUM 10ML (1+1)",
+                "code": "132507",
+                "usage": "دهان للاظافر مرتين يوميا"
+            },
+            {
+                "name": "VEEXIA VEE ALLURE NAILS LOTION 15ML",
+                "code": "113348",
+                "usage": "دهان للاظافر مرتين يوميا"
+            }
+        ],
+        "فطريات الأظافر": [
+            {
+                "name": "CLOSOL SPRAY 50 ML",
+                "code": "125059",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "ERNEST NAIL LOTION HEALTHY HAND15M",
+                "code": "108924",
+                "usage": "مرتين يوميا"
+            }
+        ]
+    },
+    "الاكزيما": [
+        {
+            "name": "BIOD ATODERM INTENSIVE BALM ULTRA SOOTH 200ML",
+            "code": "99769",
+            "usage": "دهان للبشرة 3 مرات يوميا"
+        },
+        {
+            "name": "CERAVE MOISTURIZING CREAM 177ML",
+            "code": "23372",
+            "usage": "دهان للبشرة 3 مرات يوميا"
+        },
+        {
+            "name": "HAYAH STRALINE EMOLIENT CREAM 200ML",
+            "code": "99982",
+            "usage": "دهان للبشرة 3 مرات يوميا"
+        },
+        {
+            "name": "LA ROCHE LIPIKAR BAUME(AP+M)BODYBALM400ML",
+            "code": "39447",
+            "usage": "دهان للبشرة 3 مرات يوميا"
+        }
+    ],
+    "التجاعيد وشد الوجه": [
+        {
+            "name": "BIOVINCI ANTI-AGING CREAM 50GM",
+            "code": "76931",
+            "usage": "ضعي طبقة رقيقة ودلكي بلطف من الأسفل إلى الأعلى مرة واحدة يوميًا في وقت النوم ، وتجنبي التعرض لأشعة الشمس عند وضع الكريم"
+        },
+        {
+            "name": "DONE ANTIWRINKLE CREAM",
+            "code": "127888",
+            "usage": "دهان للبشرة صباحا ومساءا"
+        },
+        {
+            "name": "EVER YOUTH ANTI WRINKLES CREAM 50GM",
+            "code": "116153",
+            "usage": "يوضع بكميه مناسبه علي البشره ويدلك جيدا حتي تمام الامتصاص مره او مرتين يوميا"
+        },
+        {
+            "name": "NEUTH GOLD ANTI WRINKLE CREAM 50ML",
+            "code": "28247",
+            "usage": "يوضع بكميه مناسبه علي الوجه والرقبه ويدلك جيدا حتي تمام الامتصاص  مرتين يوميا"
+        }
+    ],
+    "التساقط": {
+ "علاج تساقط الشعر": [
+            {
+                "name": "DERMACTIVE  TRICHO-ACT ANTI-HAIR LOSS LOTION 120ML",
+                "code": "115174",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "FOLLICET LOTION HAIR LOSS 120ML",
+                "code": "114675",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "OXYGEN O-KERATIN HAIR LOSS LOTION120M",
+                "code": "134208",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "REGO HAIR LOTION 120ML",
+                "code": "113064",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "SFIRA HAIR LOTION 120ML",
+                "code": "1101378",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "VICHY  DERCOS DENSI SOLUTIONS HAIR MASS SPRAY 100M",
+                "code": "1707",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "YOULICIOUS   ANTI-HAIR LOSS TONIC LOTION125ML",
+                "code": "133923",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            }
+        ],
+        "اطالة الشعر - تطويل الشعر": [
+            {
+                "name": "SEROPIPE HAIR SPRAY 200 ML",
+                "code": "106973",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            },
+            {
+                "name": "TWIST&GO LOTION HAIR LENGTH SPRAY 125ML",
+                "code": "116384",
+                "usage": "<span class='complex-usage'>*لا يشطف*</span>رش 8 بخات علي فروة الراس صباحا ومساءا"
+            }
+        ],
+        "ترطيب وتكثيف واطالة الدقن او اللحية": [
+            {
+                "name": "HAIR DAILY GO THICK BEARD SERUM 30ML",
+                "code": "113780",
+                "usage": "<span class='complex-usage'>*لشعر اللحية القصير والضعيف*</span>توزيع 4 نقاط يوميًا على منابت الذقن مع التدليك لبضع دقائق، واستخدامه مرة واحدة يوميًا"
+            },
+            {
+                "name": "MAN LOOK EXPERT BEARD NATURAL OIL 50ML",
+                "code": "126193",
+                "usage": "<span class='complex-usage'>*ترطيب وتنعيم شعر اللحية*</span>ضع 2-3 قطرة مرتين يوميا مع التدليك برفق"
+            },
+            {
+                "name": "THE HAIR ADDICT BEARD OIL 25ML",
+                "code": "123124",
+                "usage": "<span class='complex-usage'>* للحصول على لحية أطول وأكثر سمكًا*</span>فرك بضع قطرات من زيت اللحية بين راحتك ، ثم قم بتدليكه في لحيتك وبشرتك. كرر كما يفضل"
+            },
+            {
+                "name": "VEEXIA TRICHO GROW VEE BEARD SERUM 30ML",
+                "code": "113342",
+                "usage": "<span class='complex-usage'>*للحصول على لحية أطول وأكثر سمكًا*</span>ضع 2-3 قطرة مرتين يوميا مع التدليك برفق"
+            }
+        ],
+        "تساقط - اطالة الشعر عند الاطفال": [
+            {
+                "name": "PENDULINE CURLY SPRAY HAIR GROWTH250MSULFATE FREE",
+                "code": "108084",
+                "usage": "<span class='complex-usage'>*مناسب من عمر  سنه*</span>يرش على فروة الرأس يوميًا ثم نعمل مساچ لفروة لراس لمدة دقيقة"
+            },
+            {
+                "name": "SUPER  KIDS NUTRITIVE HAIR SPRAY120ML",
+                "code": "44282",
+                "usage": "<span class='complex-usage'>*مناسب من عمر سنتين*</span>رش 6 بخات علي فروة الراس  مره واحده يوميا"
+            },
+            {
+                "name": "TOLA HAIR  LOTION  120 ML",
+                "code": "24761",
+                "usage": "<span class='complex-usage'>*مناسب من عمر 6 شهور*</span>رش 6 بخات علي فروة الراس صباحا ومساءا والتسريح بمشط خشب"
+            }
+        ],
+        "تكثيف واطالة الرموش والحواجب - ماسكرا علاجيه": [
+            {
+                "name": "ANIVAGENE  EYE LASH SERUM CAPIXYL PANTHENOL10ML",
+                "code": "102713",
+                "usage": "<span class='complex-usage'>*شفافه*</span>ماسكرا مرتين يوميا"
+            },
+            {
+                "name": "CAPIXY EYE LASH &BROW TREAT SERUM 10ML",
+                "code": "119151",
+                "usage": "<span class='complex-usage'>*شفافه*</span>ماسكرا مرتين يوميا"
+            },
+            {
+                "name": "LEYLAK (EYE LASHES & BROWS)SERUM 10ML",
+                "code": "132441",
+                "usage": "<span class='complex-usage'>*شفافه*</span>ماسكرا مرتين يوميا"
+            },
+            {
+                "name": "OXYGEN O-KERATIN EYE LASH BROW SERUM9ML",
+                "code": "136310",
+                "usage": "<span class='complex-usage'>*شفافه*</span>ماسكرا مرتين يوميا"
+            }
+        ],
+        "زيت للشعر": [
+            {
+                "name": "AVRELLE HAIR OIL ROSEMARY&OILVE&ROCCA 50ML",
+                "code": "120246",
+                "usage": "<span class='complex-usage'>*بالروزماري والزيتون والجرجير*</span>حمام زيت مره او مرتين اسبوعيا يوضع علي فروة الراس مع التدليك ويترك طوال الليل"
+            },
+            {
+                "name": "HEPTA PANTHENOL HAIR OIL 120 ML",
+                "code": "130223",
+                "usage": "<span class='complex-usage'>*تصفيف / حمام زيت*</span>حمام زيت مره او مرتين اسبوعيا يوضع علي فروة الراس مع التدليك لمدة نصف ساعه ثم يشطف"
+            },
+            {
+                "name": "NATURAL HAIR OILS 100 ML AL ABD ELLATIF",
+                "code": "75322",
+                "usage": "<span class='complex-usage'>*تصفيف / حمام زيت*</span>حمام زيت مره او مرتين اسبوعيا يوضع علي فروة الراس مع التدليك لمدة نصف ساعه ثم يشطف"
+            },
+            {
+                "name": "PIOSETA HAIR OIL 120ML",
+                "code": "130223",
+                "usage": "<span class='complex-usage'>*مناسب لجميع افراد الاسرة*</span>للتسريح اليومي"
+            }
+        ]
+       
+    },
+    "التفتيح والبقع الغامقة": {
+        "تفتيح الاسمرار حول الفم": [
+            {
+                "name": "CICAPRO CREAM 50 ML",
+                "code": "126959",
+                "usage": "<span class='complex-usage'>*يستخدم مع اي نوع كريم تفتيح من الموجود في نفس الفئة*</span>"
+            },
+            {
+                "name": "DERMA TEN SERUM (BRIGHTENING) 30ML",
+                "code": "132847",
+                "usage": "<span class='complex-usage'>*يستخدم مع اي نوع كريم سيكا من الموجود في نفس الفئة*</span>"
+            },
+            {
+                "name": "DERMACTIVE ACTI-REPAIR CICA CREAM 50 ML",
+                "code": "115177",
+                "usage": "<span class='complex-usage'>*يستخدم مع اي نوع كريم تفتيح من الموجود في نفس الفئة*</span>"
+            },
+            {
+                "name": "FOLDEX SKIN LIGHT CREAM 50GM",
+                "code": "132024",
+                "usage": "<span class='complex-usage'>*يستخدم مع اي نوع كريم سيكا من الموجود في نفس الفئة*</span>"
+            },
+            {
+                "name": "STARVILLE WHITENING CREAM 60 GM",
+                "code": "97447",
+                "usage": "<span class='complex-usage'>*يستخدم مع اي نوع كريم سيكا من الموجود في نفس الفئة*</span>"
+            }
+        ],
+        "تفتيح البشرة - اثار الحبوب": [
+            {
+                "name": "ACM DEPIWHITE ADVANCED CREAM BROWN SPOTS40ML",
+                "code": "85639",
+                "usage": "دهان مره يوميا مساءا"
+            },
+            {
+                "name": "BIONNEX WHITEXPERT NIGHT REPAIR SERUM 30ML",
+                "code": "120281",
+                "usage": "دهان مره يوميا مساءا"
+            },
+            {
+                "name": "DERMACTIVE ACTI-WHITE CORRECTING SERUM 30ML",
+                "code": "115171",
+                "usage": "دهان مره يوميا مساءا"
+            },
+            {
+                "name": "DERMACTIVE ACTI-WHITE DEPIGMENTING CREAM50ML",
+                "code": "115169",
+                "usage": "دهان مره يوميا مساءا"
+            },
+            {
+                "name": "DOLAR WHITENING CREAM 5 % 60GM",
+                "code": "122109",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "PURE SACCO WHITENING GEL CREAM 50ML",
+                "code": "114088",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "SHINE AND WHITE ( FACE SERUM ) 30ML",
+                "code": "132393",
+                "usage": "دهان مره يوميا مساءا"
+            },
+            {
+                "name": "TELOFILL LIGHTENING SERUM 30ML",
+                "code": "112396",
+                "usage": "دهان مره يوميا مساءا"
+            }
+        ],
+        "تفتيح الجسم": [
+            {
+                "name": "ACM DEPIWHITE BODY MILK WHITENING DRY SKIN 200ML",
+                "code": "99716",
+                "usage": "دهان مرتين يوميا"
+            },
+            {
+                "name": "ALEJON WHITENING BODY MILK 200ML",
+                "code": "9379",
+                "usage": "دهان مرتين يوميا"
+            },
+            {
+                "name": "DERMACTIVE ACTI-WHITE 2 IN1 BODY MILK200ML",
+                "code": "115168",
+                "usage": "<span class='complex-usage'>*للجسم والمناطق الحساسة*</span>دهان مرتين يوميا"
+            },
+            {
+                "name": "DERMAELLE HYALUWHITE BODY LOTION 200 ML",
+                "code": "128337",
+                "usage": "دهان مرتين يوميا"
+            },
+            {
+                "name": "HAYAH MELATEX LIGHTENIG BODY MILK CREAM 200ML",
+                "code": "128069",
+                "usage": "دهان مرتين يوميا"
+            }
+        ],
+        "تفتيح الركب والاكواع": [
+            {
+                "name": "DERMAELLE HYALUWHITE DARK KNUCKL CRE150ML",
+                "code": "128338",
+                "usage": "<span class='complex-usage'>*يوريا 10%*</span>دهان مرتين يوميا للركب والاكواع والمفاصل"
+            },
+            {
+                "name": "OXYGEN O-WHITE ELBOW&KNEE WHITE CRE50ML",
+                "code": "137259",
+                "usage": "<span class='complex-usage'>*يوريا 30% + جليكوليك اسيد 3%*</span>دهان مرتين يوميا للركب والاكواع والمفاصل"
+            }
+        ],
+        "تفتيح الشعر": [
+            {
+                "name": "MANZANILLA ORO LIGHT HAIR LOTION SPRAY180ML",
+                "code": "110248",
+                "usage": "<span class='complex-usage'>*خالي من الامونيا. يستخدم من سن 8 سنوات للأطفال وحتي السن الكبير بشرط عدم وجود شعر أبيض*</span>تاكدي ان الشعر خالي من الزيوت او الكريمات وقومي برشه على الشعر المبلل بكمية كافيه واستعملي مشط بلاستيكي  لتتأكدي من توزيعه على جميع الشعر مع التركيز على الجذور والأماكن الداكنه من الشعر ثم جففي شعرك بالاستشوار ويترك علي الشعر 24 ساعة بعدها يغسل بميا او بشامبو يمكنك إعادة استخدام مفتح مانزانيلا أورو على الشعر كل ثلاثة أيام حتى يظهر اللون المناسب لشعرك"
+            }
+        ],
+        "تفتيح المناطق الحساسة (البكيني - اندر ارم)": [
+            {
+                "name": "ALEJON WHITENING BODY MILK 200ML",
+                "code": "9379",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "ASELIA PROFESSION LIGHT SERUM(SENSITIVE)20ML",
+                "code": "124980",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "BIOD PIGMENTBIO SENSTIVE AREAS T 75ML",
+                "code": "29711",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "BIONNEX WHITEXPERT CREAM SENSITIVE 50ML",
+                "code": "120279",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "BOBANA LIGHT CREAM SENSITIVE AREAS60G",
+                "code": "42133",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "DERMACTIVE ACTI-WHITE 2 IN1 BODY MILK200ML",
+                "code": "115168",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "DERMAELLE HYALUWHITE SENSITIVE AREA CREAM 60 ML",
+                "code": "128341",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "DOLAR WHITENING CREAM SENSITIVE AREA30G",
+                "code": "12210",
+                "usage": "دهان مرتين يوميا صباحا ومsاءا"
+            },
+            {
+                "name": "PERIMETRO LIGHTENING CREAM SENSITIVE 250ML",
+                "code": "44974",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            },
+            {
+                "name": "TETRA GLOW WHITE CREAM SENSTIVE 50G",
+                "code": "100693",
+                "usage": "دهان مرتين يوميا صباحا ومساءا"
+            }
+        ],
+        "تفتيح بشرة الاطفال": [
+            {
+                "name": "PENDULINE KIDS(+3Y)SKIN LIGHT CREAM120M",
+                "code": "108083",
+                "usage": "<span class='complex-usage'>*من عمر 3 سنوات*</span> تدهن كمية مناسبة من كريم تفتيح بندولين علي المنطقة المراد تفتيحها من وجه أو جسم طفلك يستخدم مرتين يوميا"
+            }
+        ]
+    },
+    "السيلوليت - شد  الجسم": [
+        {
+            "name": "CRYO - SHAPE GEL 150 ML",
+            "code": "122339",
+            "usage": "دهان مرتين يوميا في اتجاه واحد من اسفل الي اعلي لتعزيز الامتصاص وتنشيط الدوره الدمويه"
+        },
+        {
+            "name": "CURVY - PLUS CREAM 150 ML",
+            "code": "126784",
+            "usage": "دهان مرتين يوميا في اتجاه واحد من اسفل الي اعلي لتعزيز الامتصاص وتنشيط الدوره الدمويه"
+        },
+        {
+            "name": "DEMARK CREAM ANTI STRECH MARKS 100 GM",
+            "code": "133770",
+            "usage": "دهان مرتين يوميا في اتجاه واحد من اسفل الي اعلي لتعزيز الامتصاص وتنشيط الدوره الدمويه"
+        }
+    ],
+    "الشعر المعالج كيميائيا - معمول بروتين او صبغه": {
+        "بلسم": [
+            {
+                "name": "ANIVAGENE  COND PANTHENOL&JOJOBA 125ML",
+                "code": "99724",
+                "usage": " بلسم للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "CLARY CONDITIONER HAIR DRY&DAMAGED 300ML",
+                "code": "25414",
+                "usage": " بلسم للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "EVERY STRAND COND KERAT&ALOEVERA 399ML",
+                "code": "41181",
+                "usage": " بلسم للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "G.K (4) KERATIN MOIST COND COLOUR 300ML",
+                "code": "4414",
+                "usage": " بلسم للشعر مرتين اسبوعيا"
+            }
+        ],
+        "سيروم و ليف ان": [
+            {
+                "name": "AFRICANA  LEAVE IN COND SHEA&ARG 225ML",
+                "code": "130694",
+                "usage": " يترك علي الشعر للتصفيف عند اللزوم"
+            },
+            {
+                "name": "CLARY LEAVE IN CREAM WITH PROCAPIL 300GM",
+                "code": "120733",
+                "usage": " يترك علي الشعر للتصفيف عند اللزوم"
+            },
+            {
+                "name": "EVERY STRAND SERUM KERATIN&ALOEVERA177ML",
+                "code": "42138",
+                "usage": " يترك علي الشعر للتصفيف عند اللزوم"
+            },
+            {
+                "name": "G.K KERATIN SERUM  ANTI-FRIZZ HAIR 50ML",
+                "code": "83240",
+                "usage": "يترك علي الشعر للتصفيف عند اللزوم"
+            }
+        ],
+        "شامبو": [
+            {
+                "name": "BLUEBELL ELONE KERATIN SHAMP200ML",
+                "code": "96756",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "EVERY STRAND SHAM KERATIN&ALOEVERA399ML",
+                "code": "42139",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "G.K (3) KERATIN BALANC SHAMPOO  ALL HAIR 300ML",
+                "code": "4419",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "KERATIN SILK PROTEIN HAIR SHAM(SOMANG)620ML",
+                "code": "78365",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "MOTIONS SHAMPOO NOURISH&RESTOR SHEA&COCO473ML",
+                "code": "80804",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "PANTHOVERA SHAMPOO 250 ML",
+                "code": "130541",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SEROPIPE HAIR SHAMPOO 300ML",
+                "code": "106874",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            }
+        ],
+        "ماسك او حمام كريم": [
+            {
+                "name": "AFRICANA  ARGAN OIL HAIR MASK NPC 225ML",
+                "code": "130692",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+            },
+            {
+                "name": "CLARY  HAIR MASK DRY&DAMAGE HAIR 300ML",
+                "code": "1524",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+            },
+            {
+                "name": "EVERY STRAND MASK KERATIN DAMAGHAIR 425 GM",
+                "code": "82710",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+            },
+            {
+                "name": "G.K KERATIN MASK DEEP COND HYDRATE 200 GM",
+                "code": "83687",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+            }
+        ]
+    },
+    "الصابون": {
+        "صابون السالسيلك اسيد": [
+            {
+                "name": "FIVE FIVES SALICYLIC ACID SOAP 70 GM",
+                "code": "124251",
+                "usage": "<span class='complex-usage'>*تركيز 2%*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "LIZA SOAP SALICYLIC(2) ACNE PRONE 70GM",
+                "code": "123901",
+                "usage": "<span class='complex-usage'>*تركيز 2%*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "LUNA MEDICINAL SOAP SALICYLIC 55G",
+                "code": "12832",
+                "usage": "<span class='complex-usage'>*تركيز 2%*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "SALICYLIC SOAP 45 MG",
+                "code": "132039",
+                "usage": "<span class='complex-usage'>*تركيز 2%*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            }
+        ],
+        "صابون الكركم": [
+            {
+                "name": "LIZA SOAP ACNE BAR TURMERIC CLEANSING 70GM",
+                "code": "117946",
+                "usage": "<span class='complex-usage'>*حب الشباب و تفتيح البشرة*</span>غسول للبشرة مرتين يوميا"
+            }
+        ],
+        "صابون اللبان الدكر": [
+            {
+                "name": "LIZA SOAP FRANKIN&HIBISCUS 70GM",
+                "code": "136318",
+                "usage": "<span class='complex-usage'>*تفتيح البشرة والتجاعيد*</span>غسول للبشرة مرتين يوميا"
+            }
+        ],
+        "صابون جليسرين": [
+            {
+                "name": "EVA SOAP GLYCERIN FRAGRANCE FREE 120GM",
+                "code": "115548",
+                "usage": "<span class='complex-usage'>*بدون رائحة*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "IMTENAN ALOE VERA GLYCERIN SOAP 100 GM",
+                "code": "107329",
+                "usage": "<span class='complex-usage'>*جليسرين و صبار*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "LA TREEBEAUTE  SOAP GLYCERIN 60GM",
+                "code": "53665",
+                "usage": "<span class='complex-usage'>*مناسبة للبشرة والشعر والجسم وبدون عطر*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            },
+            {
+                "name": "LUNA SOAP GLYCERIN&ROSE& MILK100GM",
+                "code": "117626",
+                "usage": "<span class='complex-usage'>*برائحة الروز و الحليب*</span> يستخدم لتنظيف البشرة صباحا ومساءا"
+            }
+        ],
+        "صابون فحم": [
+            {
+                "name": "IMTENAN  CHARCOAL GLYCERIN  SOAP 100 GM",
+                "code": "120578",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "LIZA SOAP CHARCOAL DEEP CLEANS 80G",
+                "code": "118175",
+                "usage": "غسول للبشرة مرتين يوميا"
+            }
+        ],
+        "صابون كبريت": [
+            {
+                "name": "FIVE FIVES SULFUR SOAP 70 GM",
+                "code": "124250",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span>غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "SULPHUR SOAP 45 GM",
+                "code": "132038",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span> غسول للبشرة مرتين يوميا"
+            }
+        ]
+    },
+    "القشره": {
+        "قشرة الشعر عند الاطفال": [
+            {
+                "name": "MUSTELA FOAM SHAMPOO CRADLE CAP 150 ML",
+                "code": "84841",
+                "usage": "<span class='complex-usage'>*لقشرة المهد*</span>شامبو مرتين اسبوعيا"
+            },
+            {
+                "name": "PENDULINE KIDS ANTI-DANDRUFF SHAMP TEA300ML",
+                "code": "109301",
+                "usage": "<span class='complex-usage'>*لقشرة الاطفال*</span>شامبو مرتين اسبوعيا"
+            },
+            {
+                "name": "PENDULINE SHAMP ANTI-CRADLE CAP150ML",
+                "code": "108402",
+                "usage": "<span class='complex-usage'>*لقشرة المهد*</span>شامبو مرتين اسبوعيا"
+            }
+        ],
+        "قشرة الشعر عند الكبار": [
+            {
+                "name": "COFFEE ZINC  SHAMPOO ANTI DANDRUFF 200 ML",
+                "code": "106988",
+                "usage": "<span class='complex-usage'>*خالي من السلفات. مناسب للشعر المعالج كيميائيا*</span> يدك جيدا في فروة الراس ويترك 5 دقائق ثم يشطف مرتين اسبوعيا"
+            },
+            {
+                "name": "DANDCETA  ANTI-DAND SHAMP(4IN1) 150ML",
+                "code": "113926",
+                "usage": " يدك جيدا في فروة الراس ويترك 5 دقائق ثم يشطف مرتين اسبوعيا"
+            },
+            {
+                "name": "DANDIVERA  SPRAY 120 ML",
+                "code": "130874",
+                "usage": "<span class='complex-usage'>*للقضاء علي الفطريات والقشره*</span> بخاخ لفروة الراس"
+            },
+            {
+                "name": "DANDIVERA  ANTIDANDRUFF SHAM 180ML",
+                "code": "131431",
+                "usage": "<span class='complex-usage'>*خالي من السلفات. مناسب للشعر المعالج كيميائيا*</span>يدك جيدا في فروة الراس ويترك 5 دقائق ثم يشطف مرتين اسبوعيا"
+            },
+            {
+                "name": "KITADAN  SPRAY 120 ML",
+                "code": "3795",
+                "usage": "<span class='complex-usage'>*مناسب للشعر الجاف والمعالج كيميائيا*</span> بخاخ لفروة الراس"
+            },
+            {
+                "name": "NAKATO ANTI-DANDRUFF OILY HAIR SHAM100M",
+                "code": "35885",
+                "usage": "<span class='complex-usage'>*مناسب للشعر الدهني*</span> يدك جيدا في فروة الراس ويترك 5 دقائق ثم يشطف مرتين اسبوعيا"
+            },
+            {
+                "name": "PIX ANTI DANDRUFF SHAMPOO 200 ML",
+                "code": "125870",
+                "usage": " يدك جيدا في فروة الراس ويترك 5 دقائق ثم يشطف مرتين اسبوعيا"
+            }
+        ]
+    },
+    "المسام الواسعة وتنظيم افراز الدهون": [
+        {
+            "name": "KOLAGRA NIACINAMIDE SERUM(B3)30ML",
+            "code": "10817",
+            "usage": "دهان للبشرة مرتين يوميا علي بشرة نظيفه"
+        },
+        {
+            "name": "NANO TREAT SERUM NIACINAMIDE ALL SKIN 30ML",
+            "code": "36926",
+            "usage": "دهان للبشرة مرتين يوميا علي بشرة نظيفه"
+        },
+        {
+            "name": "SKINSIDE NIACINAMIDE SERUM BLEMISH FREE REFINI",
+            "code": "115056",
+            "usage": "دهان للبشرة مرتين يوميا علي بشرة نظيفه"
+        },
+        {
+            "name": "VACATION NIACINAM (10%) FACE SERUM 30ML",
+            "code": "123937",
+            "usage": "دهان للبشرة مرتين يوميا علي بشرة نظيفه"
+        }
+    ],
+    "الهالات السوداء والخطوط والانتفاخات حول العين": [
+        {
+            "name": "ACM DUOLYS EYE CONTOUR CREAM 15 ML",
+            "code": "107356",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "B&B EYE CONTOUR CREAM ANTI-AGEING 30GM",
+            "code": "30136",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "BIONNEX WHITEXPERT EYE CONTOUR CREAM 15ML",
+            "code": "120280",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "DERMACTIVE ACTI-WHITE EYE CONTOUR CARE CREAM GEL",
+            "code": "115172",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "DISAAR WHITENING EYE CREAM (VIT C )25ML",
+            "code": "122725",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "EUCERIN PIG-PERFECT EYE CREAM 15ML",
+            "code": "130808",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "LA ROCHE PIGMENTCLAR EYE ANTI DARK15ML",
+            "code": "88950",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "LA ROCHE RETINOL REDERMIC EYES 15 ML",
+            "code": "119234",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "LAVENDER EYE CREAM 21GM",
+            "code": "96041",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "NEUTROGENA HYDRO BOOST EYE CREAM 15ML",
+            "code": "122413",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "RAW EYE BLAM CREAM 20ML",
+            "code": "49731",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        },
+        {
+            "name": "SHINE AND WHITE ( EYE CREAM ) 15GM",
+            "code": "132392",
+            "usage": "طبطبه حول العين مرتين يوميا"
+        }
+    ],
+    "الحبوب - حب الشباب": {
+        "علاج حبوب البشرة": [
+            {
+                "name": "ACM SEBIONIX TRIO FACE SOOTHING CREAM 40ML",
+                "code": "99718",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "ALEJON OILY SKIN ACNE CREAM 50GM",
+                "code": "112793",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "CLASCO TERON ACNE PRONE SKIN CREAM 50 GM",
+                "code": "110509",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "ECONET ACNE PRONE SKIN CREAM60GM",
+                "code": "1550",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "GELBLEND ACTIVE GEL 50 ML",
+                "code": "133431",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "LA ROCHE EFFACLAR DUO (+M) ANTI-IMPERFECTION 40M",
+                "code": "85040",
+                "usage": "دهان مرتين يوميا مع وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "LAMIVEX  ACNE GEL  50 GM",
+                "code": "138312",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "MEDITOPIC ACNIMED GEL 75ML",
+                "code": "31238",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "NEBULA ANTI-ACNE GEL OILY&PRONE SKIN50M",
+                "code": "30228",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "SECTOR ACNE PRONE SKIN LOTION 120ML",
+                "code": "106073",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "STARVILLE (ACNE PRON SKIN GEL) 30GM",
+                "code": "125935",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "VIDAILY-CARE ACNE GEL PRONE SKIN 50GM",
+                "code": "77094",
+                "usage": "دهان مره يوميا مساءا مع ضرورة وضع واقي شمس قبل الخروج"
+            }
+        ],
+        "علاج حبوب الجسم": [
+            {
+                "name": "FANGRARE SHOWER GEL 200 ML",
+                "code": "127889",
+                "usage": "<span class='complex-usage'>*شاور جل*</span>للاستحمام مضاد للبكتريا والفطريات"
+            },
+            {
+                "name": "FEEL GOOD SEBA PURE BODY SPRAY 120ML",
+                "code": "121158",
+                "usage": "<span class='complex-usage'>*للحبوب صعب الوصول اليها مثل الظهر والاكتاف*</span>سبراي لاماكن الحبوب مره مساءا"
+            },
+            {
+                "name": "POM CLEANSING SHOWER GEL 250 ML",
+                "code": "126332",
+                "usage": "<span class='complex-usage'>*شاور جل*</span>للاستحمام مضاد للبكتريا والفطريات"
+            },
+            {
+                "name": "SOLODEX EXFOLEAR SPRAY 120 ML",
+                "code": "113083",
+                "usage": "<span class='complex-usage'>*للحبوب صعب الوصول اليها مثل الظهر والاكتاف*</span>سبراي لاماكن الحبوب مره مساءا"
+            },
+            {
+                "name": "STARVILLE ACNE PRONE SKIN LOTION 230ML",
+                "code": "121698",
+                "usage": "دهان لاماكن الحبوب مره مساءا"
+            }
+        ],
+        "لاصقات لحبوب الشباب": [
+            {
+                "name": "GARNIER (8H)PIMPLE PATCH",
+                "code": "136854",
+                "usage": "<span class='complex-usage'>*22 قطعة*</span>توضع لمدة 8 ساعات علي الحبه لتمتص الصديد والدهون الزائده"
+            },
+            {
+                "name": "LA ROCHE  EFFACLAR DUO+M PATCHS FOR ACNE PRONE",
+                "code": "136600",
+                "usage": "<span class='complex-usage'>*22 قطعة*</span>توضع لمدة 8 ساعات علي الحبه لتمتص الصديد والدهون الزائده"
+            },
+            {
+                "name": "PHARMACOLL CURE AID SPOTS PCS ACNE PATCH",
+                "code": "80048",
+                "usage": "<span class='complex-usage'>*24 قطعة*</span>توضع لمدة 8 ساعات علي الحبه لتمتص الصديد والدهون الزائده"
+            }
+        ]
+    },
+    "الحج والعمرة": {
+        "حفاضات نسائيه (خالي من العطور)": [
+            {
+                "name": "CAREFREE  COTTON UNSCENTED NORMAL 100PAD",
+                "code": "113509",
+                "usage": "يوميه"
+            },
+            {
+                "name": "CAREFREE COTTON UNSCENTED S/M 20PADS",
+                "code": "76053",
+                "usage": "يوميه"
+            },
+            {
+                "name": "CAREFREE COTTON UNSCENTED S/M 56PCS",
+                "code": "81784",
+                "usage": "يوميه"
+            }
+        ],
+        "صابون وغسول (خالي من العطور)": [
+            {
+                "name": "EVA SOAP GLYCERIN FRAGRANCE FREE 120GM",
+                "code": "115548",
+                "usage": "صابون بالجلسرين خالٍ من العطور"
+            },
+            {
+                "name": "LUNA GLYCERIN SOAP TRANSPARENT 72 GM",
+                "code": "44628",
+                "usage": "صابون بالجلسرين خالٍ من العطور"
+            },
+            {
+                "name": "WEISER LIQUID GLYCERIN SOAP 350 ML",
+                "code": "134273",
+                "usage": "<span class='complex-usage'>*للوجه والجسم واليدين*</span>غسول سائل خالٍ من العطور"
+            }
+        ],
+        "مرطب للجسم (خالي من العطور)": [
+            {
+                "name": "EVASILINE PETROLEUM JELLY 35GM",
+                "code": "45066",
+                "usage": "فازلين للترطيب العميق"
+            },
+            {
+                "name": "GLYSOLID BODY LOTION SENSITIVE 200M",
+                "code": "7427",
+                "usage": "مرطب للجسم عند اللزوم"
+            },
+            {
+                "name": "LA ROCHE LIPIKAR BAUME(AP+) BALM200M",
+                "code": "85112",
+                "usage": "مرطب للجسم عند اللزوم"
+            },
+            {
+                "name": "SHAAN BODY MILK DRY&V.DRY SKIN 300ML",
+                "code": "97473",
+                "usage": "مرطب للجسم عند اللزوم"
+            }
+        ],
+        "مرطب للشفاة (خالي من العطور)": [
+            {
+                "name": "BEESLINE LIP CARE FLAVOUR FREE4G",
+                "code": "80234",
+                "usage": "مرطب للشفاة عند اللزوم"
+            },
+            {
+                "name": "CARE&MORE LIP BALM ORIGINAL 4GM",
+                "code": "117395",
+                "usage": "مرطب للشفاة عند اللزوم"
+            },
+            {
+                "name": "HAYAH STRALINE MOIST LIP BALM 5G",
+                "code": "107069",
+                "usage": "مرطب للشفاة عند اللزوم"
+            }
+        ],
+        "مرطب للوجه (خالي من العطور)": [
+            {
+                "name": "HYDRO-VERA GEL MOISTURIZ OILY SKIN50GM",
+                "code": "109904",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الدهنية*</span>مرطب للوجه عند اللزوم"
+            },
+            {
+                "name": "LA ROCHE LIPIKAR BAUME(AP+M) BALM75ML",
+                "code": "89741",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الجافة*</span>مرطب الوجه عند اللزوم"
+            },
+            {
+                "name": "MOIST-(1 ) CREAM 100 GM",
+                "code": "122457",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الجافة*</span>مرطب للوجه عند اللزوم"
+            },
+            {
+                "name": "MOIST-(1 )CREAM GEL OILY&COMB SKIN100GM",
+                "code": "128233",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الدهنية*</span>مرطب للوجه عند اللزوم"
+            },
+            {
+                "name": "VITA BALM MOISTURIZER SKIN ANTI-DRY100ML",
+                "code": "108951",
+                "usage": "<span class='complex-usage'>*مناسب لجميع انواع البشرة*</span>مرطب الوجه عند اللزوم"
+            }
+        ],
+        "مزيل عرق (خالي من العطور)": [
+            {
+                "name": "ALEJON ROLL-ON FRAGRANCE FREE 50 ML",
+                "code": "124044",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "BEESLINE ROLL ON FRAGRANCE FREE50ML",
+                "code": "80073",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "DERMATIQUE ROLL (FRAGRANCE FREE) 40ML",
+                "code": "125634",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "DRAKON ROLL FRAGRANCE FREE(1+1)50ML",
+                "code": "137378",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "KOLAGRA ROLL WHITE FRAGR FREE(1+1)60M(48H)",
+                "code": "129278",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "NANO TREAT ROLL(1+1)(FRAGRANCE FREE)50ML",
+                "code": "123827",
+                "usage": "مزيل عرق خالٍ من العطور"
+            },
+            {
+                "name": "STARVILLE FRAGRANCE FREE ROLLON WHITE60ML",
+                "code": "50169",
+                "usage": "مزيل عرق خالٍ من العطور"
+            }
+        ],
+        "واقي شمس (خالي من العطور)": [
+            {
+                "name": "BOBAI SUNSCREEN OIL DEFENSE FLUID (SPF50 ) 75ML",
+                "code": "124689",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الدهنية*</span>يوضع قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "COSMO APPE LOTION SPRAY(SPF50) 150ML",
+                "code": "126074",
+                "usage": "<span class='complex-usage'>*مناسب لجميع انواع البشرة*</span>يوضع قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "EUCERIN SUN-PHOTO AGE FLUID SPF50 50ML",
+                "code": "109686",
+                "usage": "<span class='complex-usage'>*مناسب لجميع انواع البشرة*</span>يوضع قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "RETILDA SUN DRY TOUCH FLUID (SPF50)60ML",
+                "code": "113644",
+                "usage": "<span class='complex-usage'>*مناسب للبشرة الدهنية*</span>يوضع قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            }
+        ]
+    },
+    "الحمل والرضاعة": {
+        "بلسم للشعر (آمن)": [
+            {
+                "name": "MOTIONS COND ACTIVE PLUS COCON&SHEA",
+                "code": "102847",
+                "usage": "بلسم للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SEROPIPE HAIR CONDITIONER DEEP",
+                "code": "50165",
+                "usage": "بلسم للشعر مرتين اسبوعيا"
+            }
+        ],
+        "تشققات الثدي (آمن)": [
+            {
+                "name": "FORMAMY SOOTHING NIPPLE CREAM",
+                "code": "110971",
+                "usage": "دهان للحلمة بعد كل رضاعة"
+            },
+            {
+                "name": "SANOSAN CREAM NIPPLE SALVE",
+                "code": "77069",
+                "usage": "دهان للحلمة بعد كل رضاعة"
+            }
+        ],
+        "سيروم للشعر (آمن)": [
+            {
+                "name": "BLUEBELL ROZALIA HAIR SERUM",
+                "code": "78927",
+                "usage": "للتصفيف عند اللزوم"
+            },
+            {
+                "name": "KARITES HAIR SERUM MOISTUR SHEA BUTTER",
+                "code": "119181",
+                "usage": "للتصفيف عند اللزوم"
+            }
+        ],
+        "شامبو للشعر (آمن)": [
+            {
+                "name": "MOTIONS SHAMPOO NOURISH&RESTOR",
+                "code": "80804",
+                "usage": "غسول للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SEROPIPE HAIR SHAMPOO",
+                "code": "106974",
+                "usage": "غسول للشعر مرتين اسبوعيا"
+            }
+        ],
+        "علامات التمدد (آمن)": [
+            {
+                "name": "BIO-OIL SKIN CARE OIL",
+                "code": "4230",
+                "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+            },
+            {
+                "name": "FORMAMY STRETCH MARKS CREAM",
+                "code": "110970",
+                "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+            }
+        ],
+        "غسول للجسم (آمن)": [
+            {
+                "name": "DOVE BODY WASH DEEPLY NOURISHING",
+                "code": "97586",
+                "usage": "للاستحمام"
+            },
+            {
+                "name": "EVA SHOWER CREAM MILK PROT PASSION",
+                "code": "31103",
+                "usage": "للاستحمام"
+            }
+        ],
+        "غسول للبشرة الحساسة (آمن)": [
+            {
+                "name": "COSMO APPE FACIAL WASH SENSITIVE",
+                "code": "111636",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "KOLANOG ULTRA FACIAL CLEANSER",
+                "code": "123246",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "LA ROCHE TOLERIANE FOAM GEL",
+                "code": "85983",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "TOPI GENT DELICATE CLEANSING FOAM",
+                "code": "113074",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "غسول للبشره الجافة والعادية (آمن)": [
+            {
+                "name": "CERAVE HYDRATING CLEANSER",
+                "code": "28417",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "HELMADERM CLEANSING GEL DRY SKIN",
+                "code": "122059",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "غسول للبشره المختلطة والدهنية (آمن)": [
+            {
+                "name": "AVENE CLEANANCE GEL OILY SKIN TUBE",
+                "code": "108232",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "CERAVE FOAMING CLEANSER 236ML",
+                "code": "41537",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "ماسك للشعر (آمن)": [
+            {
+                "name": "KARITES HAIR MASK SHEA BUTTER",
+                "code": "71625",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SEROPIPE HAIR MASK",
+                "code": "26494",
+                "usage": "حمام كريم للشعر مرتين اسبوعيا"
+            }
+        ],
+        "مرطب للجسم (آمن)": [
+            {
+                "name": "CERAVE DAILY MOISTURIZING LOTION",
+                "code": "25560",
+                "usage": "دهان مرطب للجسم عند اللزوم"
+            },
+            {
+                "name": "SHAAN BODY MILK DRY&V.DRY SKIN",
+                "code": "97473",
+                "usage": "دهان مرطب للجسم عند اللزوم"
+            }
+        ],
+        "مرطب للشفاه (آمن)": [
+            {
+                "name": "AVENE CICALFATE LIP BALM REPAIR",
+                "code": "106918",
+                "usage": "دهان مرطب للشفاه عند اللزوم"
+            },
+            {
+                "name": "HAYAH STRALINE MOIST LIP BALM 5G",
+                "code": "107069",
+                "usage": "دهان مرطب للشفاه عند اللزوم"
+            }
+        ],
+        "مرطب لجميع انواع البشره (آمن)": [
+            {
+                "name": "LEYLAK DEEP MOISTURIZING GEL",
+                "code": "84292",
+                "usage": "دهان مرطب للبشره عند اللزوم"
+            },
+            {
+                "name": "SKINSIDE MOISTURIZER HYALURONIC ACD",
+                "code": "115053",
+                "usage": "دهان مرطب للبشره عند اللزوم"
+            }
+        ],
+        "مزيل عرق (آمن)": [
+            {
+                "name": "STARVILLE FRAGRANCE FREE ROLLON WHITE",
+                "code": "50169",
+                "usage": "مزيل عرق خالي من العطور والالمونيوم"
+            },
+            {
+                "name": "URIAGE DEODORANT DOUCEUR 24 H ROLL",
+                "code": "95485",
+                "usage": "مزيل عرق خالي من الالمونيوم"
+            }
+        ],
+        "واقي شمس (آمن)": [
+            {
+                "name": "MEDC DERMABOND MINERAL FUS SPF50",
+                "code": "49297",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "NANO TREAT SUN GEL (1+1) SUPER SHEER 40ML",
+                "code": "133687",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "REVON SUN BLOCK SPF50",
+                "code": "108049",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            }
+        ]
+    },
+    "بونية للشعر - فوطة ماكروفايبر - فرشاة تدليك": {
+        "بونيه شعر": [
+            {
+                "name": "AFRICANA SATIN LUXURY BONNET PINK NPC",
+                "code": "130698",
+                "usage": "<span class='complex-usage'>*بونيه ساتان*</span>"
+            },
+            {
+                "name": "AFRICANA SATIN LUXURY BONNET SILVER NPC",
+                "code": "133472",
+                "usage": "<span class='complex-usage'>*بونيه ساتان*</span>"
+            },
+            {
+                "name": "BONAHA  HEAT CAP",
+                "code": "88929",
+                "usage": "<span class='complex-usage'>*بونيه حراري*</span>"
+            }
+        ],
+        "فرشاه تدليك فروة الراس": [
+            {
+                "name": "AFRICANA SOFT GRO BRUSH",
+                "code": "130703",
+                "usage": "<span class='complex-usage'>*اصفر*</span>فرشاة تدليك للشعر تحفز نموه وتزيل القشرة والجلد الميت"
+            },
+            {
+                "name": "AFRICANASOFT GRO BRUSH",
+                "code": "130702",
+                "usage": "<span class='complex-usage'>*بينك*</span>فرشاة تدليك للشعر تحفز نموه وتزيل القشرة والجلد الميت"
+            },
+            {
+                "name": "THE HAIR ADDICT GRO BRUSH",
+                "code": "120330",
+                "usage": "<span class='complex-usage'>*لون عشوائي*</span>فرشاة تدليك للشعر تحفز نموه وتزيل القشرة والجلد الميت"
+            }
+        ],
+        "فوطه مايكروفايبر شعر": [
+            {
+                "name": "AFRICANA MICROF LUXURY TOWEL",
+                "code": "130699",
+                "usage": "<span class='complex-usage'>*بينك*</span>تعمل على تجفيف شعرك بشكل أسرع، تعزز الاحتفاظ بالرطوبة، وتحمي شعرك من التقصف الناتج عن الاحتكاك"
+            },
+            {
+                "name": "AFRICANA MICROF LUXURY TOWEL",
+                "code": "132527",
+                "usage": "<span class='complex-usage'>*كاشمير*</span>تعمل على تجفيف شعرك بشكل أسرع، تعزز الاحتفاظ بالرطوبة، وتحمي شعرك من التقصف الناتج عن الاحتكاك"
+            },
+            {
+                "name": "AFRICANA MICROF LUXURY TOWEL",
+                "code": "130700",
+                "usage": "<span class='complex-usage'>*ازرق*</span>تعمل على تجفيف شعرك بشكل أسرع، تعزز الاحتفاظ بالرطوبة، وتحمي شعرك من التقصف الناتج عن الاحتكاك"
+            },
+            {
+                "name": "THE HAIR ADDICT FRIZZ OFF TOWEL",
+                "code": "120329",
+                "usage": "<span class='complex-usage'>*لون عشوائي*</span>تعمل على تجفيف شعرك بشكل أسرع، تعزز الاحتفاظ بالرطوبة، وتحمي شعرك من التقصف الناتج عن الاحتكاك"
+            }
+        ]
+    },
+    "بروتين الشعر": [
+        {
+            "name": "CHI ENVIRO SMOOTH TREAT",
+            "code": "85369",
+            "usage": "<span class='complex-usage'>*مصري*</span>يستخدم تحت اشراف متخصص"
+        },
+        {
+            "name": "G.K KERATIN (2) THE BEST COCO JUVEXIN",
+            "code": "116188",
+            "usage": "<span class='complex-usage'>*امريكي*</span>يستخدم تحت اشراف متخصص"
+        },
+        {
+            "name": "PARANA LOTION PROTEIN&CAFFIENE",
+            "code": "121653",
+            "usage": "<span class='complex-usage'>*امن للأطفال من عمر سنتين*</span>يستخدم تحت اشراف متخصص"
+        }
+    ],
+    "تصفيف الشعر الكيرلي": [
+        {
+            "name": "4MY HAIR CURLY ENHANCING CREAM SHEA BUT 250ML",
+            "code": "121432",
+            "usage": "لتسريح الشعر وقت اللزوم "
+        },
+        {
+            "name": "BLESS LEAVE IN CREAM VIT E CURLY 450M",
+            "code": "116624",
+            "usage": "لتسريح الشعر وقت اللزوم"
+        },
+        {
+            "name": "DIVOL KIDS CURLY HAIR LEAVE IN COND SHEA250GM",
+            "code": "101350",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>لتسريح الشعر وقت اللزوم"
+        },
+        {
+            "name": "DOVE BEAUTIFUL CURLS LEAVE IN CREAM 300ML",
+            "code": "128253",
+            "usage": "لتسريح الشعر وقت اللزوم"
+        },
+        {
+            "name": "PENDULINE CREAM KIDS ( CURLY HAIR ) SHEA 150 ML",
+            "code": "52759",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>لتسريح الشعر وقت اللزوم"
+        },
+        {
+            "name": "SUNSILK LEAVE ON CREAM DEFINED CURLS 200ML",
+            "code": "132918",
+            "usage": "لتسريح الشعر وقت اللزوم"
+        },
+        {
+            "name": "SUPER KIDS CURLY HAIR GEL (1+YEARS) 250MLL",
+            "code": "120528",
+            "usage": "<span class='complex-usage'>*جل مناسب للاطفال*</span>لتسريح الشعر وقت اللزوم"
+        }
+    ],
+    "تشققات اليدين": [
+        {
+            "name": "BABE REPAIRING HAND CREAM 50ML",
+            "code": "78003",
+            "usage": "دهان 3 مرات يوميا"
+        },
+        {
+            "name": "BIOD ATODERM HAND CREAM 50 ML",
+            "code": "97543",
+            "usage": "دهان 3 مرات يوميا"
+        },
+        {
+            "name": "BIONNEX PERFEDERM ( HAND CREAM ) 50ML",
+            "code": "127126",
+            "usage": "دهان 3 مرات يوميا"
+        },
+        {
+            "name": "DERMACTIVE ACTI-REPAIR CICA CREAM 50 ML",
+            "code": "115177",
+            "usage": "دهان 3 مرات يوميا"
+        },
+        {
+            "name": "DERMAELLE HYALU REPAIR CICA CREAM60ML",
+            "code": "137716",
+            "usage": "دهان 3 مرات يوميا"
+        }
+    ],
+    "تقشير الجلد الميت وترطيب القدمين": [
+        {
+            "name": "ALEJON FOOT CREAM 75ML",
+            "code": "123842",
+            "usage": "ضعي كمية صغيرة على قدم نظيفة وجافة من مرة إلى مرتين يومياً. دلكي بحركات دائرية حتى يتم امتصاصه بالكامل"
+        },
+        {
+            "name": "CRACKED HEEL REPAIR OINT. 55GM",
+            "code": "90037",
+            "usage": "دهان مره مساءا"
+        },
+        {
+            "name": "FOOT SMART CREAM 60 GM",
+            "code": "133562",
+            "usage": "ضعي كمية صغيرة على قدم نظيفة وجافة مرتين يومياً. دلكي بحركات دائرية حتى يتم امتصاصه بالكامل"
+        },
+        {
+            "name": "KOLAGRA FOOT CREAM WITH UREA10 50ML",
+            "code": "36203",
+            "usage": "ضعي كمية صغيرة على قدم نظيفة وجافة مرتين يومياً. دلكي بحركات دائرية حتى يتم امتصاصه بالكامل"
+        }
+    ],
+    "تهدئة التهاب واحمرار وقشور الجلد مهما كان السبب": {
+        "بعد التعرض للشمس": [
+            {
+                "name": "ALEJON AFTER SUN GEL FACE&BODY 200GM",
+                "code": "115818",
+                "usage": "دهان 3 مرات يوميا"
+            },
+            {
+                "name": "BIOD PHOTODERM GEL CREAM AFTER SUN 200ML TUBE",
+                "code": "50677",
+                "usage": "دهان 3 مرات يوميا"
+            },
+            {
+                "name": "BOBAI AFTER SUN GEL 200ML",
+                "code": "24668",
+                "usage": "دهان 3 مرات يوميا"
+            },
+            {
+                "name": "EVA SUN&SEA AFTER SUN LOTION 150ML",
+                "code": "122789",
+                "usage": "دهان 3 مرات يوميا"
+            }
+        ],
+        "بعد الليزر - التقشير - ازالة الشعر - التهاب الحفاضات - تشققات الثدي - البحر - حمو النيل": [
+            {
+                "name": "ACM CICASTIM REPAIR CREAM 20ML",
+                "code": "72212",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "AVENE CICALFATE(+) CREAM REPAIRING 40ML",
+                "code": "127299",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "DERMACTIVE ACTI-REPAIR CICA CREAM 50 ML",
+                "code": "115177",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "LA ROCHE CICAPLAST B5+ BALM SOOTH40ML",
+                "code": "89862",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "NORMELAN CICA CREAM 50ML",
+                "code": "129429",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "SHAAN CICA CREAM 60GM",
+                "code": "130796",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            },
+            {
+                "name": "URIAGE BARIEDERM CICA CREAM ZINC 40ML",
+                "code": "24120",
+                "usage": "دهان للبشرة 3 مرات يوميا علي بشرة نظيفه"
+            }
+        ]
+    },
+    "تونر": {
+        " تونر جليكوليك اسيد": [
+            {
+                "name": "BIONNEX THE NORDEA GLYCO ACID TONER100ML",
+                "code": "138206",
+                "usage": "<span class='complex-usage'>*تركيز 4%*</span>  يُستخدم في المساء بعد تنظيف البشرة. للمختلطة والدهنيه"
+            },
+            {
+                "name": "DERMAELLE GLYCOLIC ACID TONER(PH3.6)350ML",
+                "code": "137349",
+                "usage": "<span class='complex-usage'>*تركيز 7%*</span> يُستخدم في المساء بعد تنظيف البشرة. للمختلطة والدهنيه"
+            },
+            {
+                "name": "VITALIST TONIC 150ML GLYCOLIC&ALOE&GINSENG",
+                "code": "116346",
+                "usage": "مرتين يوميا بعد الغسول"
+            }
+        ],
+        "تونر للبشرة الجافة": [
+            {
+                "name": "COSMO APPE PURE TONER ALL SLKIN250ML",
+                "code": "87177",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "DERMAELLE TONER (RADIANCE BOOST) 120ML",
+                "code": "129274",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "GLOW MARK  HYDRATING(DRY SKIN TONER) 200ML",
+                "code": "131411",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "MOIST - (1) TONER 200 ML",
+                "code": "122458",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            }
+        ],
+        "تونر للبشرة الدهنية": [
+            {
+                "name": "ALEJON FACIAL TONER FACE & NECK ALL SKIN 200ML",
+                "code": "31222",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "BIONNEX RENSADERM REVIT TONER 200ML OILY SKIN",
+                "code": "399",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "BIOTHERM TONER ACNE PRONE SKIN200ML",
+                "code": "125672",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "DERMATIQUE REFINE PURIFYING TONER 150 ML",
+                "code": "115753",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "EUCERIN DERMO-PURIFYER TONER 200ML",
+                "code": "115366",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "KOLAGRA BRIGHTENING FACE TONER 200ML",
+                "code": "118757",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "LA ROCHE EFFACLAR LOTION OILY TONER 200ML",
+                "code": "29260",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "NEUTH ANTI-ACNE MATTIFYING TONER SOLUTION 200M",
+                "code": "31525",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            },
+            {
+                "name": "POQITO FACIA TONER OILY&ACN SKIN 100ML خالي من الكحول",
+                "code": "124231",
+                "usage": "يوضع علي قطنه ويتم مسح البشره به مرتين يوميا بعد الغسول ولا يشطف"
+            }
+        ]
+    },
+    "جوانتي و شراب سيلكون": [
+        {
+            "name": "سيلكون جوانتىSPA GEL GLOVES ",
+            "code": "120473",
+            "usage": "<span class='complex-usage'>*بطانة جل غنية بفيتامين هـ وزيت الجوجوبا وزيت الزيتون*</span> ٌتم غسله يدويا باستخدام صابون سائل ويعاد استخدامه"
+        },
+        {
+            "name": "سيلكون شرابSPA GEL SOCKS ",
+            "code": "120474",
+            "usage": "<span class='complex-usage'>*بطانة جل غنية بفيتامين هـ وزيت الجوجوبا وزيت الزيتون*</span> يتم غسله يدويا باستخدام صابون سائل ويعاد استخدامه"
+        }
+    ],
+    "حشرات الشعر": [
+        {
+            "name": "EVA COMPLETE CARE SERUM CLEARING HAIR 60ML",
+            "code": "96947",
+            "usage": "ضعي السيروم على فروة الرأس والشعر، دلكّيه بلطف واتركيه لمدة 8 ساعات ثم اغسليه بالشامبو."
+        },
+        {
+            "name": "HEDRIN ONCE 15MIN SPRAY GEL 100ML FOR LICE",
+            "code": "122769",
+            "usage": "<span class='complex-usage'>*مناسب من 6 شهور*</span> رش الاسبراي على فروة الرأس والشعر، دلكّيه بلطف واتركيه لمدة 15 دقيقه  ثم اغسليه بالماء"
+        },
+        {
+            "name": "ITEM ( N ) SHAMPO ANTI - LICE 60 ML",
+            "code": "138147",
+            "usage": "يستخدم كشامبو للشعر"
+        },
+        {
+            "name": "NYDA TIC LOTION 60 ML",
+            "code": "137885",
+            "usage": "ضعي اللوشن على فروة الرأس والشعر، دلكّيه بلطف واتركيه لمدة ساعة  ثم اغسليه بالماء"
+        },
+        {
+            "name": "OPPY LICE HAIR OIL SPRAY 60 ML",
+            "code": "32504",
+            "usage": "يستخدم مرة واحدة اسبوعياً، يوضع علي الشعر و فروة الرأس و يترك لمدة 20 دقيقة ثم يغسل جيدا بالشامبو."
+        }
+    ],
+    "حماية الشعر من الحرارة": [
+        {
+            "name": "EVA HAIR CLINIC GOLD ARGAN HEAT GUARD",
+            "code": "118600",
+            "usage": "<span class='complex-usage'>*اسبراي*</span>ٌيوضع قبل المكواه والاستشوار وقبل التعرض للشمس ونزول البحر"
+        },
+        {
+            "name": "LOREAL DREAM LONG STRAIGHT HAIR",
+            "code": "32810",
+            "usage": "<span class='complex-usage'>*سيروم. يمكن استخدامه للتصفيف*</span>ٌيوضع قبل المكواه والاستشوار"
+        },
+        {
+            "name": "TRICOVEL SUN SPRAY HAIR PROTECTIVE",
+            "code": "25540",
+            "usage": "<span class='complex-usage'>*اسبراي*</span>يوضع قبل المكواه والاستشوار وقبل التعرض للشمس ونزول البحر"
+        },
+        {
+            "name": "VATIKA HAIR SERUM THERMAL PROTECT",
+            "code": "52333",
+            "usage": "<span class='complex-usage'>*سيروم. يمكن استخدامه للتصفيف*</span>ٌيوضع قبل المكواه والاستشوار"
+        }
+    ],
+    "شامبو": {
+        "شامبو خالي من السلفات للشعر الجاف": [
+            {
+                "name": "BLUEBELL ELONE KERATIN SHAMP200ML",
+                "code": "96756",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "EVERY STRAND SHAM KERATIN&ALOEVERA399ML",
+                "code": "42139",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "G.K (3) KERATIN BALANC SHAMPOO  ALL HAIR 300ML",
+                "code": "4419",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "KERATIN SILK PROTEIN HAIR SHAM(SOMANG)620ML",
+                "code": "78365",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "MOTIONS SHAMPOO NOURISH&RESTOR SHEA&COCO473ML",
+                "code": "80804",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "PANTHOVERA SHAMPOO 250 ML",
+                "code": "130541",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SEROPIPE HAIR SHAMPOO 300ML",
+                "code": "106874",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            }
+        ],
+        "شامبو لتساقط الشعر": [
+  
+            {
+                "name": "DERMACTIVE  TRICHO-ACT ANTI-HAIR LOSS SHAMPOO 200M",
+                "code": "115175",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+         
+            {
+                "name": "OLLANO  ANTI HAIR LOSS SHAMP225M",
+                "code": "40493",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "OXYGEN O-KERATIN HAIR LOSS SHAMP 200ML",
+                "code": "136308\t",
+                "usage": "<span class='complex-usage'>*خالٍ من الكبريتات، والبارابين، والسلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+  {
+                "name": "LOGIPACT SHAMP&COND HAIR LOSS 250ML",
+                "code": "7271",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "ROSA DX SHAMPOO TONIC HAIR LOSS 250ML",
+                "code": "114235",
+                "usage": "<span class='complex-usage'>*خالي من السلفات*</span> شامبو للشعر مرتين اسبوعيا"
+            }
+        ],
+        "شامبو للشعر الدهني": [
+            {
+                "name": "LC NATURALS OILY SCALP SHAMP 180M",
+                "code": "136993\t",
+                "usage": "<span class='complex-usage'>*شامبو مضاد للقشرة ومضاد لتساقط الشعر*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+          
+          {
+                "name": "BIONNEX ORG HAIR LOSS SHAMP OILY HAIR 300ML",
+                "code": "120267",
+                "usage": "<span class='complex-usage'>*خالي من السلفات ومضاد للتساقط*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+   {
+                "name": "LOREAL SHAMP (HYALURON PURE ) 600ML",
+                "code": "123908",
+                "usage": "<span class='complex-usage'>*لفروة الراس الدهنية والاطراف الجافة*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "SFIRA SHAMPO HAIR OILY (G) TEA TREE 250ML",
+                "code": "124950",
+                "usage": "<span class='complex-usage'>*يعمل على تنشيط فروة الرأس*</span> شامبو للشعر مرتين اسبوعيا"
+            },
+            {
+                "name": "TRICOVEL OIL  SEBUM  BALANCING SHAMPOO 200ML",
+                "code": "20980",
+                "usage": "<span class='complex-usage'>*يتحكم في إفراز الدهون*</span> شامبو للشعر مرتين اسبوعيا"
+            }
+        ],
+        "مصحح لون الشعر - شامبو سيلفر - شامبو بنفسجي - رينساج": [
+            {
+                "name": "G.K SHAMPOO (3) SILVER BOMBSHELL 280ML",
+                "code": "126146",
+                "usage": "<span class='complex-usage'>*شامبو سيلفر*</span>يزيل التدرجات الصفراء والنحاسية والبرتقاليه غير المرغوب فيها من أول استخدام"
+            },
+            {
+                "name": "PHYTO SHAMP (PURPLE) NO YELLOW 250ML",
+                "code": "129328",
+                "usage": "<span class='complex-usage'>*شامبو بنفسجي*</span>يزيل التدرجات الصفراء والنحاسية غير المرغوب فيها من أول استخدام"
+            }
+        ]
+    },
+    "شيت ماسك": [
+        {
+            "name": "BOBANA SHEET MASK AVOCADO&RETINOL",
+            "code": "138676",
+            "usage": "<span class='complex-usage'>*افوكادو وريتينول*</span> بوضع القناع على وجه نظيف وجاف، ثم اضبطي مكانه ودلكي بلطف بأطراف الأصابع لمدة 15 دقيقة. بعد ذلك، انزعي القناع ودلكي بقايا السيروم على وجهك ورقبتك، ثم استخدمي قطعة من القطن لإزالة أي فائض"
+        },
+        {
+            "name": "BOBANA SHEET MASK COLLAGEN&V.C",
+            "code": "84294",
+            "usage": "<span class='complex-usage'>*كولاجين وفيتامين سي*</span> بوضع القناع على وجه نظيف وجاف، ثم اضبطي مكانه ودلكي بلطف بأطراف الأصابع لمدة 15 دقيقة. بعد ذلك، انزعي القناع ودلكي بقايا السيروم على وجهك ورقبتك، ثم استخدمي قطعة من القطن لإزالة أي فائض"
+        },
+        {
+            "name": "BOBANA SHEET MASK POMEGR&HYALU",
+            "code": "84293",
+            "usage": "<span class='complex-usage'>*رمان وحمض الهيالورنيك*</span> بوضع القناع على وجه نظيف وجاف، ثم اضبطي مكانه ودلكي بلطف بأطراف الأصابع لمدة 15 دقيقة. بعد ذلك، انزعي القناع ودلكي بقايا السيروم على وجهك ورقبتك، ثم استخدمي قطعة من القطن لإزالة أي فائض"
+        },
+        {
+            "name": "EVA MASK CHARCOAL SHEETS 42ML",
+            "code": "116056",
+            "usage": "<span class='complex-usage'>*فحم*</span>ضعي القناع على بشرتك لمدة 15 إلى 20 دقيقة مع التأكد من تطابق فتحاته مع العينين والأنف والفم. بعد إزالة القناع، دلّكي السيروم المتبقي على بشرتك حتى يُمتص بالكامل. يُفضل استخدام القناع 2 إلى 3 مرات في الأسبوع"
+        },
+        {
+            "name": "EVA MASK WHITE PEARL 3 SHEETS 42M",
+            "code": "76947",
+            "usage": "<span class='complex-usage'>*اللؤلؤ الابيض*</span>ضعي القناع على بشرتك لمدة 15 إلى 20 دقيقة مع التأكد من تطابق فتحاته مع العينين والأنف والفم. بعد إزالة القناع، دلّكي السيروم المتبقي على بشرتك حتى يُمتص بالكامل. يُفضل استخدام القناع 2 إلى 3 مرات في الأسبوع"
+        },
+        {
+            "name": "STARVILLE  ACNE PRONE SKIN FACE MASK 1 SHEET",
+            "code": "120742",
+            "usage": "<span class='complex-usage'>*زيت شجرة الشاي وفيتامين هـ*</span>ضعي الماسك علي وجهك لمدة 15 دقيقة اسحبي الماسك مع تدليك الوجه و الرقبة بلطف لافضل النتائج  استخدمي الماسك 3 مرات اسبوعيا"
+        },
+        {
+            "name": "STARVILLE  WHITENING FACE MASK 1 SHEET",
+            "code": "120743",
+            "usage": "<span class='complex-usage'>*ألفا أربوتين وفيتكسيل*</span>ضعي الماسك علي وجهك لمدة 15 دقيقة اسحبي الماسك مع تدليك الوجه و الرقبة بلطف لافضل النتائج  استخدمي الماسك 3 مرات اسبوعيا"
+        }
+    ],
+    "صبغة خاليه من الامونيا": [
+        {
+            "name": "LOREAL CASTING () CREAM COLOR",
+            "code": "",
+            "usage": "<span class='complex-usage'>*صبغة مؤقته تدوم حتي 32 غسله*</span>تفتح او تغمق الشعر درجه واحده فقط"
+        },
+        {
+            "name": "LOREAL PRODIGY () COLOR",
+            "code": "",
+            "usage": "<span class='complex-usage'>*صبغة دائمة بالزيت تغطيه 100% للشعر الابيض*</span>تدلك في الشعر باستمرار طوال مدة وجودها علي الشعر اثناء الصبغ "
+        },
+        {
+            "name": "NOUVI COLOR (NOUVIQUE)",
+            "code": "",
+            "usage": "<span class='complex-usage'>*صبغه دائمة بالزيوت*</span>"
+        },
+        {
+            "name": "PHYTO  COLOR",
+            "code": "",
+            "usage": "<span class='complex-usage'>*صبغه دائمة بالزيوت*</span>مستورده"
+        },
+        {
+            "name": "THE HAIR  ADDICT 88ML",
+            "code": "",
+            "usage": "<span class='complex-usage'>*صبغه غير دائمة تزول بعد اول غسله للشعر*</span>بعد غسل الشعر وتصفيفه يتم تقسيم الشعر الي اجزاء وتوزيع كميه مناسبه منه الصبغه وتترك حتي تجف"
+        }
+    ],
+    "علامات التمدد استرتش مارك": [
+        {
+            "name": "MARKPHASE CREAM STRETCH MARKS120GM",
+            "code": "108070",
+            "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+        },
+        {
+            "name": "NORMELAN LOTION STRETCH MARKS50ML",
+            "code": "23561",
+            "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+        },
+        {
+            "name": "RE-GEN OIL STRETCH MARKS 125ML",
+            "code": "121058",
+            "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+        },
+        {
+            "name": "STRIACLEAR OIL ANTI - STRETCH MARKS 30 ML",
+            "code": "127428",
+            "usage": "دهان للبشره مرتين يوميا في اتجاه واحد"
+        }
+    ],
+    "غسول": {
+        "غسول بشرة حساسة": [
+            {
+                "name": "BG SENSITIVE SKIN CLEANSER 200ML",
+                "code": "130743",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "INFINITY FACIAL WASH SENISITIVE SKIN 200ML",
+                "code": "37188",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "KOLANOG ULTRA FACIAL CLEANSER(SENSTIVE SKIN)",
+                "code": "123246",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "VEEXIA VEE ALLURE CLEANSR FOAM SENSITIVE SKIN",
+                "code": "129840",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "غسول بشرة دهنية ومختلطة": [
+            {
+                "name": "ALEJON OILY SKIN GEL CLEANSER 150 GM",
+                "code": "125833",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "AVENE CLEANANCE GEL OILY SKIN TUBE200ML",
+                "code": "108232",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "FEEL GOOD CLEANSER SEBA PURE ACNE OILY SKIN 250ML",
+                "code": "112268",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "ISIS TEEN DERM GEL SENSITIV PURIFY OILY250ML",
+                "code": "103088",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "IVY CLEAN FACIAL CLEANSE NORM&OIL150ML",
+                "code": "113788",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "KOLAGRA CLEANSER OILY SKIN 200ML",
+                "code": "116198",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "LA ROCHE EFFACLAR FOAMGEL OILY&SNSTVE200ML",
+                "code": "85161",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "LA ROCHE EFFACLAR MICRO PEELING GEL200ML",
+                "code": "8474",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "MYKOLO FACIAL CLEANSER GEL OILY 200ML",
+                "code": "119631",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "NANO TREAT OILY SKIN CLEANSER 200ML",
+                "code": "129216",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "STARVILLE FACIAL CLEANSER GEL 200ML",
+                "code": "33867",
+                "usage": "غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "TOPI GENT SEBUM CLEANSING FOAM150ML",
+                "code": "113123",
+                "usage": "غسول للبشرة مرتين يوميا"
+            }
+        ],
+        "غسول بشرة جافة وعادية": [
+            {
+                "name": "ATRAKTA AQUA FACIAL CLEANSER NORMAL DRY SKIN 200ML",
+                "code": "109575",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "BG DRY SKIN CLEANSER 200ML",
+                "code": "132611",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "BIOD ATODERM INTENSIVE GEL MOUSSANT 200ML",
+                "code": "50608",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "CERAVE HYDRATING CLEANSER",
+                "code": "28417",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "HAYAH STRALINE RICH CLEANSER FACE&BODY 200ML",
+                "code": "100235",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "KOLANOG FACIAL CLEANSER(DRY SKIN) 200 ML",
+                "code": "123247",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "LA ROCHE LIPIKAR SYNDET(AP+)CREAM200ML",
+                "code": "85110",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "MEDITOPIC CLEANSER DRY SKIN 200ML",
+                "code": "21711",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "غسول زيتي": [
+            {
+                "name": "DR ELVISH (DEEP CLEAN) CLEANS OIL 200ML",
+                "code": "132866",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "PREMIER SOFT CLEANSING BALM 100GM",
+                "code": "129022",
+                "usage": "غسول مرتين يوميا"
+            },
+            {
+                "name": "SIRBEST CLEANSING OIL ALL SKIN 150ML",
+                "code": "135441",
+                "usage": "غسول مرتين يوميا"
+            }
+        ],
+        "غسول للجسم وشاور البشرة الحساسة والجافة والاكزيما": [
+            {
+                "name": "BIOD ATODERM DOUCHE GEL GENTLE200ML",
+                "code": "24161",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "CERAVE HYDRATING CLEANSER 236M",
+                "code": "28417",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "DOVE BODY WASH DEEPLY NOURISH 500ML",
+                "code": "125780",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "DOVE SOAP MOIST WHITE 90GM",
+                "code": "44609",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "ISOHYDRIN HYDRA STORE BODY WASH250M(DRY&PRONE)",
+                "code": "138163",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "LUNA GLYCERIN SOAP TRANSPARENT 115 GM",
+                "code": "87581",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "SENSODERM DEEP MOIST SOAP 80GM",
+                "code": "121151",
+                "usage": "يستخدم للاستحمام"
+            },
+            {
+                "name": "SHAAN BODY WASH DRY&SENS SKIN480ML",
+                "code": "137374",
+                "usage": "يستخدم للاستحمام"
+            }
+        ],
+     "غسول المناطق الحساسة": [
+            {
+                "name": "TETRA  GLOW  WHITE CLEANS FOAM SENSITIVE200ML",
+                "code": "101856",
+                "usage": "غسول للمناطق الحساسة مرتين اسبوعيا"
+            },
+            {
+                "name": "KOLAGRA BIKINI WHITENING WASH 200ML(1+1)عرض",
+                "code": "106652",
+                "usage": "غسول للمناطق الحساسة مرتين اسبوعيا"
+            },
+  {
+                "name": "FEMI  (9) LIQUID CLEANSER WASH INTERNAL250ML",
+                "code": "81900",
+                "usage": "غسول للمناطق الحساسة مرتين اسبوعيا"
+            },
+            {
+                "name": "PERIMETRO INTIMATE WASH CLEAN GEL300ML",
+                "code": "44978",
+                "usage": "غسول للمناطق الحساسة مرتين اسبوعيا"
+            }
+        ],
+        "غسول اللحية - الدقن": [
+            {
+                "name": "MAN LOOK EXPERT BEARD WASH100M",
+                "code": "72301",
+                "usage": "غسول للحية مرتين يوميا"
+            }
+        ],
+        "غسول وجه للاطفال": [
+            {
+                "name": "PENDULINE BLUE FACIAL FOAM 150ML",
+                "code": "131149",
+                "usage": "<span class='complex-usage'>*للاولاد*</span>غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "PENDULINE PINK FACIAL FOAM 150ML",
+                "code": "131150",
+                "usage": "<span class='complex-usage'>*للبنات*</span>غسول للبشرة مرتين يوميا"
+            },
+            {
+                "name": "SUPER KIDS FACIAL FOAM 200ML",
+                "code": "114821",
+                "usage": "غسول للبشرة مرتين يوميا"
+            }
+        ]
+    },
+    "غسول المناطق الحساسة للرجال": [
+        {
+            "name": "DERMACIDE LIQUID INTIMATE WASH 120 ML",
+            "code": "118307",
+            "usage": "<span class='complex-usage'>*مناسب للرجال والسيدات*</span> يستخدم كغسول للمناطق الحساسة"
+        },
+        {
+            "name": "MAN CITY BODY WASH SENSITIVE MEN 150 ML",
+            "code": "134790",
+            "usage": "يستخدم كغسول للمناطق الحساسة"
+        }
+    ],
+    "غسول ببرونات": [
+        {
+            "name": "BABYSTAR BOTTLE & TEATS CLEANSER 380ML",
+            "code": "125669",
+            "usage": "غسول ببرونات"
+        },
+        {
+            "name": "CANPOL (01/500) WASHING LIQUID 500ML",
+            "code": "129800",
+            "usage": "غسول ببرونات"
+        }
+    ],
+    "فرد الشعر": [
+        {
+            "name": "BIOPOINT HAIR STRAIGHT CREAM",
+            "code": "93603",
+            "usage": "ضعي كريم فرد الشعر (مع تجنب فروة الرأس) لمدة 15 دقيقة ثم يشطف"
+        },
+        {
+            "name": "HAIR CONTROL CREAM RELAXER",
+            "code": "95744",
+            "usage": "ضعي كريم فرد الشعر (مع تجنب فروة الرأس) لمدة 10 - 30 دقيقة حسب احتمال الشعر وتجعده"
+        },
+        {
+            "name": "ORS CREAM EXTRA STRENGTH OLIVE",
+            "code": "96818",
+            "usage": ""
+        },
+        {
+            "name": "TCB NO BASE CREAM HAIR RELAXER",
+            "code": "111165",
+            "usage": "ضعي كريم فرد الشعر (مع تجنب فروة الرأس) لمدة  15 - 20  دقيقة ثم يشطف"
+        }
+    ],
+    "فرش الاسنان": {
+        "فرشاة  لثه للرضع": [
+            {
+                "name": "BUBBLES BABY FINGER TOOTH BRUSH",
+                "code": "21566",
+                "usage": "فرشاة اصبع سليكون"
+            },
+            {
+                "name": "NICE BABY TOOTH BRUSH",
+                "code": "114811",
+                "usage": "فرشاة اصبع سليكون"
+            }
+        ],
+        "فرشاة تقويم الاسنان": [
+            {
+                "name": "FUCHS INTERDENTALBRUSH 4 PCS",
+                "code": "109576",
+                "usage": "فرشاة تزيل الطعام بين الأسنان ومن حول الحاصارت الخاصة بالتقويم"
+            },
+            {
+                "name": "INTERDENTAL BRUSH STANDARD",
+                "code": "42419",
+                "usage": "فرشاة تزيل الطعام بين الأسنان ومن حول الحاصارت الخاصة بالتقويم"
+            }
+        ],
+        "فرشاة لحديثي الولاده من 1-2 سنه": [
+            {
+                "name": "FUCHS KIDS TOOTH BRUSH SOFT (FIRST STEP)",
+                "code": "48990",
+                "usage": "."
+            }
+        ]
+    },
+    "فك التشابك - ملمع شعر للكبار والاطفال": [
+        {
+            "name": "ALEJON SPRAY BI PHASE COLLAGEN 200ML",
+            "code": "116421",
+            "usage": "<span class='complex-usage'>*للكبار*</span> بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        },
+        {
+            "name": "BUBBLZZ KIDS SILKY DETANGLING MILK 200 ML",
+            "code": "134395",
+            "usage": "<span class='complex-usage'>*للاطفال*</span>بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        },
+        {
+            "name": "EVER  YOUTH  SEROIL BILAYER HAIR SPRAY 240 ML",
+            "code": "131548",
+            "usage": "<span class='complex-usage'>*للكبار*</span>بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        },
+        {
+            "name": "HAPPINESS KIDS SPRAY DETANG ANTI-FRIZZ150ML",
+            "code": "102948",
+            "usage": "<span class='complex-usage'>*للاطفال*</span>بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        },
+        {
+            "name": "ROOT TO END  HAIR MIST (R - 1) SOLUTION 150 ML",
+            "code": "132860",
+            "usage": "<span class='complex-usage'>*للكبار*</span>بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        },
+        {
+            "name": "SUPER KIDS SPRAY DETANGLING120ML",
+            "code": "78358",
+            "usage": "<span class='complex-usage'>*للاطفال*</span>بخاخ مرطب وملمع للشعر للتصفيف وقت اللزوم"
+        }
+    ],
+    "كريم صبغة للشعر الابيض": [
+        {
+            "name": "BLACK AGAIN-NCREAM COLOURGREY HAIR150ML",
+            "code": "122518",
+            "usage": "<span class='complex-usage'>*يعيد الشعر الابيض الي لونه الطبيعي خلال 3 اسابيع*</span>ضع الكريم علي الشعر مستخدما رؤوس أصابعك مدلكا بلطف من جذور الشعر إلي أن يغطي الكريم طافة النواحي التي تريد تلوينها ، قم بذلك يوميا حين تسريح شعرك "
+        },
+        {
+            "name": "WHITE TO BLACK HAIR CREAM 150ML(PANTH&KERATIN)",
+            "code": "137257",
+            "usage": "<span class='complex-usage'>*يعيد الشعر الابيض الي لونه الطبيعي خلال 3 اسابيع*</span>ضع الكريم علي الشعر مستخدما رؤوس أصابعك مدلكا بلطف من جذور الشعر إلي أن يغطي الكريم طافة النواحي التي تريد تلوينها ، قم بذلك يوميا حين تسريح شعرك "
+        },
+        {
+            "name": "YOUTH MEN HAIR COLOUR CREAM 106 ML",
+            "code": "80039",
+            "usage": "<span class='complex-usage'>*يعيد الشعر الابيض الي لونه الطبيعي خلال 3 اسابيع*</span>ضع الكريم علي الشعر مستخدما رؤوس أصابعك مدلكا بلطف من جذور الشعر إلي أن يغطي الكريم طافة النواحي التي تريد تلوينها ، قم بذلك يوميا حين تسريح شعرك "
+        }
+    ],
+    "كونسيلر طبي": [
+        {
+            "name": "BG (101)CONCEALER(1+1)LONG LASTING 9ML",
+            "code": "136020",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "BG (104)CONCEALER(1+1)LONG LASTING 9ML",
+            "code": "136021",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "BG (107)CONCEALER(1+1)LONG LASTING 9ML",
+            "code": "136022",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "DERMATIQUE MAQUILLAGE CONCEALER MEDIUM 8ML",
+            "code": "77107",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "DERMATIQUE MAQUILLAGE CONCELAR LIGHT 8 ML",
+            "code": "77106",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "DRAKON EYE CONTOUR CONCEALER(LIGHT BEIGE)10ML",
+            "code": "118969",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        },
+        {
+            "name": "DRAKON WHIT EYE CONTOUR CONCEALER(MEDIUM BEIGE) 10ML",
+            "code": "118926",
+            "usage": "كونسيلر قبل الخروج او مرتين يوميا"
+        }
+    ],
+    "مرطب البشرة": {
+        "مرطب بشرة حساسة": [
+            {
+                "name": "LA ROCHE POSAY TOLERIANE SENSITIVE CREME 40ML",
+                "code": "106921",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "MELANTHENOL MOISTURISING CREAM SENSITIVE SKIN 30 G",
+                "code": "122297",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            }
+        ],
+        "مرطب بشرة دهنية ومختلطة": [
+            {
+                "name": "BIOD SEBIUM HYDRAFLUIDACTIV ACNE PRONE40ML",
+                "code": "97544",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "DEAR MOISTURIZING GEL (OILY SKIN) 60GM",
+                "code": "130355",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "GELBLEND HYDRA MOIST FOR OILY&ACNE PRONE SKIN 100ML",
+                "code": "130197",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "HAYAH SEBACLAR HYDRA CREAM 50ML",
+                "code": "104181",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "LA ROCHE EFFACLAR H CREAM ISO- BIOME 40M",
+                "code": "89434",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "MELANTHENOL GEL 40 GM",
+                "code": "121789",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "MOIST-(1 )CREAM GEL OILY&COMB SKIN100GM",
+                "code": "138233",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "NORMELAN MOIST CREAM OILY SKIN 250ML",
+                "code": "133392",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "POQITO HYDRO CREAM MOIST FOR OILY SKIN50GM",
+                "code": "25747",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "SOFT&PURE LIGHT HYDRAT GEL CREAM OILY SKIN 75GM",
+                "code": "128875",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            }
+        ],
+        "مرطب بشرة جافة وعادية": [
+            {
+                "name": "DEAR MOIST CREAM (DRY SKIN) 60GM",
+                "code": "130354",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "DRY CET(EMOL CREAM) DRY SENS SKIN 120ML",
+                "code": "130910",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "HYDRENSA MOISTURIZING CREAM DRY 200ML",
+                "code": "117964",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "LA ROCHE LIPIKAR BAUME BALM200ML",
+                "code": "85112",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "MELANTHENOL CREAM 40 GM",
+                "code": "123624",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "REPASEEN EMOLLIENT CREAM 60GM",
+                "code": "109408",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "SFIRA MOISTURIZING CREAM 75GM",
+                "code": "46034",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "VITA BALM MOISTURIZER SKIN ANTI-DRY100ML",
+                "code": "108951",
+                "usage": "مرطب عند اللزوم اي عدد من المرات"
+            }
+        ],
+        "مرطب الجسم": [
+            {
+                "name": "BUBBLZZ BODY LOTION (CUP CAKE) 150 ML",
+                "code": "134319",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "CARE&MORE BODY LOTION STRAWBERRY 150ML",
+                "code": "125908",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "DR ELVISH MOIST BODY LOTION 200ML",
+                "code": "132868",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "GLYSOLID BODY LOTION CLASSIC 500M",
+                "code": "116774",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "HEPTA PANTHENOL BODY LOTION -RICH 250ML",
+                "code": "132001",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "SHAAN BODY MILK DRY&V.DRY SKIN 300ML",
+                "code": "97473",
+                "usage": "مرطب للجسم مرتين يوميا"
+            },
+            {
+                "name": "TETRA HYDRO CERAMIDE BODY LOTION 250ML",
+                "code": "130385",
+                "usage": "مرطب للجسم مرتين يوميا"
+            }
+        ],
+        "مرطب الشفاة": [
+            {
+                "name": "AVENE COLD CREAM LIP BALM STICK 4G",
+                "code": "136773",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "BEESLINE LIP CARE FLAVOUR FREE4G",
+                "code": "80234",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "BOBANA LIP BALM HYALURONIC 5.5 ML",
+                "code": "112481",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "CARE&MORE LIP BALM COCONUT 4GM",
+                "code": "120499",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "CARE&MORE LIP BALM ORIGINAL 4GM",
+                "code": "117395",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "EGY SEVEN SUN MOIST LIP BALM (SPF50) STRAWBERRY 5G",
+                "code": "124239",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "EVA SUN&SEA LIP BALM SPF15 10G مرطب شفاة",
+                "code": "115471",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "HELMADERM LIP BALM DRY LIPS15GM",
+                "code": "122062",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "LA ROCHE CICAPLAST LEVRES BALM 7.5 ML",
+                "code": "118179",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            },
+            {
+                "name": "SEE-LIT LIP BALM MOISTURIZING 15GM",
+                "code": "130748",
+                "usage": "مرطب للشفاه وقت اللزوم اي عدد من المرات"
+            }
+        ],
+        "مرطب لبشرة الرضع والاطفال للوجه والجسم": [
+            {
+                "name": "BIOD ATODERM INTENSIVE BALM 75ML",
+                "code": "106864",
+                "usage": "<span class='complex-usage'>*مناسب من عمر يوم*</span> دهان 2-3 مرات يوميا"
+            },
+            {
+                "name": "BLANKIE BABY DAILY MOIST FACE&BODY 40ML",
+                "code": "118351",
+                "usage": "دهان 2-3 مرات يوميا"
+            },
+            {
+                "name": "DERMACTIVE BABY FACE SOOTH CREAM75ML",
+                "code": "128791",
+                "usage": "<span class='complex-usage'>*مناسب من عمر يوم*</span> دهان 2-3 مرات يوميا"
+            },
+            {
+                "name": "LA ROCHE LIPIKAR BAUME(AP+M) BALM75ML",
+                "code": "89741",
+                "usage": "<span class='complex-usage'>*مناسب من عمر يوم*</span> دهان 2-3 مرات يوميا"
+            }
+        ]
+    },
+    "مرطب ومعطر ومزيل عرق المناطق الحساسة": [
+        {
+            "name": "BEESLINE SPRAY WHITE SENSI FRESH150ML",
+            "code": "137646",
+            "usage": "<span class='complex-usage'>*مزيل للرائحة ومفتح*</span> يستخدم كل 24 ساعه"
+        },
+        {
+            "name": "DRAKON WHITENING(FRESH)SENSITIVE ZONE150 ML",
+            "code": "130073",
+            "usage": "<span class='complex-usage'>*مزيل عرق ومعطر*</span> يستخدم كل 24 ساعه"
+        },
+        {
+            "name": "RE-REST ADVANCE SPRAY 20ML",
+            "code": "131973",
+            "usage": "<span class='complex-usage'>*بخاخ ملطف ومرطب للمنطقة الحميمية*</span> يستخدم مرتين يوميا"
+        }
+    ],
+    "مزيل الرؤوس السوداء": [
+        {
+            "name": "CLEAN&C BLACK HEAD CLEANSER 200 ML",
+            "code": "105103",
+            "usage": "<span class='complex-usage'>*لا يُشطف*</span> تبلل قطعة قطن بالسائل ونمسح بها البشرة وتجنب منطقة حول العين والفم."
+        },
+        {
+            "name": "CLEAN&C BLACKHEAD DAILY SCRUB 100 ML",
+            "code": "46437",
+            "usage": "<span class='complex-usage'>*صنفرة يومية*</span> يستخدم يوميا يدلك بحركات دائريه لمدة 30 ثانيه ثم يشطف"
+        }
+    ],
+    "مزيل عرق خالي من الالومونيوم": [
+        {
+            "name": "BEESLINE ROLL ON BEAUTY PEARL 50ML",
+            "code": "90270",
+            "usage": "مزيل عرق"
+        },
+        {
+            "name": "DERMACTIVE SWEAT ROLL (INTENSE) 60ML",
+            "code": "124738",
+            "usage": "مزيل عرق"
+        },
+        {
+            "name": "STARVILLE ROLL ON WHITENING ALLSKIN 60ML",
+            "code": "21271",
+            "usage": "مزيل عرق"
+        },
+        {
+            "name": "URIAGE DEODORANT DOUCEUR 24 H ROLL ON 50ML",
+            "code": "95485",
+            "usage": "مزيل عرق"
+        },
+        {
+            "name": "WOROUD DEODORANT ROLL ON HERBAL 50ML",
+            "code": "123390",
+            "usage": "مزيل عرق"
+        }
+    ],
+    "مثبت مكياج": [
+        {
+            "name": "ELIZABETH HELEN MAKE-UP FIXER SPRAY(VIT-E) 150ML",
+            "code": "123397",
+            "usage": "<span class='complex-usage'>*غني بفيتامين هـ*</span>بخاخ  مثبت للمكياج"
+        },
+        {
+            "name": "NIVEA SPRAY ROSE WATER HYDRAT FACE MIST 150ML",
+            "code": "122702",
+            "usage": "<span class='complex-usage'>*خالي من الكحول*</span>بخاخ مرطب وملطف للبشرة ويمكن استخدامه كمثبت للمكياج"
+        }
+    ],
+    "مضاد لاكسدة البشرة": [
+        {
+            "name": "ANTOX  30  TAB",
+            "code": "125323",
+            "usage": "قرص مرة واحدة يوميا مع الطعام"
+        },
+        {
+            "name": "CLEO GLOW VITAMIN C SERUM 25 ML",
+            "code": "32850",
+            "usage": "<span class='complex-usage'>*تركيز 10%*</span> مره يوميا مساءا مع وضع واقي شمس عند الخروج"
+        },
+        {
+            "name": "DERMA TEN SERUM (GLOWING POWER) 30ML",
+            "code": "132844",
+            "usage": "<span class='complex-usage'>*تركيز 10%*</span> مره يوميا مساءا مع وضع واقي شمس عند الخروج"
+        },
+        {
+            "name": "SELENIUM -ACE 30 TAB",
+            "code": "122651",
+            "usage": "قرص مرة واحدة يوميا مع الطعام"
+        }
+    ],
+    "معطر الشعر": [
+        {
+            "name": "AVRELLE HAIR PERFUM",
+            "code": "120244",
+            "usage": "<span class='complex-usage'>*خالي من الكحول*</span>اسبراي معطر للشعر"
+        },
+        {
+            "name": "BIO BACK HAIR PERFUME",
+            "code": "108198",
+            "usage": "اسبراي معطر للشعر"
+        },
+        {
+            "name": "HAIR DAILY HAIR MIST PERFUME",
+            "code": "133751",
+            "usage": "اسبراي معطر للشعر"
+        },
+        {
+            "name": "THE HAIR ADDICT HAIR PERFUME",
+            "code": "128159",
+            "usage": "<span class='complex-usage'>*خالي من الكحول*</span>اسبراي معطر للشعر"
+        }
+    ],
+    "مقشر الجسم - جلد الوزة": [
+        {
+            "name": "AGERA UREA LOTION REPAIR & MOIST 200ML",
+            "code": "136345",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span> دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "AKIVA UREA RENOVATE GEL CREAM 120 ML",
+            "code": "115498",
+            "usage": "<span class='complex-usage'>*تركيز 15% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "CARBAMIDE CREAM 30 GM",
+            "code": "137148",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "CERAVE SA SMOOTH CREAM 177ML",
+            "code": "118183",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "DERMACTIVE ACTI REPAIR SMOOTHING CREAM UREA",
+            "code": "130585",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "HAYAH UREPAR BODY CREAM 10 UREA 200ML",
+            "code": "104182",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        },
+        {
+            "name": "UREACT BODY MILK LOTION 200GM",
+            "code": "131111",
+            "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+        }
+    ],
+    "منتجات خارج المقاطعة": {
+        "براندات مصرية": [
+            {
+                "name": "ALEJON",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "BOBAI",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "CLEO",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "DERMAELLE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "DERMATIQE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "DRAKON",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "EVA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "GLOWMARK",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "HAYAH",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "INFINITY",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "KOLAGRA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "MOOD",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "SHAAN",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "STARVILLE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "STRONGVILLE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "VACATION",
+                "code": "",
+                "usage": ""
+            }
+        ],
+        "حفاضات نسائيه": [
+            {
+                "name": "DRY",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "MOLPED",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "PRIVATE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "SOFY",
+                "code": "",
+                "usage": ""
+            }
+        ],
+        "كريم مرطب وشاور جل": [
+            {
+                "name": "BOBANA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "CARE AND MORE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "EVA",
+                "code": "",
+                "usage": ""
+            }
+        ],
+        "ماكينات حلاقة": [
+            {
+                "name": "AVUVA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "LORD",
+                "code": "",
+                "usage": ""
+            }
+        ],
+        "مزيل عرق": [
+            {
+                "name": "BEESLINE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "BOBANA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "DRAKON",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "EVA",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "INFINITY",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "STARVILLE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "VEBIX",
+                "code": "",
+                "usage": ""
+            }
+        ],
+        "معجون اسنان": [
+            {
+                "name": "DABUR HERBL TOOTH PASTE CLOVE140GM",
+                "code": "124004",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "DABUR HERBL TOOTH SALT &LEMON140GM",
+                "code": "119551",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "DABUR MISWAK TOOTH PASTE (MINT)  50G",
+                "code": "128957",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "DABUR MISWAK TOOTH PASTE 50G",
+                "code": "72754",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "DABUR RED TOOTH PASTE CLOVE&MINT 100GM",
+                "code": "116693",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "DG- LONG SENSITIVITY CARE TOOTH PASTE 80 GM",
+                "code": "121388",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "EVA SMOKERS TOOTH PASTE CHARCOAL 50GM",
+                "code": "109983",
+                "usage": " معجون اسنان"
+            },
+            {
+                "name": "ORATOP CARE GEL PUMP120 GM",
+                "code": "130417",
+                "usage": " معجون اسنان"
+            }
+        ],
+        "منتجات الاطفال": [
+            {
+                "name": "BEBEM",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "BUBBLES",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "GOOD CARE",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "HERO BABY",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "MOLFIX",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "NUNU",
+                "code": "",
+                "usage": ""
+            },
+            {
+                "name": "RIRI",
+                "code": "",
+                "usage": ""
+            }
+        ]
+    },
+    "مناديل اسيتون": [
+        {
+            "name": "CIVILER WIPES NAIL POLISH REMOVER10PCS",
+            "code": "138452",
+            "usage": "<span class='complex-usage'>*خالي من الاسيتون*</span> منديل واحد يكفي لليدين"
+        }
+    ],
+    "مواد فعالة": {
+        "الفا اربيوتين": [
+            {
+                "name": "ARBUTEX WHITENING CREAM ALL SKIN60ML",
+                "code": "34816",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "DERMA TEN SERUM (BRIGHTENING) 30ML",
+                "code": "132847",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "بيبتايد": [
+            {
+                "name": "EVELINE SERUM (MULTI PEPTIDES)30ML",
+                "code": "126932",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "IGEA SERUM PEPTIDE ANTI AGING 30ML",
+                "code": "121772",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "جزيئات الدهب": [
+            {
+                "name": "EVELINE SERUM (COLLAGEN 3X) 30ML",
+                "code": "126937",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "EVA GOLD COLLAGEN SKIN FACIAL SERUM 30ML",
+                "code": "103681",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "KOLAGRA GOLD SKIN SERUM 30ML",
+                "code": "121293",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "جليكوليك اسيد": [
+            {
+                "name": "DERMA TEN SERUM (REVIVING POWER) 30ML",
+                "code": "132840",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span>  مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "DERMAELLE GLYCO ACID ADVANCE SERUM30ML",
+                "code": "137353",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span>  مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            }
+        ],
+        "جلوتاثيون": [
+            {
+                "name": "GLUTANA 30 CAPS",
+                "code": "127167",
+                "usage": "كبسوله واحده يوميا"
+            },
+            {
+                "name": "GLUTASHINE PIG CORRECTION CREAM50ML",
+                "code": "108954",
+                "usage": "كريم تفتيح مرتين يوميا"
+            },
+            {
+                "name": "VEE WHITE ANTIOXIDANT 30 CAP",
+                "code": "128429",
+                "usage": "كبسوله واحده يوميا"
+            }
+        ],
+        "ريتينول": [
+            {
+                "name": "AZHA SERUM RETINOL NIACINAMIDE 30ML",
+                "code": "132552",
+                "usage": "<span class='complex-usage'>*تركيز 0.3%*</span> مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "BIONNEX THE NORDEA RETINOL SERUM 30ML",
+                "code": "120286",
+                "usage": "<span class='complex-usage'>*تركيز 1%*</span> مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            }
+        ],
+        "سالسيلك اسيد": [
+            {
+                "name": "DERMA TEN SERUM (ACNE FIGHTING) 30ML",
+                "code": "132845",
+                "usage": "مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            },
+            {
+                "name": "SIRBEST SALICYLIC ACID SERUM 30ML",
+                "code": "135442",
+                "usage": "مره واحده مساءا مع وضع واقي شمس قبل الخروج"
+            }
+        ],
+        "سنتيلا": [
+            {
+                "name": "DERMA TEN SERUM (SOOTHING POWER) 30ML",
+                "code": "132841",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "LEYLAK HYALU CICA SERUM 30ML",
+                "code": "127814",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "MOIST- (1) CENTELLA SERUM FACE&NECK30ML",
+                "code": "135717",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "سيراميد": [
+            {
+                "name": "DR ELVISH RICE CERAMIDE (GEL CREAM) 100ML",
+                "code": "132872",
+                "usage": "<span class='complex-usage'>*للبشرة العادية حتى الدهنية*</span>مرتين يوميا"
+            },
+            {
+                "name": "EVELINE SERUM SHOT (CERAMIDES 6X) 30ML",
+                "code": "131747",
+                "usage": "<span class='complex-usage'>*للبشرة العادية حتى الجافه*</span>مرتين يوميا"
+            },
+            {
+                "name": "NINETIMES SERUM HYALURONIC ACID 30ML",
+                "code": "116801",
+                "usage": "<span class='complex-usage'>*لجميع انواع البشره*</span>مرتين يوميا"
+            }
+        ],
+        "فيتامين سي": [
+            {
+                "name": "CLEO GLOW VITAMIN C SERUM 25 ML",
+                "code": "32850",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span> مره يوميا مساءا مع وضع واقي شمس عند الخروج"
+            },
+            {
+                "name": "DAKY VITAMIN.C SKIN SERUM 30ML",
+                "code": "124201",
+                "usage": "<span class='complex-usage'>*تركيز 20%*</span> مره يوميا مساءا مع وضع واقي شمس عند الخروج"
+            },
+            {
+                "name": "DERMA TEN SERUM (GLOWING POWER) 30ML",
+                "code": "132844",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span> مره يوميا مساءا مع وضع واقي شمس عند الخروج"
+            }
+        ],
+        "كافيار": [
+            {
+                "name": "DERMATIQUE GOLD ALL SERUM SKIN FACE&NECK 30ML",
+                "code": "110836",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "IGEA  SERUM CAVIAR SUPPLE GLOWING 30ML",
+                "code": "112256",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "كافيين للعين": [
+            {
+                "name": "BIONNEX THE NORDEA CAFFE EYE CONT SERUM 30ML",
+                "code": "120287",
+                "usage": "<span class='complex-usage'>*تركيز 5%*</span> مرتين يوميا"
+            },
+            {
+                "name": "IGEA SERUM CAFFEINE EYE CONTER 30ML",
+                "code": "112255",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "كولاجين": [
+            {
+                "name": "ALEJON COLLAGEN SERUM FACE&NECK 50ML",
+                "code": "42805",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "EVELINE SERUM (COLLAGEN 3X) 30ML",
+                "code": "126937",
+                "usage": "مرتين يوميا"
+            },
+            {
+                "name": "INFINITY HYALU COLLAGEN SERUM30ML",
+                "code": "109973",
+                "usage": "مرتين يوميا"
+            }
+        ],
+        "نياسيناميد": [
+            {
+                "name": "KOLAGRA NIACINAMIDE SERUM(B3)30ML",
+                "code": "109817",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span> دهان مرتين يوميا علي بشره نظيفه بعد الغسول"
+            },
+            {
+                "name": "SKINSIDE NIACINAMIDE SERUM BLEMISH FREE REFINI",
+                "code": "115056",
+                "usage": "<span class='complex-usage'>*تركيز 10%*</span> دهان مرتين يوميا علي بشره نظيفه بعد الغسول"
+            }
+        ],
+        "هيالورنيك اسيد": [
+            {
+                "name": "DERMA TEN SERUM (HYDRA POWER) 30ML",
+                "code": "132839",
+                "usage": "<span class='complex-usage'>*تركيز 2%*</span> مرتين يوميا علي بشره مبلله ويوضع بعده بربع ساعه المرطب"
+            },
+            {
+                "name": "DERMAELLE HYALU AC+ ADVANC SERUM30ML",
+                "code": "129269",
+                "usage": "<span class='complex-usage'>*تركيز 2.5%*</span>  مرتين يوميا علي بشره مبلله ويوضع بعده بربع ساعه المرطب"
+            },
+            {
+                "name": "STARVILLE HYALURONIC ACID SERUM 30ML",
+                "code": "117806",
+                "usage": "<span class='complex-usage'>*تركيز 3%*</span> مرتين يوميا علي بشره مبلله ويوضع بعده بربع ساعه المرطب"
+            }
+        ],
+        "يوريا": [
+            {
+                "name": "AKIVA UREA RENOVATE GEL CREAM 120 ML",
+                "code": "115498",
+                "usage": "<span class='complex-usage'>*تركيز 15% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+            },
+            {
+                "name": "CARBAMIDE CREAM 30 GM",
+                "code": "137148",
+                "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+            },
+            {
+                "name": "HAYAH UREPAR BODY CREAM 10 UREA 200ML",
+                "code": "104182",
+                "usage": "<span class='complex-usage'>*تركيز 10% يوريا*</span>دهان مقشر ومرطب مرتين يوميا"
+            },
+            {
+                "name": "LEYLAK UREA(20)CREAM MOIST&EXFOLIAT200ML",
+                "code": "138678",
+                "usage": "<span class='complex-usage'>*تركيز 20% يوريا*</span> دهان مقشر ومرطب مرتين يوميا"
+            }
+        ]
+    },
+    "واقي شمس": {
+        "واقي شمس فيزيائي او مينرال": [
+            {
+                "name": "MEDCE DERMABOND MINERAL FUS SUN CREAM SPF50 75G",
+                "code": "49297",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "NANO TREAT SUN GEL (1+1) SUPER SHEER 40ML",
+                "code": "133687",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "REVON SUN BLOCK SPF50 120ML",
+                "code": "108049",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            }
+        ],
+        "واقي شمس الرضع والاطفال +6 شهور": [
+            {
+                "name": "BLANKIE KIDS SPF50 MOIST SUNSCREEN 120ML",
+                "code": "112452",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "BOBAI KIDS SUN SCREEN SPF30 LOTION 200ML",
+                "code": "106644",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "LA ROCHE ANTHELIOS+6M BABYLOTIONSPF50 50M",
+                "code": "102689",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "SANOSAN BABY SUN CREAM SPF50 VERY HIGH 75ML",
+                "code": "114099",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            },
+            {
+                "name": "SUPER KIDS(6+)SUNSCREEN SPF50 BABY LOTION 200ML",
+                "code": "85130",
+                "usage": "قبل التعرض للشمس بربع ساعه ويكرر كل ساعتين"
+            }
+        ],
+        "واقي شمس البشرة المختلطة والدهنيه": [
+            {
+                "name": "ALEJON SUN SCREEN GEL SPF50 75ML",
+                "code": "40320",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "AVENE CLEANANCE SPF50 OILY SKIN 50ML",
+                "code": "102212",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "BOBAI SUN SCREEN GEL SPF50 ANTI-SHINE60M(1+1)",
+                "code": "122379",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "COSMO APPE SUN SPF50 GEL CRE60ML(1+1)عرض",
+                "code": "126074",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "DERMACTIVE ACTI-SOLAIRE SPF50+ ULTRA FLUID 50 ML",
+                "code": "117257",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "EUCERIN SUN-OIL DRY TOUCH SPF50 50ML",
+                "code": "109687",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "INFINITY SUN SPF50 ULTRA FLUID50G(1+1)عرض",
+                "code": "116152",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "ISIS UVEBLOCK SPF50+ FLUID SNSTV SKN 40ML",
+                "code": "49778",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "LA ROCHE ANTHELIOS GEL CREAM SPF50 50ML",
+                "code": "87480",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "LA ROCHE ANTHELIOS OIL CONTROLFLUID SPF50 50ML",
+                "code": "132417",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "URIAGEAGE BARIESUN SPF50 FLUID ULTRA30ML",
+                "code": "136770",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            }
+        ],
+        "واقي شمس البشرة الجافة والعادية": [
+            {
+                "name": "ACM MEDISUN CREAM SPF 50+ HIGH PROTECTION 40ML",
+                "code": "111465",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "ALEJON SUN SCREEN CREAM SPF50 75ML",
+                "code": "33379",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "BIONNEX PREVENTIVA SUN CREAM SPF50 50ML",
+                "code": "120274",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "CLEO SUNSCREEN HYDRATING SPF50CREAM50ML",
+                "code": "23922",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "DERMACTIVE ACTI-SOL SPF50+ MELT CREAM 50ML",
+                "code": "112755",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "LA ROCHE ANTHELIOS SPF50HYDRATING CREAM 50 ML",
+                "code": "41141",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            },
+            {
+                "name": "LAPINZA SUNSCREEN (SPF 50+) CREAM 120GM",
+                "code": "136573",
+                "usage": "يوضع قبل التعرض للشمس بربع ساعة ويكرر كل ساعتين"
+            }
+        ]
+    },
+    "واكس استيك الشعر": [
+        {
+            "name": "AFRICANA HAIR WAX BUNDLE",
+            "code": "130696",
+            "usage": "<span class='complex-usage'>*شمع تثبيت للشعر + فرشاة للشعر*</span>يتحكم في الهيشان ويرطب الشعر."
+        },
+        {
+            "name": "AFRICANA HAIR WAX STICK 50ML",
+            "code": "130697",
+            "usage": "<span class='complex-usage'>*شمع تثبيت للشعر*</span>يتحكم في الهيشان ويرطب الشعر."
+        }
+    ],
+    "هيدروسول": {
+        "ماء روز": [
+            {
+                "name": "AFRICANA ROSE WATER NPC 250ML",
+                "code": "130688",
+                "usage": "يستخدم كتونر او بخاخ لتلطيف البشرة واعادة ترطيبها"
+            },
+            {
+                "name": "IMTENAN ROSE WATER 190 ML",
+                "code": "135309",
+                "usage": "يستخدم كتونر او بخاخ لتلطيف البشرة واعادة ترطيبها"
+            }
+        ],
+        "ماء لافندر": [
+            {
+                "name": "IMTENAN LAVANDER WATER 190 ML",
+                "code": "137844",
+                "usage": "يستخدم كتونر او بخاخ لتلطيف البشرة واعادة ترطيبها"
+            }
+        ],
+        "ماء نعناع": [
+            {
+                "name": "AFRICANA PEPPER MINT WATER NPC OIL SKIN 250ML",
+                "code": "131830",
+                "usage": "يستخدم كتونر او بخاخ لتلطيف البشرة واعادة ترطيبها"
+            }
+        ]
+
+    },
+"علاج  الشعر التالف والمتضرر والهيشان": {
+    "ماسك الشعر - حمام كريم": [
+        {
+            "name": "AFRICANA  ARGAN OIL HAIR MASK NPC 225ML",
+            "code": "130692",
+            "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+        },
+        {
+            "name": "CLARY  HAIR MASK DRY&DAMAGE HAIR 300ML",
+            "code": "1524",
+            "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+        },
+        {
+            "name": "EVERY STRAND MASK KERATIN DAMAGHAIR 425 GM",
+            "code": "82710",
+            "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+        },
+        {
+            "name": "G.K KERATIN MASK DEEP COND HYDRATE 200 GM",
+            "code": "83687",
+            "usage": "حمام كريم للشعر مرتين اسبوعيا من 5 ل 10 دقائق ثم يشطف"
+        }
+    ]
+}
+};
+            // END: Product data
+
+            const categoryListElement = document.getElementById('categoryList');
+            const productsDisplayElement = document.getElementById('productsDisplay');
+            const searchInput = document.getElementById('searchInput');
+            const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+            let currentCategory = 'الكل';
+
+            // Sidebar Elements
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            // Calculator Modal Elements
+            const calculatorModal = document.getElementById('calculator-modal');
+            const openCalculatorBtn = document.getElementById('open-calculator-btn');
+            const calcCloseBtn = document.getElementById('calc-close-btn');
+
+            // --- Main Application Logic ---
+
+            function getCategoryIcon(categoryName) {
+                if (categoryName.includes('الرؤوس السوداء')) return 'fas fa-head-side-virus';
+                if (categoryName.includes('المناطق الحساسة للرجال')) return 'fas fa-mars';
+                if (categoryName.includes('معطر ومزيل عرق للمناطق الحساسة')) return 'fas fa-shield-virus';
+                if (categoryName.includes('فيزيائي') || categoryName.includes('مينرال')) return 'fas fa-atom';
+                if (categoryName.includes('صابون سالسيلك اسيد')) return 'fas fa-hand-holding-water';
+                if (categoryName.includes('غسول للجسم') || categoryName.includes('شاور')) return 'fas fa-shower';
+                if (categoryName.includes('الرضع') || categoryName.includes('الاطفال')) return 'fas fa-baby-carriage';
+                if (categoryName.includes('حشرات الشعر')) return 'fas fa-bug';
+                if (categoryName.includes('حول الفم')) return 'fas fa-mouth';
+                if (categoryName.includes('بروتين الشعر')) return 'fas fa-award';
+                if (categoryName.includes('منتجات خارج المقاطعة')) return 'fas fa-ban';
+                if (categoryName.includes('حماية الشعر من الحرارة')) return 'fas fa-temperature-high';
+                if (categoryName === 'الحج والعمرة') return 'fas fa-kaaba';
+                if (categoryName === 'الحمل والرضاعة') return 'fas fa-baby';
+                if (categoryName.includes('المسام الواسعة') || categoryName.includes('افراز الدهون')) return 'fas fa-eye-dropper';
+                if (categoryName.includes('التجاعيد') || categoryName.includes('شد البشره')) return 'fas fa-user-clock';
+                if (categoryName.includes('التهاب') || categoryName.includes('احمرار') || categoryName.includes('تهدئة')) return 'fas fa-fire-extinguisher';
+                if (categoryName.includes('القدمين') || categoryName.includes('الجلد الميت')) return 'fas fa-shoe-prints';
+                if (categoryName.includes('واقي شمس')) return 'fas fa-sun';
+                if (categoryName.includes('الحبوب')) return 'fas fa-head-side-cough';
+                if (categoryName.includes('تفتيح')) return 'fas fa-magic-wand-sparkles';
+                if (categoryName.includes('عين') || categoryName.includes('كونسيلر')) return 'fas fa-eye';
+                if (categoryName.includes('شفاة')) return 'fas fa-lips';
+                if (categoryName.includes('تمدد') || categoryName.includes('اكزيما')) return 'fas fa-spa';
+                if (categoryName.includes('مزيل عرق')) return 'fas fa-spray-can';
+                if (categoryName.includes('تونر')) return 'fas fa-spray-can-sparkles';
+                if (categoryName.includes('أظافر') || categoryName.includes('فطريات')) return 'fas fa-hand-sparkles';
+                if (categoryName.includes('يدين')) return 'fas fa-hands';
+                if (categoryName.includes('مرطب الجسم')) return 'fas fa-soap';
+                if (categoryName.includes('مقشر') || categoryName.includes('جلد الوزة')) return 'fas fa-brush';
+                if (categoryName.includes('شامبو')) return 'fas fa-pump-soap';
+                if (categoryName.includes('مضاد لاكسدة')) return 'fas fa-spray-can-sparkles';
+                if (categoryName.includes('غسول')) return 'fas fa-pump-soap';
+                if (categoryName.includes('تساقط')) return 'fas fa-wind';
+                if (categoryName.includes('مواد فعالة')) return 'fas fa-flask';
+                return 'fas fa-pills';
+            }
+
+            function createProductCardHtml(product, categoryName) {
+                const code = product.code && product.code.trim() !== '' ? product.code : 'لا يوجد';
+                const hasCode = code !== 'لا يوجد';
+                const copyButtonHtml = hasCode ? `<button class="copy-button" type="button" data-code="${code}"><i class="fas fa-copy"></i><span>نسخ الكود</span></button>` : '';
+
+                // Enhanced usage parsing
+                let usageHtml = '<div class="main-usage-text">لا توجد تفاصيل.</div>';
+                if (product.usage) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = product.usage;
+                    const complexNode = tempDiv.querySelector('.complex-usage');
+                    const complexBadge = complexNode ? `<div class="complex-usage-badge">${complexNode.innerHTML}</div>` : '';
+                    if(complexNode) complexNode.remove();
+                    const mainText = tempDiv.innerHTML.trim();
+                    usageHtml = `<div class="usage-content">${complexBadge}<div class="main-usage-text">${mainText || 'لا توجد تفاصيل.'}</div></div>`;
+                }
+
+                return `
+                    <div class="product-card" data-product-name="${product.name}" data-category-name="${categoryName}">
+                        <div class="product-card-header">${product.name}</div>
+                        <div class="product-card-details">
+                            <div><strong><i class="fas fa-barcode"></i> الكود:</strong> <span class="product-code">${code}</span></div>
+                            <div class="usage-section">
+                                <strong><i class="fas fa-info-circle"></i> الاستخدام:</strong>
+                                ${usageHtml}
+                            </div>
+                        </div>
+                        ${copyButtonHtml}
+                    </div>
+                `;
+            }
+
+            function renderProducts(categoryName) {
+                productsDisplayElement.innerHTML = '';
+                const filterText = searchInput.value.trim().toLowerCase();
+                const isAllCategory = categoryName === 'الكل';
+
+                currentCategoryTitle.textContent = categoryName;
+
+                const categoriesToProcess = isAllCategory ? Object.keys(appData) : [categoryName];
+                let contentHtml = '';
+                let hasResults = false;
+
+                categoriesToProcess.forEach(mainCatName => {
+                    const data = appData[mainCatName];
+                    const mainCatMatch = mainCatName.toLowerCase().includes(filterText);
+                    let mainCategoryHtml = '';
+                    let shouldDisplayMainCategory = false;
+
+                    if (Array.isArray(data)) {
+                        const filteredProducts = data.filter(p => filterText === '' || mainCatMatch || p.name.toLowerCase().includes(filterText));
+                        if (filteredProducts.length > 0) {
+                            let gridHtml = '<div class="product-grid">';
+                            filteredProducts.forEach(p => gridHtml += createProductCardHtml(p, mainCatName));
+                            gridHtml += '</div>';
+                            mainCategoryHtml += gridHtml;
+                            shouldDisplayMainCategory = true;
+                        }
+                    } else if (typeof data === 'object' && data !== null) {
+                        let subCategoriesHtml = '';
+                        Object.keys(data).forEach(subCatName => {
+                            const subCatProducts = data[subCatName] || [];
+                            const subCatMatch = subCatName.toLowerCase().includes(filterText);
+                            const filteredSubCatProducts = subCatProducts.filter(p => filterText === '' || mainCatMatch || subCatMatch || p.name.toLowerCase().includes(filterText));
+
+                            if (filteredSubCatProducts.length > 0) {
+                                subCategoriesHtml += `<h3 class="sub-category-title">${subCatName}</h3>`;
+                                subCategoriesHtml += '<div class="product-grid">';
+                                filteredSubCatProducts.forEach(p => subCategoriesHtml += createProductCardHtml(p, subCatName));
+                                subCategoriesHtml += '</div>';
+                                shouldDisplayMainCategory = true;
+                            }
+                        });
+                        mainCategoryHtml += subCategoriesHtml;
+                    }
+
+                    if (shouldDisplayMainCategory) {
+                        hasResults = true;
+                        if (isAllCategory) {
+                            contentHtml += `<h2 class="main-category-separator"><i class="${getCategoryIcon(mainCatName)}"></i> ${mainCatName}</h2>`;
+                        }
+                        contentHtml += mainCategoryHtml;
+                    }
+                });
+
+                productsDisplayElement.innerHTML = hasResults ? contentHtml : `<div class="no-results"><i class="fas fa-box-open"></i> لا توجد أصناف تطابق بحثك.</div>`;
+                attachCopyListeners();
+            }
+
+            function renderCategoryList() {
+                categoryListElement.innerHTML = '';
+                const allItem = document.createElement('li');
+                allItem.className = 'category-item active';
+                allItem.innerHTML = `<i class="fas fa-star"></i> <span>الكل</span>`;
+                allItem.dataset.category = 'الكل';
+                categoryListElement.appendChild(allItem);
+
+                Object.keys(appData).forEach(categoryName => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'category-item';
+                    listItem.innerHTML = `<i class="${getCategoryIcon(categoryName)}"></i> <span>${categoryName}</span>`;
+                    listItem.dataset.category = categoryName;
+                    categoryListElement.appendChild(listItem);
+                });
+
+                categoryListElement.querySelectorAll('.category-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        categoryListElement.querySelector('.active')?.classList.remove('active');
+                        item.classList.add('active');
+                        currentCategory = item.dataset.category;
+                        searchInput.value = '';
+                        renderProducts(currentCategory);
+                        closeSidebar();
+                    });
+                });
+            }
+
+            function copyCodeToClipboard(text) {
+                // Modern way: Clipboard API (works in secure contexts - https)
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback for older browsers and insecure contexts (http)
+                    let textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    // Make the textarea out of viewport
+                    textArea.style.position = "fixed";
+                    textArea.style.top = "0";
+                    textArea.style.left = "0";
+                    textArea.style.width = "1px";
+                    textArea.style.height = "1px";
+                    textArea.style.opacity = "0";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    return new Promise((res, rej) => {
+                        try {
+                            const successful = document.execCommand('copy');
+                            if (successful) {
+                                res();
+                            } else {
+                                rej(new Error('Copy command failed'));
+                            }
+                        } catch (err) {
+                            rej(err);
+                        } finally {
+                           document.body.removeChild(textArea);
+                        }
+                    });
+                }
+            }
+            
+            function attachCopyListeners() {
+                document.querySelectorAll('.copy-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent any other click events
+                        const codeToCopy = button.getAttribute('data-code');
+                        copyCodeToClipboard(codeToCopy).then(() => {
+                            const originalContent = button.innerHTML;
+                            button.innerHTML = '<i class="fas fa-check"></i> <span>تم النسخ!</span>';
+                            button.classList.add('copied');
+                            setTimeout(() => {
+                                button.innerHTML = originalContent;
+                                button.classList.remove('copied');
+                            }, 1500);
+                        }).catch(err => {
+                            console.error('Failed to copy text: ', err);
+                            alert('فشل نسخ الكود. الرجاء نسخه يدوياً.');
+                        });
+                    });
+                });
+            }
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('is-visible');
+                sidebarOverlay.classList.toggle('is-visible');
+            }
+            function closeSidebar() {
+                sidebar.classList.remove('is-visible');
+                sidebarOverlay.classList.remove('is-visible');
+            }
+
+            // --- Event Listeners ---
+            searchInput.addEventListener('input', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // SMOOTH SCROLL
+                renderProducts(currentCategory);
+            });
+            sidebarToggleBtn.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            openCalculatorBtn.addEventListener('click', () => calculatorModal.classList.add('is-visible'));
+            calcCloseBtn.addEventListener('click', () => calculatorModal.classList.remove('is-visible'));
+            calculatorModal.addEventListener('click', (e) => {
+                if(e.target === calculatorModal) {
+                     calculatorModal.classList.remove('is-visible');
+                }
+            });
+
+
+            // --- Initial Load ---
+            renderCategoryList();
+            renderProducts(currentCategory);
+            
+            // --- Calculator Logic ---
+            const calcPricesInput = document.getElementById('calc-prices-input');
+            const calcOfferType = document.getElementById('calc-offer-type');
+            const calcResultsArea = document.getElementById('calc-results-area');
+            const calcBreakdownList = document.getElementById('calc-breakdown-list');
+            const calcErrorMessage = document.getElementById('calc-error-message');
+            const calcTotalDisplay = document.getElementById('calc-total-display');
+
+            function calculateOffer() {
+                const rawText = calcPricesInput.value;
+                const prices = rawText.split('\n').map(line => parseFloat(line.trim())).filter(p => !isNaN(p) && p > 0).sort((a, b) => b - a);
+                const offer = calcOfferType.value;
+                let total = 0;
+                const breakdown = [];
+
+                calcResultsArea.style.display = 'none';
+                calcErrorMessage.style.display = 'none';
+
+                if (prices.length === 0) {
+                    if (rawText.trim() !== '') {
+                        calcErrorMessage.textContent = 'الرجاء إدخال أسعار صالحة.';
+                        calcErrorMessage.style.display = 'block';
+                    }
+                    return;
+                }
+
+                if (offer === 'none') {
+                    total = prices.reduce((sum, p) => sum + p, 0);
+                    renderCalcBreakdown(prices.map(p => ({ price: p, status: 'receipt-primary', label: 'ريسيت أساسي (مدفوع)' })));
+                    calcTotalDisplay.textContent = `الإجمالي: ${total.toFixed(2)} جنيه`;
+                    calcResultsArea.style.display = 'block';
+                    return;
+                }
+
+                let numItems = prices.length;
+                let errorMessageText = '';
+
+                if (offer === '1+1') {
+                    if (numItems % 2 !== 0 && numItems > 1) errorMessageText = `ملاحظة: عدد القطع فردي (${numItems}). القطعة المتبقية (${prices[numItems - 1].toFixed(2)}) مدفوعة بالكامل.`;
+                    for (let i = 0; i < numItems; i += 2) {
+                        if (prices[i+1] === undefined) {
+                            total += prices[i];
+                            breakdown.push({ price: prices[i], status: 'receipt-primary', label: 'ريسيت أساسي (فردي)' });
+                        } else {
+                            total += prices[i];
+                            breakdown.push({ price: prices[i], status: 'receipt-primary', label: 'ريسيت أساسي (الأغلى)' });
+                            breakdown.push({ price: prices[i+1], status: 'receipt-deferred', label: 'ريسيت آجل (مجاني)' });
+                        }
+                    }
+                } else if (offer.startsWith('1+')) {
+                    const discountPercent = parseInt(offer.match(/\d+$/)[0]) / 100;
+                    if (numItems % 2 !== 0 && numItems > 1) errorMessageText = `ملاحظة: عدد القطع فردي (${numItems}). القطعة المتبقية (${prices[numItems - 1].toFixed(2)}) مدفوعة بالكامل.`;
+                    for (let i = 0; i < numItems; i += 2) {
+                         if (prices[i+1] === undefined) {
+                            total += prices[i];
+                            breakdown.push({ price: prices[i], status: 'receipt-primary', label: 'ريسيت أساسي (فردي)' });
+                        } else {
+                            const discountedPrice = prices[i+1] * (1 - discountPercent);
+                            total += prices[i] + discountedPrice;
+                            breakdown.push({ price: prices[i], status: 'receipt-primary', label: 'ريسيت أساسي (مدفوع بالكامل)' });
+                            breakdown.push({ price: prices[i+1], status: 'receipt-deferred', label: `ريسيت آجل (${(discountPercent*100)}% خصم, يدفع ${discountedPrice.toFixed(2)})` });
+                        }
+                    }
+                } else if (offer === '2+2' || offer === '2+1') {
+                    const groupSize = offer === '2+2' ? 4 : 3;
+                    const freeItems = offer === '2+2' ? 2 : 1;
+                    if (numItems % groupSize !== 0 && numItems >= groupSize) errorMessageText = `تنبيه: عرض ${offer} يتطلب عدد قطع يقبل القسمة على ${groupSize}. القطع المتبقية (${numItems % groupSize}) مدفوعة بالكامل.`;
+                    for (let i = 0; i < numItems; i += groupSize) {
+                        const group = prices.slice(i, i + groupSize);
+                        if (group.length === groupSize) {
+                            for(let j = 0; j < groupSize - freeItems; j++) {
+                                total += group[j];
+                                breakdown.push({ price: group[j], status: 'receipt-primary', label: `ريسيت أساسي (الأغلى ${j+1})` });
+                            }
+                            for(let j = 0; j < freeItems; j++) {
+                                breakdown.push({ price: group[groupSize - 1 - j], status: 'receipt-deferred', label: `ريسيت آجل (مجاني ${j+1})` });
+                            }
+                        } else {
+                            group.forEach(p => {
+                                total += p;
+                                breakdown.push({ price: p, status: 'receipt-primary', label: 'ريسيت أساسي (لم يكتمل العرض)' });
+                            });
+                        }
+                    }
+                } else if (offer.startsWith('discount-')) {
+                    const discountPercent = parseInt(offer.match(/\d+$/)[0]) / 100;
+                    prices.forEach(price => {
+                        const discountedPrice = price * (1 - discountPercent);
+                        total += discountedPrice;
+                        breakdown.push({ price: price, status: 'receipt-primary', label: `ريسيت أساسي (${(discountPercent*100)}% خصم, يدفع ${discountedPrice.toFixed(2)})` });
+                    });
+                }
+                
+                if (errorMessageText) {
+                    calcErrorMessage.textContent = errorMessageText;
+                    calcErrorMessage.style.display = 'block';
+                }
+                
+                renderCalcBreakdown(breakdown.sort((a,b) => b.price - a.price));
+                calcTotalDisplay.textContent = `الإجمالي: ${total.toFixed(2)} جنيه`;
+                calcResultsArea.style.display = 'block';
+            }
+
+            function renderCalcBreakdown(breakdown) {
+                calcBreakdownList.innerHTML = '';
+                breakdown.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'calc-breakdown-item';
+                    li.innerHTML = `
+                        <span class="price-label">${item.price.toFixed(2)} جنيه</span>
+                        <span class="calc-status status-${item.status}">${item.label}</span>`;
+                    calcBreakdownList.appendChild(li);
+                });
+            }
+
+            calcPricesInput.addEventListener('input', calculateOffer);
+            calcOfferType.addEventListener('change', calculateOffer);
+        });
+    </script>
+</body>
+</html>
