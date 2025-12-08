@@ -449,93 +449,6 @@
         [data-theme="dark"] #calc-error-message { background-color: #2a0c0c; color: #ff5252; }
         
         /* ---------------------------------- */
-        /* 6. AI Chat Widget Styles */
-        /* ---------------------------------- */
-        #chat-widget-btn {
-            position: fixed; bottom: 30px; left: 25px; 
-            width: 60px; height: 60px; border-radius: 50%;
-            background-color: var(--primary-color); color: #fff;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            border: none; cursor: pointer; z-index: 2500;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5em; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        [data-theme="dark"] #chat-widget-btn { color: #000000; }
-        #chat-widget-btn:hover { transform: scale(1.1); }
-        
-        .chat-window {
-            position: fixed; bottom: 100px; left: 25px;
-            width: 350px; height: 500px;
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            display: flex; flex-direction: column;
-            z-index: 2500;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            transition: opacity 0.3s, transform 0.3s;
-            opacity: 0; transform: translateY(20px); pointer-events: none;
-        }
-        .chat-window.active { opacity: 1; transform: translateY(0); pointer-events: all; }
-        
-        .chat-header {
-            background-color: var(--primary-color); color: #fff;
-            padding: 15px; display: flex; justify-content: space-between; align-items: center;
-            font-weight: 700;
-        }
-        [data-theme="dark"] .chat-header { color: #000000; }
-        .chat-close { background: none; border: none; color: inherit; cursor: pointer; font-size: 1.2em; }
-        
-        .chat-messages {
-            flex-grow: 1; overflow-y: auto; padding: 15px;
-            background-color: var(--bg-app);
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        
-        .chat-input-area {
-            padding: 10px; border-top: 1px solid var(--border-color);
-            background-color: var(--bg-page);
-            display: flex; gap: 10px;
-        }
-        
-        .chat-input {
-            flex-grow: 1; padding: 10px; border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg); color: var(--text-dark);
-            outline: none;
-        }
-        .chat-send-btn {
-            background-color: var(--primary-color); color: #fff;
-            border: none; width: 40px; height: 40px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        [data-theme="dark"] .chat-send-btn { color: #000000; }
-        
-        .message { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95em; line-height: 1.4; position: relative; word-wrap: break-word; }
-        .message.user {
-            align-self: flex-end; /* Left in RTL */
-            background-color: var(--primary-color); color: #fff;
-            border-bottom-left-radius: 2px;
-        }
-        [data-theme="dark"] .message.user { color: #000000; }
-        .message.bot {
-            align-self: flex-start; /* Right in RTL */
-            background-color: var(--nav-item-bg); color: var(--text-dark);
-            border: 1px solid var(--border-color);
-            border-bottom-right-radius: 2px;
-        }
-        
-        .grounding-source {
-            font-size: 0.8em; margin-top: 5px; padding-top: 5px; border-top: 1px solid rgba(0,0,0,0.1); display: block;
-        }
-        .grounding-chip {
-            display: inline-block; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; margin: 2px; color: var(--primary-color); text-decoration: none;
-        }
-        .message.user .grounding-chip { display: none; }
-        
-        .typing-indicator { font-style: italic; color: var(--text-light); font-size: 0.8em; align-self: flex-start; margin-left: 10px; display: none; }
-
-        /* ---------------------------------- */
         /* 6. Responsive Design (Mobile Optimization) */
         /* ---------------------------------- */
         @media (max-width: 1200px) {
@@ -670,25 +583,6 @@
                 justify-content: center;
             }
             
-            /* Chat Widget Mobile: Bottom Sheet */
-            #chat-widget-btn { bottom: 20px; left: 20px; width: 50px; height: 50px; font-size: 1.2em; }
-            
-            .chat-window { 
-                left: 0;
-                right: 0; 
-                bottom: 0; 
-                width: 100%; 
-                height: 85vh; /* Full bottom sheet */
-                z-index: 5000;
-                border-radius: 20px 20px 0 0;
-                border-bottom: none;
-            }
-            
-            .chat-header {
-                padding: 15px 20px;
-                border-radius: 20px 20px 0 0;
-            }
-            
             /* Calculator Modal Mobile */
             .calc-wrapper { width: 95%; max-height: 85vh; }
             .calc-header h2 { font-size: 1.3em; }
@@ -697,7 +591,9 @@
 <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0"
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/"
   }
 }
 </script>
@@ -818,38 +714,7 @@
         </div>
     </div>
     
-    <!-- Chat Widget -->
-    <button id="chat-widget-btn"><i class="fas fa-comment-dots"></i></button>
-    <div class="chat-window" id="chat-window">
-        <div class="chat-header">
-            <span><i class="fas fa-robot"></i> المساعد الذكي</span>
-            <button class="chat-close" id="chat-close"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-messages" id="chat-messages">
-            <div class="message bot">مرحباً! أنا مساعدك الصيدلي الذكي. كيف يمكنني مساعدتك اليوم؟</div>
-        </div>
-        <div class="typing-indicator" id="typing-indicator">جاري الكتابة...</div>
-        <div class="chat-input-area">
-            <input type="text" class="chat-input" id="chat-input" placeholder="اكتب سؤالك هنا...">
-            <button class="chat-send-btn" id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <script type="module">
-        import { GoogleGenAI } from "@google/genai";
-
-        // --- CONFIGURATION START ---
-        // تنبيه: استبدل النص التالي بمفتاح API الخاص بك.
-        // Get your key from: https://aistudio.google.com/app/apikey
-        // مثال: window.process = { env: { API_KEY: "AIzaSyD......" } };
-        
-        window.process = { 
-            env: { 
-                API_KEY: "AIzaSyALO98XuMp3f1F1EeDHC9lg9Rn3kL-5sgk" 
-            } 
-        };
-        // --- CONFIGURATION END ---
-
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- THEME TOGGLE LOGIC START ---
             const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -6122,7 +5987,7 @@
         }
     ]
 },
-    "الشعر الكيرلى": {
+     "الشعر الكيرلى": {
 
 "معلومات هامة عن الشعر الكيرلي وكيفية العناية": [
         {
@@ -10109,196 +9974,7 @@
 
             calcPricesInput.addEventListener('input', calculateOffer);
             calcOfferType.addEventListener('change', calculateOffer);
-
-            // --- CHATBOT LOGIC START ---
-            const chatBtn = document.getElementById('chat-widget-btn');
-            const chatWindow = document.getElementById('chat-window');
-            const chatClose = document.getElementById('chat-close');
-            const chatMessages = document.getElementById('chat-messages');
-            const chatInput = document.getElementById('chat-input');
-            const chatSendBtn = document.getElementById('chat-send-btn');
-            const typingIndicator = document.getElementById('typing-indicator');
-
-            if (chatBtn && chatWindow && chatClose && chatMessages && chatInput && chatSendBtn) {
-                chatBtn.addEventListener('click', () => {
-                    chatWindow.classList.toggle('active');
-                    if (chatWindow.classList.contains('active')) {
-                        chatInput.focus();
-                    }
-                });
-
-                chatClose.addEventListener('click', () => {
-                    chatWindow.classList.remove('active');
-                });
-
-                chatSendBtn.addEventListener('click', sendMessage);
-                chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') sendMessage();
-                });
-            }
-
-            async function sendMessage() {
-                const text = chatInput.value.trim();
-                if (!text) return;
-
-                // Add user message
-                addMessage(text, 'user');
-                chatInput.value = '';
-                
-                // Show typing indicator
-                if (typingIndicator) typingIndicator.style.display = 'block';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                try {
-                    // Initialize AI with the global process.env.API_KEY
-                    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-                    // Build Context from Site Data
-                    const siteContext = buildSiteContext();
-                    
-                    const response = await ai.models.generateContent({
-                        model: 'gemini-2.5-flash',
-                        contents: text,
-                        config: {
-                            tools: [{ googleSearch: {} }],
-                            systemInstruction: `
-                                أنت مساعد صيدلي ذكي في صيدلية "آل عبد اللطيف الطرشوبي"، تتحدث العربية.
-                                
-                                لديك صلاحية الوصول إلى قاعدة بيانات المنتجات والمعلومات الخاصة بالصيدلية التالية:
-                                ${siteContext}
-                                
-                                التعليمات:
-                                1. استخدم المعلومات الواردة في قاعدة البيانات أعلاه كمرجع أساسي للإجابة على أسئلة المستخدم (مثل الأكواد، طرق الاستخدام، الروتين، النصائح).
-                                2. إذا سأل المستخدم عن منتج موجود في القائمة، قدم له الاسم، الكود، وطريقة الاستخدام بدقة.
-                                3. إذا كانت الإجابة غير موجودة في قاعدة البيانات، استخدم "Google Search" للبحث عن معلومات طبية عامة موثوقة.
-                                4. قدم إجابات دقيقة، مختصرة، ومهذبة.
-                            `
-                        }
-                    });
-
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-
-                    const responseText = response.text || "عذراً، لم أستطع فهم ذلك.";
-                    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-
-                    addMessage(responseText, 'bot', groundingChunks);
-
-                } catch (error) {
-                    console.error(error);
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    
-                    let errorMsg = "حدث خطأ أثناء الاتصال بالخادم.";
-                    if (error.message && (error.message.includes('400') || error.message.includes('API key'))) {
-                         errorMsg = "عذراً، مفتاح API غير صالح. يرجى من المطور مراجعة الكود.";
-                    }
-                    addMessage(errorMsg, 'bot');
-                }
-            }
-
-            function buildSiteContext() {
-                // Access appData from the closure (or window.appData)
-                const data = appData; 
-                if (!data) return "لا توجد بيانات متاحة حالياً.";
-
-                let context = "--- بيانات الصيدلية ---\n";
-
-                // Helper to strip HTML tags
-                const stripHtml = (html) => {
-                    const tempDiv = document.createElement("div");
-                    tempDiv.innerHTML = html;
-                    return tempDiv.textContent || tempDiv.innerText || "";
-                };
-
-                for (const categoryName in data) {
-                    context += `\n[قسم: ${categoryName}]\n`;
-                    const catData = data[categoryName];
-
-                    // 1. Array of Products
-                    if (Array.isArray(catData)) {
-                        catData.forEach((p) => {
-                            context += `- منتج: ${p.name} | كود: ${p.code} | استخدام: ${stripHtml(p.usage)}\n`;
-                        });
-                    } 
-                    // 2. Object with subcategories or special sections
-                    else if (typeof catData === 'object') {
-                        for (const subKey in catData) {
-                            const subData = catData[subKey];
-
-                            if (subKey === 'routines' && Array.isArray(subData)) {
-                                context += `  > روتين العناية:\n`;
-                                subData.forEach((r) => {
-                                    context += `    - ${r.title}: ${r.description}\n`;
-                                });
-                            } else if (subKey === 'sellingTips' && Array.isArray(subData)) {
-                                context += `  > نصائح بيعية:\n`;
-                                subData.forEach((t) => {
-                                    context += `    - اقتراح: ${t.suggestion} (السبب: ${t.reason})\n`;
-                                });
-                            } else if (subKey === 'faqs' && Array.isArray(subData)) {
-                                context += `  > أسئلة شائعة:\n`;
-                                subData.forEach((f) => {
-                                    context += `    - س: ${f.q} | ج: ${f.a}\n`;
-                                });
-                            } else if (Array.isArray(subData)) {
-                                // Subcategory of products
-                                context += `  > فرع: ${subKey}\n`;
-                                subData.forEach((p) => {
-                                    context += `    - منتج: ${p.name} | كود: ${p.code} | استخدام: ${stripHtml(p.usage)}\n`;
-                                });
-                            }
-                        }
-                    }
-                }
-                return context;
-            }
-
-            function addMessage(text, sender, groundingChunks) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${sender}`;
-                
-                // Basic formatting for Markdown-like syntax
-                let formattedText = text
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n/g, '<br>');
-
-                msgDiv.innerHTML = formattedText;
-
-                if (groundingChunks && groundingChunks.length > 0) {
-                    const sourcesDiv = document.createElement('div');
-                    sourcesDiv.className = 'grounding-source';
-                    sourcesDiv.innerHTML = '<strong>المصادر:</strong><br>';
-                    
-                    // Extract unique links
-                    const uniqueLinks = new Map();
-                    groundingChunks.forEach((chunk) => {
-                        if (chunk.web && chunk.web.uri && chunk.web.title) {
-                            if (!uniqueLinks.has(chunk.web.uri)) {
-                                uniqueLinks.set(chunk.web.uri, chunk.web.title);
-                            }
-                        }
-                    });
-
-                    uniqueLinks.forEach((title, uri) => {
-                        const link = document.createElement('a');
-                        link.href = uri;
-                        link.target = '_blank';
-                        link.className = 'grounding-chip';
-                        link.textContent = title;
-                        link.innerHTML += ' <i class="fas fa-external-link-alt" style="font-size:0.8em"></i>';
-                        sourcesDiv.appendChild(link);
-                    });
-                    
-                    if (uniqueLinks.size > 0) {
-                        msgDiv.appendChild(sourcesDiv);
-                    }
-                }
-
-                chatMessages.appendChild(msgDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-            // --- CHATBOT LOGIC END ---
         });
     </script>
 </body>
-
 </html>
