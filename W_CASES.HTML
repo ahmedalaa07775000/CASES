@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>صيدلية آل عبد اللطيف الطرشوبي</title>
+    <!-- New Favicon: Medical Shield -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%2310b981' d='M50 5 L95 25 L95 65 C95 85 50 95 50 95 C50 95 5 85 5 65 L5 25 Z'/><path fill='white' d='M42 30 h16 v15 h15 v16 h-15 v15 h-16 v-15 h-15 v-16 h15 v-15 z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
@@ -30,6 +33,44 @@
             --success-border: #10b981;
             --success-text: #047857;
             --trigger-bg: #f8fafc;
+
+            /* Specific component backgrounds for light mode */
+            --code-bg: #fcebeb;
+            --code-text: var(--primary-color);
+            --input-bg: #ffffff;
+            --sub-cat-bg: #fdfcfc;
+            --nav-item-bg: #f8f9fa;
+            --nav-item-hover: #e9ecef;
+            --faq-header-bg: #fafafa;
+        }
+
+        /* DARK MODE VARIABLES - Premium OLED Black Theme */
+        [data-theme="dark"] {
+            --primary-color: #ff5252; /* Vivid Red/Coral suitable for black bg */
+            --accent-color: #ffffff; 
+            
+            --bg-app: #000000; /* Pitch Black (AMOLED) */
+            --bg-page: #000000; /* Pitch Black */
+            --card-bg: #121212; /* Very dark grey for cards to stand out slightly */
+            
+            --text-dark: #ffffff; /* Pure white */
+            --text-light: #bbbbbb; /* Light grey */
+            --border-color: #333333; /* Dark subtle border */
+            --shadow-light: 0 4px 20px rgba(255, 82, 82, 0.1); /* Subtle red glow instead of black shadow */
+            
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --success-border: #10b981;
+            --success-text: #34d399;
+            --trigger-bg: #0a0a0a;
+
+            /* Component overrides for dark mode */
+            --code-bg: #1e0505;
+            --code-text: #ff5252;
+            --input-bg: #121212;
+            --sub-cat-bg: #0a0a0a;
+            --nav-item-bg: #121212;
+            --nav-item-hover: #1e1e1e;
+            --faq-header-bg: #121212;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,6 +83,7 @@
             color: var(--text-dark);
             direction: rtl;
             text-align: right;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Animations */
@@ -74,6 +116,7 @@
             border-bottom: 3px solid var(--primary-color);
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             padding: 12px 0;
+            transition: background-color 0.3s ease;
         }
 
         .header-content-wrapper { max-width: var(--main-container-width); margin: 0 auto; padding: 0 25px; }
@@ -88,6 +131,17 @@
             position: absolute; left: 0; top: 50%; transform: translateY(-50%);
         }
 
+        /* Theme Toggle Button */
+        #theme-toggle-btn {
+            background: var(--nav-item-bg); border: 1px solid var(--border-color);
+            color: var(--text-dark); cursor: pointer;
+            font-size: 1.2em; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+        #theme-toggle-btn:hover { background-color: var(--border-color); }
+
         .search-actions-row {
             display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 1300px; margin: 0 auto; height: 55px;
             animation: fadeInScale 0.8s ease-out 0.2s backwards;
@@ -95,14 +149,14 @@
 
         .current-category-info {
              height: 100%; display: flex; align-items: center; padding: 0 25px; font-size: 1em; color: var(--text-dark);
-             border-radius: 50px; background-color: #ffffff; border: 1px solid var(--border-color); white-space: nowrap;
+             border-radius: 50px; background-color: var(--input-bg); border: 1px solid var(--border-color); white-space: nowrap;
              box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: all 0.3s;
         }
         .current-category-info:hover { border-color: var(--primary-color); }
         .current-category-info strong { color: var(--primary-color); font-weight: 800; margin-right: 6px; }
 
         .search-bar {
-            flex-grow: 1; height: 100%; display: flex; align-items: center; background-color: #ffffff; 
+            flex-grow: 1; height: 100%; display: flex; align-items: center; background-color: var(--input-bg); 
             border: 2px solid var(--border-color); border-radius: 50px; padding: 0 25px; transition: all 0.3s ease;
             max-width: 800px; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
@@ -112,13 +166,15 @@
         .search-bar:focus-within i { color: var(--primary-color); }
 
         #open-calculator-btn {
-            height: 100%; background-color: var(--primary-color); color: white; border: none; padding: 0 30px;
+            height: 100%; background-color: var(--primary-color); color: #ffffff; border: none; padding: 0 30px;
             border-radius: 50px; cursor: pointer; font-size: 1.05em; font-weight: 700; 
             transition: background-color 0.2s ease, transform 0.2s ease; display: flex; align-items: center; gap: 10px; flex-shrink: 0; white-space: nowrap;
             box-shadow: 0 4px 10px rgba(128, 0, 0, 0.2);
         }
-        #open-calculator-btn:hover { background-color: #a00000; transform: translateY(-2px); }
+        #open-calculator-btn:hover { opacity: 0.9; transform: translateY(-2px); }
         #open-calculator-btn:active { transform: translateY(0); }
+        /* Fix text color in button for dark mode if primary changes */
+        [data-theme="dark"] #open-calculator-btn { color: #000000; }
 
         .header-placeholder { height: var(--header-height); }
 
@@ -132,40 +188,43 @@
         #sidebar {
             width: var(--sidebar-width); flex-shrink: 0; position: sticky; top: calc(var(--header-height) + 15px); 
             height: calc(100vh - var(--header-height) - 30px); background-color: var(--bg-page); border-radius: 16px;
-            box-shadow: var(--shadow-light); display: flex; flex-direction: column; transition: transform 0.3s ease-in-out; overflow: hidden;
+            box-shadow: var(--shadow-light); display: flex; flex-direction: column; transition: transform 0.3s ease-in-out, background-color 0.3s; overflow: hidden;
+            border: 1px solid var(--border-color);
         }
         
         .sidebar-header {
-            font-size: 1.5em; font-weight: 800; color: var(--primary-color); padding: 20px; text-align: center; border-bottom: 2px solid var(--border-color); flex-shrink: 0; background-color: #fafafa;
+            font-size: 1.5em; font-weight: 800; color: var(--primary-color); padding: 20px; text-align: center; border-bottom: 2px solid var(--border-color); flex-shrink: 0; background-color: var(--nav-item-bg);
         }
         .category-nav { flex-grow: 1; overflow-y: auto; padding: 10px; }
         .category-list { list-style: none; }
         .category-item {
             cursor: pointer; border-radius: 12px; padding: 0 15px; font-size: 1em; font-weight: 600; color: var(--text-dark); 
             transition: background-color 0.2s ease, color 0.2s ease; display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
-            width: 100%; height: 55px; text-align: right; border: 1px solid transparent; background-color: #f8f9fa;
+            width: 100%; height: 55px; text-align: right; border: 1px solid transparent; background-color: var(--nav-item-bg);
         }
-        .category-item:hover { background-color: #e9ecef; border-color: var(--border-color); }
+        .category-item:hover { background-color: var(--nav-item-hover); border-color: var(--border-color); }
         .category-item.active {
-            background-color: var(--primary-color); color: var(--card-bg); font-weight: 700;
+            background-color: var(--primary-color); color: #fff; font-weight: 700;
             box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3); border-color: var(--primary-color);
         }
-        .category-item.active i, .category-item.active span { color: var(--card-bg) !important; }
+        [data-theme="dark"] .category-item.active { color: #000000; }
+        .category-item.active i, .category-item.active span { color: inherit !important; }
         .category-item i { color: var(--primary-color); font-size: 1.4em; width: 30px; text-align: center; transition: color 0.2s ease; }
         .category-item span { flex-grow: 1; white-space: normal; line-height: 1.3; }
 
         .main-content { flex-grow: 1; min-width: 0; }
-        .main-content-area { padding: 25px; background-color: var(--bg-page); border-radius: 16px; box-shadow: var(--shadow-light); min-height: 600px; }
+        .main-content-area { padding: 25px; background-color: var(--bg-page); border-radius: 16px; box-shadow: var(--shadow-light); min-height: 600px; transition: background-color 0.3s; border: 1px solid var(--border-color); }
         
         .main-category-separator {
-            font-size: 1.8em; font-weight: 800; color: var(--card-bg); background-color: var(--primary-color);
+            font-size: 1.8em; font-weight: 800; color: #fff; background-color: var(--primary-color);
             padding: 15px 25px; border-radius: 50px; box-shadow: 0 6px 15px rgba(128,0,0,0.2); margin-bottom: 25px; display: flex; align-items: center; margin-top: 40px; 
         }
+        [data-theme="dark"] .main-category-separator { color: #000000; }
         .main-category-separator:first-child { margin-top: 0; }
         .main-category-separator i { margin-left: 15px; }
 
         .sub-category-title {
-            font-size: 1.35em; font-weight: 800; color: var(--primary-color); background-color: #fdfcfc;
+            font-size: 1.35em; font-weight: 800; color: var(--primary-color); background-color: var(--sub-cat-bg);
             margin: 35px 0 20px 0; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border-color);
             border-right: 6px solid var(--primary-color); box-shadow: 0 3px 6px rgba(0,0,0,0.03); display: flex; align-items: center;
         }
@@ -175,6 +234,7 @@
         .product-card {
             background-color: var(--card-bg); padding: 20px; border-radius: 16px;
             box-shadow: var(--shadow-light); transition: all 0.3s;
+            border: 1px solid var(--border-color);
             border-top: 5px solid var(--accent-color); display: flex; flex-direction: column;
         }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: var(--primary-color); }
@@ -185,8 +245,8 @@
         }
         .product-card-details strong { color: var(--primary-color); font-weight: 700; }
         .product-code {
-            font-family: 'Consolas', monospace; background-color: #fcebeb; padding: 4px 10px;
-            border-radius: 6px; color: var(--primary-color); font-weight: 700; user-select: all;
+            font-family: 'Consolas', monospace; background-color: var(--code-bg); padding: 4px 10px;
+            border-radius: 6px; color: var(--code-text); font-weight: 700; user-select: all;
         }
         .usage-section { display: flex; flex-direction: column; gap: 8px; }
         .usage-content { display: flex; flex-direction: column; gap: 5px; }
@@ -194,14 +254,17 @@
             color: #d9534f; font-weight: 700; background-color: #fdd; padding: 5px 8px;
             border-radius: 6px; border: 1px solid #d9534f; display: inline-block; align-self: flex-start;
         }
+        [data-theme="dark"] .complex-usage-badge { background-color: #2a0c0c; color: #ff5252; border-color: #900; }
+        
         .main-usage-text { color: var(--text-dark); line-height: 1.5; }
         .main-usage-text ul { padding-right: 20px; }
         .copy-button {
-            background-color: var(--accent-color); color: var(--card-bg); border: none; padding: 8px 15px;
+            background-color: var(--accent-color); color: var(--bg-page); border: none; padding: 8px 15px;
             border-radius: 25px; cursor: pointer; font-weight: 700; transition: all 0.2s ease;
             display: flex; align-items: center; gap: 8px; margin-top: 15px; align-self: flex-start;
         }
-        .copy-button:hover { background-color: #1A1A1A; transform: translateY(-2px); }
+        [data-theme="dark"] .copy-button { color: #000000; }
+        .copy-button:hover { opacity: 0.9; transform: translateY(-2px); }
         .copy-button.copied { background-color: var(--primary-color); } 
 
         .no-results { text-align: center; padding: 50px; font-size: 1.3em; color: var(--text-light); }
@@ -217,32 +280,34 @@
             padding: 10px 25px; border: none; background-color: var(--bg-app); color: var(--text-light); font-weight: 700; font-size: 1.1em;
             border-radius: 50px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; display: flex; align-items: center; gap: 8px;
         }
-        .special-category-tab:hover { background-color: #e9ecef; }
+        .special-category-tab:hover { background-color: var(--border-color); }
         .special-category-tab.active {
-            background-color: var(--primary-color); color: var(--card-bg); border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(128,0,0,0.2);
+            background-color: var(--primary-color); color: #fff; border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(128,0,0,0.2);
         }
+        [data-theme="dark"] .special-category-tab.active { color: #000000; }
 
         /* Info Card */
         .info-display { display: grid; grid-template-columns: 1fr; gap: 30px; }
         .info-card {
             background-color: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0,0,0,0.05); border-top: 5px solid var(--primary-color); transition: transform 0.3s ease;
+            border: 1px solid var(--border-color); border-top: 5px solid var(--primary-color); transition: transform 0.3s ease;
         }
         .info-card:hover { transform: translateY(-5px); }
         .info-card h3 {
-            font-size: 1.6em; font-weight: 800; color: var(--primary-color); margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #eee; display: flex; align-items: center; gap: 10px;
+            font-size: 1.6em; font-weight: 800; color: var(--primary-color); margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed var(--border-color); display: flex; align-items: center; gap: 10px;
         }
         .info-card h3::before {
-            content: '\f05a'; font-family: "Font Awesome 6 Free"; font-weight: 900; background-color: #fff0f0; color: var(--primary-color); width: 40px; height: 40px;
+            content: '\f05a'; font-family: "Font Awesome 6 Free"; font-weight: 900; background-color: var(--code-bg); color: var(--primary-color); width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.8em;
         }
         .info-content h4 {
-            background-color: var(--accent-color); color: #fff; padding: 8px 20px; border-radius: 50px; display: inline-block; font-size: 1em; margin-top: 25px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            background-color: var(--accent-color); color: var(--bg-page); padding: 8px 20px; border-radius: 50px; display: inline-block; font-size: 1em; margin-top: 25px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
+        [data-theme="dark"] .info-content h4 { color: #000000; }
         .info-content ul { list-style: none; padding: 0; }
         .info-content li { position: relative; padding-right: 35px; margin-bottom: 12px; font-size: 1.05em; line-height: 1.6; color: var(--text-dark); }
         .info-content li::before {
-            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 0; top: 3px; color: var(--primary-color); background-color: #fff0f0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.7em;
+            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 0; top: 3px; color: var(--primary-color); background-color: var(--code-bg); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.7em;
         }
         .info-content p { font-size: 1.05em; line-height: 1.8; color: var(--text-light); margin-bottom: 15px; }
 
@@ -250,41 +315,42 @@
         .routine-container { padding: 10px; }
         .routine-step { display: flex; gap: 20px; margin-bottom: 30px; position: relative; }
         .routine-step::before {
-            content: ''; position: absolute; right: 24px; top: 50px; bottom: -40px; width: 2px; background-color: #e0e0e0; z-index: 0;
+            content: ''; position: absolute; right: 24px; top: 50px; bottom: -40px; width: 2px; background-color: var(--border-color); z-index: 0;
         }
         .routine-step:last-child::before { display: none; }
         .step-number {
-            width: 50px; height: 50px; background-color: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            width: 50px; height: 50px; background-color: var(--primary-color); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-weight: 800; font-size: 1.2em; flex-shrink: 0; z-index: 1; border: 4px solid var(--bg-page); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+        [data-theme="dark"] .step-number { color: #000000; }
         .step-content {
             background-color: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--shadow-light); flex-grow: 1; border: 1px solid var(--border-color);
             position: relative;
         }
         .step-content h4 { color: var(--primary-color); font-weight: 800; margin-bottom: 8px; font-size: 1.2em; display: flex; align-items: center; gap: 10px; }
-        .step-icon { color: #f8d7da; font-size: 1.5em; position: absolute; left: 20px; top: 20px; opacity: 0.5; }
+        .step-icon { color: var(--primary-color); font-size: 1.5em; position: absolute; left: 20px; top: 20px; opacity: 0.3; }
 
         /* FAQ Accordion Style */
         .faq-container { display: flex; flex-direction: column; gap: 15px; }
         .faq-item { background-color: var(--card-bg); border-radius: 12px; box-shadow: var(--shadow-light); overflow: hidden; border: 1px solid var(--border-color); }
         .faq-question {
             padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--accent-color);
-            background-color: #fafafa; transition: all 0.3s;
+            background-color: var(--faq-header-bg); transition: all 0.3s;
         }
-        .faq-question:hover { background-color: #f0f0f0; }
-        .faq-question.active { color: var(--primary-color); background-color: #fff0f0; }
+        .faq-question:hover { background-color: var(--border-color); }
+        .faq-question.active { color: var(--primary-color); background-color: var(--code-bg); }
         .faq-answer {
             padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; color: var(--text-dark); line-height: 1.6;
         }
-        .faq-answer.open { padding: 20px; max-height: 500px; border-top: 1px solid #eee; }
+        .faq-answer.open { padding: 20px; max-height: 500px; border-top: 1px solid var(--border-color); }
 
         /* Selling Tips Style (Cross-Selling) - UPDATED DESIGN */
         .selling-tips-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
         .selling-tip-card {
-            background-color: #fff;
+            background-color: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
+            border: 1px solid var(--border-color);
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
             display: flex;
@@ -296,7 +362,7 @@
         .tip-header-row {
             background-color: var(--trigger-bg);
             padding: 20px;
-            border-bottom: 1px dashed #e0e0e0;
+            border-bottom: 1px dashed var(--border-color);
             display: flex;
             align-items: flex-start;
             gap: 15px;
@@ -309,7 +375,7 @@
         .tip-icon-wrapper.buy { background-color: #fce7f3; color: #be185d; }
         
         .tip-text-wrapper { display: flex; flex-direction: column; gap: 5px; flex-grow: 1; }
-        .tip-meta-label { font-size: 0.8em; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tip-meta-label { font-size: 0.8em; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .tip-main-text { font-size: 1.1em; font-weight: 800; color: var(--text-dark); line-height: 1.4; }
 
         /* 2. Suggestion Section (Middle) */
@@ -323,6 +389,7 @@
             position: relative;
         }
         .tip-icon-wrapper.suggest { background-color: #d1fae5; color: #047857; }
+        [data-theme="dark"] .tip-icon-wrapper.suggest { background-color: rgba(46, 204, 113, 0.2); color: #58d68d; }
         .tip-main-text.highlight { color: var(--success-text); }
         
         /* Connector Arrow */
@@ -335,8 +402,8 @@
         /* 3. Reason Section (Footer) */
         .tip-reason-footer {
             padding: 15px 20px;
-            background-color: #fff;
-            border-top: 1px solid #e2e8f0;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
             font-size: 0.95em;
             color: var(--text-light);
             line-height: 1.6;
@@ -355,6 +422,7 @@
         #calculator-modal.is-visible, #sidebar-overlay.is-visible { display: block; }
         .calc-wrapper {
             background-color: var(--bg-app); border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); width: 100%; max-width: 800px; max-height: 90vh; display: flex; flex-direction: column; margin: auto; position: relative; top: 50%; transform: translateY(-50%); animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
         }
         .calc-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .calc-header h2 { font-size: 1.6em; color: var(--accent-color); font-weight: 700; }
@@ -363,18 +431,109 @@
         .calc-content { padding: 25px; overflow-y: auto; }
         .calc-input-group { margin-bottom: 20px; }
         .calc-input-group label { display: block; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; }
-        .calc-content textarea, .calc-content select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; }
+        .calc-content textarea, .calc-content select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; background-color: var(--input-bg); color: var(--text-dark); }
         .calc-content textarea:focus, .calc-content select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.2); }
         .calc-content textarea { min-height: 150px; resize: vertical; }
         #calc-results-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         #calc-breakdown-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         #calc-breakdown-header h3 { font-size: 1.3em; color: var(--accent-color); }
-        #calc-total-display { background-color: var(--primary-color); color: white; padding: 8px 15px; border-radius: 8px; font-size: 1.2em; font-weight: 800; }
-        .calc-breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #f0f0f0; background-color: var(--card-bg); }
+        #calc-total-display { background-color: var(--primary-color); color: #fff; padding: 8px 15px; border-radius: 8px; font-size: 1.2em; font-weight: 800; }
+        [data-theme="dark"] #calc-total-display { color: #000000; }
+        .calc-breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed var(--border-color); background-color: var(--card-bg); color: var(--text-dark); }
         .calc-status { font-weight: 600; padding: 5px 10px; border-radius: 6px; font-size: 0.9em; text-align: center; }
         .status-receipt-primary { background-color: #ffe0b2; color: #e65100; }
+        [data-theme="dark"] .status-receipt-primary { background-color: #4a2c00; color: #ffb74d; }
         .status-receipt-deferred { background-color: #c8e6c9; color: #28a745; }
+        [data-theme="dark"] .status-receipt-deferred { background-color: #0d2e16; color: #81c784; }
         #calc-error-message { color: #dc3545; font-weight: 700; margin-top: 15px; text-align: center; background-color: #fdd; padding: 10px; border-radius: 8px; }
+        [data-theme="dark"] #calc-error-message { background-color: #2a0c0c; color: #ff5252; }
+        
+        /* ---------------------------------- */
+        /* 6. AI Chat Widget Styles */
+        /* ---------------------------------- */
+        #chat-widget-btn {
+            position: fixed; bottom: 80px; left: 25px; 
+            width: 60px; height: 60px; border-radius: 50%;
+            background-color: var(--primary-color); color: #fff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border: none; cursor: pointer; z-index: 2500;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        [data-theme="dark"] #chat-widget-btn { color: #000000; }
+        #chat-widget-btn:hover { transform: scale(1.1); }
+        
+        .chat-window {
+            position: fixed; bottom: 150px; left: 25px;
+            width: 350px; height: 500px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column;
+            z-index: 2500;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0; transform: translateY(20px); pointer-events: none;
+        }
+        .chat-window.active { opacity: 1; transform: translateY(0); pointer-events: all; }
+        
+        .chat-header {
+            background-color: var(--primary-color); color: #fff;
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700;
+        }
+        [data-theme="dark"] .chat-header { color: #000000; }
+        .chat-close { background: none; border: none; color: inherit; cursor: pointer; font-size: 1.2em; }
+        
+        .chat-messages {
+            flex-grow: 1; overflow-y: auto; padding: 15px;
+            background-color: var(--bg-app);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        
+        .chat-input-area {
+            padding: 10px; border-top: 1px solid var(--border-color);
+            background-color: var(--bg-page);
+            display: flex; gap: 10px;
+        }
+        
+        .chat-input {
+            flex-grow: 1; padding: 10px; border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg); color: var(--text-dark);
+            outline: none;
+        }
+        .chat-send-btn {
+            background-color: var(--primary-color); color: #fff;
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        [data-theme="dark"] .chat-send-btn { color: #000000; }
+        
+        .message { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95em; line-height: 1.4; position: relative; word-wrap: break-word; }
+        .message.user {
+            align-self: flex-end; /* Left in RTL */
+            background-color: var(--primary-color); color: #fff;
+            border-bottom-left-radius: 2px;
+        }
+        [data-theme="dark"] .message.user { color: #000000; }
+        .message.bot {
+            align-self: flex-start; /* Right in RTL */
+            background-color: var(--nav-item-bg); color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            border-bottom-right-radius: 2px;
+        }
+        
+        .grounding-source {
+            font-size: 0.8em; margin-top: 5px; padding-top: 5px; border-top: 1px solid rgba(0,0,0,0.1); display: block;
+        }
+        .grounding-chip {
+            display: inline-block; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; margin: 2px; color: var(--primary-color); text-decoration: none;
+        }
+        .message.user .grounding-chip { display: none; }
+        
+        .typing-indicator { font-style: italic; color: var(--text-light); font-size: 0.8em; align-self: flex-start; margin-left: 10px; display: none; }
 
         /* ---------------------------------- */
         /* 6. Responsive Design */
@@ -394,6 +553,7 @@
             .header-main-content h1 { font-size: 1.6em; text-align: center; }
             .header-top-row { justify-content: center; position: relative; }
             #sidebar-toggle-btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+            
             .search-actions-row { flex-direction: column; align-items: stretch; height: auto; }
             .current-category-info, .search-bar, #open-calculator-btn { height: 45px; }
             .product-grid { grid-template-columns: 1fr; }
@@ -403,8 +563,18 @@
             .main-content-area { border-radius: 0; }
             
             #special-category-tabs-container { overflow-x: auto; white-space: nowrap; padding-bottom: 15px; }
+            
+            #chat-widget-btn { bottom: 20px; left: 20px; width: 50px; height: 50px; }
+            .chat-window { left: 10px; right: 10px; bottom: 80px; width: auto; height: 60vh; }
         }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0"
+  }
+}
+</script>
 </head>
 <body>
     
@@ -416,6 +586,8 @@
                         <h1>آل عبد اللطيف الطرشوبي</h1>
                     </div>
                     <button id="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+                    <!-- Theme Toggle Button Added Here -->
+                    <button id="theme-toggle-btn"><i class="fas fa-moon"></i></button>
                 </div>
                 <div class="search-actions-row">
                     <div class="current-category-info">
@@ -517,9 +689,67 @@
             </div>
         </div>
     </div>
+    
+    <!-- Chat Widget -->
+    <button id="chat-widget-btn"><i class="fas fa-comment-dots"></i></button>
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <span><i class="fas fa-robot"></i> المساعد الذكي</span>
+            <button class="chat-close" id="chat-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot">مرحباً! أنا مساعدك الصيدلي الذكي. كيف يمكنني مساعدتك اليوم؟</div>
+        </div>
+        <div class="typing-indicator" id="typing-indicator">جاري الكتابة...</div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="اكتب سؤالك هنا...">
+            <button class="chat-send-btn" id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
-    <script>
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+
+        // --- CONFIGURATION START ---
+        // تنبيه: استبدل النص التالي بمفتاح API الخاص بك.
+        // Get your key from: https://aistudio.google.com/app/apikey
+        // مثال: window.process = { env: { API_KEY: "AIzaSyD......" } };
+        
+        window.process = { 
+            env: { 
+                API_KEY: "AIzaSyALO98XuMp3f1F1EeDHC9lg9Rn3kL-5sgk" 
+            } 
+        };
+        // --- CONFIGURATION END ---
+
         document.addEventListener('DOMContentLoaded', () => {
+            // --- THEME TOGGLE LOGIC START ---
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const themeIcon = themeToggleBtn.querySelector('i');
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                if (theme === 'dark') {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            }
+
+            // Load saved theme or check system preference
+            const savedTheme = localStorage.getItem('theme') || 
+                               (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            setTheme(savedTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+            // --- THEME TOGGLE LOGIC END ---
+
             // --- DATA START ---
             const appData = {
 "التساقط": {
@@ -9003,7 +9233,7 @@
                         { trigger: "بيع هيدروسول للبشرة الدهنية (نعناع)", suggestion: "ماسك طين (Clay Mask)", reason: "الهيدروسول يعمل بشكل ممتاز لغلق المسام بعد تنظيفها بعمق باستخدام ماسك الطين." }
                     ]
                 },
-                "علاج  الشعر التالف والمتضرر والهيشان": {
+   "علاج  الشعر التالف والمتضرر والهيشان": {
                     "معلومات هامة عن علاج التلف والهيشان والتقصف": [
                         {
                             "name": "التلف والهيشان",
@@ -9064,9 +9294,11 @@
                     ]
                 }
             };
-            // --- DATA END ---
+    
+    // Assign global for easy access (though module scope is separate)
+    window.appData = appData;
 
-              const categoryListElement = document.getElementById('categoryList');
+  const categoryListElement = document.getElementById('categoryList');
             const productsDisplayElement = document.getElementById('productsDisplay');
             const infoDisplayElement = document.getElementById('infoDisplay');
             const routineDisplayElement = document.getElementById('routineDisplay');
@@ -9669,6 +9901,194 @@
 
             calcPricesInput.addEventListener('input', calculateOffer);
             calcOfferType.addEventListener('change', calculateOffer);
+
+            // --- CHATBOT LOGIC START ---
+            const chatBtn = document.getElementById('chat-widget-btn');
+            const chatWindow = document.getElementById('chat-window');
+            const chatClose = document.getElementById('chat-close');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            if (chatBtn && chatWindow && chatClose && chatMessages && chatInput && chatSendBtn) {
+                chatBtn.addEventListener('click', () => {
+                    chatWindow.classList.toggle('active');
+                    if (chatWindow.classList.contains('active')) {
+                        chatInput.focus();
+                    }
+                });
+
+                chatClose.addEventListener('click', () => {
+                    chatWindow.classList.remove('active');
+                });
+
+                chatSendBtn.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            }
+
+            async function sendMessage() {
+                const text = chatInput.value.trim();
+                if (!text) return;
+
+                // Add user message
+                addMessage(text, 'user');
+                chatInput.value = '';
+                
+                // Show typing indicator
+                if (typingIndicator) typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    // Initialize AI with the global process.env.API_KEY
+                    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+                    // Build Context from Site Data
+                    const siteContext = buildSiteContext();
+                    
+                    const response = await ai.models.generateContent({
+                        model: 'gemini-2.5-flash',
+                        contents: text,
+                        config: {
+                            tools: [{ googleSearch: {} }],
+                            systemInstruction: `
+                                أنت مساعد صيدلي ذكي في صيدلية "آل عبد اللطيف الطرشوبي"، تتحدث العربية.
+                                
+                                لديك صلاحية الوصول إلى قاعدة بيانات المنتجات والمعلومات الخاصة بالصيدلية التالية:
+                                ${siteContext}
+                                
+                                التعليمات:
+                                1. استخدم المعلومات الواردة في قاعدة البيانات أعلاه كمرجع أساسي للإجابة على أسئلة المستخدم (مثل الأكواد، طرق الاستخدام، الروتين، النصائح).
+                                2. إذا سأل المستخدم عن منتج موجود في القائمة، قدم له الاسم، الكود، وطريقة الاستخدام بدقة.
+                                3. إذا كانت الإجابة غير موجودة في قاعدة البيانات، استخدم "Google Search" للبحث عن معلومات طبية عامة موثوقة.
+                                4. قدم إجابات دقيقة، مختصرة، ومهذبة.
+                            `
+                        }
+                    });
+
+                    if (typingIndicator) typingIndicator.style.display = 'none';
+
+                    const responseText = response.text || "عذراً، لم أستطع فهم ذلك.";
+                    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+
+                    addMessage(responseText, 'bot', groundingChunks);
+
+                } catch (error) {
+                    console.error(error);
+                    if (typingIndicator) typingIndicator.style.display = 'none';
+                    
+                    let errorMsg = "حدث خطأ أثناء الاتصال بالخادم.";
+                    if (error.message && (error.message.includes('400') || error.message.includes('API key'))) {
+                         errorMsg = "عذراً، مفتاح API غير صالح. يرجى من المطور مراجعة الكود.";
+                    }
+                    addMessage(errorMsg, 'bot');
+                }
+            }
+
+            function buildSiteContext() {
+                // Access appData from the closure (or window.appData)
+                const data = appData; 
+                if (!data) return "لا توجد بيانات متاحة حالياً.";
+
+                let context = "--- بيانات الصيدلية ---\n";
+
+                // Helper to strip HTML tags
+                const stripHtml = (html) => {
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = html;
+                    return tempDiv.textContent || tempDiv.innerText || "";
+                };
+
+                for (const categoryName in data) {
+                    context += `\n[قسم: ${categoryName}]\n`;
+                    const catData = data[categoryName];
+
+                    // 1. Array of Products
+                    if (Array.isArray(catData)) {
+                        catData.forEach((p) => {
+                            context += `- منتج: ${p.name} | كود: ${p.code} | استخدام: ${stripHtml(p.usage)}\n`;
+                        });
+                    } 
+                    // 2. Object with subcategories or special sections
+                    else if (typeof catData === 'object') {
+                        for (const subKey in catData) {
+                            const subData = catData[subKey];
+
+                            if (subKey === 'routines' && Array.isArray(subData)) {
+                                context += `  > روتين العناية:\n`;
+                                subData.forEach((r) => {
+                                    context += `    - ${r.title}: ${r.description}\n`;
+                                });
+                            } else if (subKey === 'sellingTips' && Array.isArray(subData)) {
+                                context += `  > نصائح بيعية:\n`;
+                                subData.forEach((t) => {
+                                    context += `    - اقتراح: ${t.suggestion} (السبب: ${t.reason})\n`;
+                                });
+                            } else if (subKey === 'faqs' && Array.isArray(subData)) {
+                                context += `  > أسئلة شائعة:\n`;
+                                subData.forEach((f) => {
+                                    context += `    - س: ${f.q} | ج: ${f.a}\n`;
+                                });
+                            } else if (Array.isArray(subData)) {
+                                // Subcategory of products
+                                context += `  > فرع: ${subKey}\n`;
+                                subData.forEach((p) => {
+                                    context += `    - منتج: ${p.name} | كود: ${p.code} | استخدام: ${stripHtml(p.usage)}\n`;
+                                });
+                            }
+                        }
+                    }
+                }
+                return context;
+            }
+
+            function addMessage(text, sender, groundingChunks) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${sender}`;
+                
+                // Basic formatting for Markdown-like syntax
+                let formattedText = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+
+                msgDiv.innerHTML = formattedText;
+
+                if (groundingChunks && groundingChunks.length > 0) {
+                    const sourcesDiv = document.createElement('div');
+                    sourcesDiv.className = 'grounding-source';
+                    sourcesDiv.innerHTML = '<strong>المصادر:</strong><br>';
+                    
+                    // Extract unique links
+                    const uniqueLinks = new Map();
+                    groundingChunks.forEach((chunk) => {
+                        if (chunk.web && chunk.web.uri && chunk.web.title) {
+                            if (!uniqueLinks.has(chunk.web.uri)) {
+                                uniqueLinks.set(chunk.web.uri, chunk.web.title);
+                            }
+                        }
+                    });
+
+                    uniqueLinks.forEach((title, uri) => {
+                        const link = document.createElement('a');
+                        link.href = uri;
+                        link.target = '_blank';
+                        link.className = 'grounding-chip';
+                        link.textContent = title;
+                        link.innerHTML += ' <i class="fas fa-external-link-alt" style="font-size:0.8em"></i>';
+                        sourcesDiv.appendChild(link);
+                    });
+                    
+                    if (uniqueLinks.size > 0) {
+                        msgDiv.appendChild(sourcesDiv);
+                    }
+                }
+
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            // --- CHATBOT LOGIC END ---
         });
     </script>
 </body>
