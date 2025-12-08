@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light dark">
     <title>صيدلية آل عبد اللطيف الطرشوبي</title>
     <!-- New Favicon: Medical Shield -->
@@ -73,7 +73,7 @@
             --faq-header-bg: #121212;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         html { scroll-behavior: smooth; }
 
@@ -84,6 +84,7 @@
             direction: rtl;
             text-align: right;
             transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
         }
 
         /* Animations */
@@ -128,7 +129,7 @@
 
         #sidebar-toggle-btn {
             display: none; background: none; border: none; font-size: 1.8em; color: var(--primary-color); cursor: pointer;
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
         }
 
         /* Theme Toggle Button */
@@ -425,7 +426,7 @@
             border: 1px solid var(--border-color);
         }
         .calc-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .calc-header h2 { font-size: 1.6em; color: var(--accent-color); font-weight: 700; }
+        .calc-header h2 { font-size: 1.6em; color: var(--accent-color); font-weight: 700; margin: 0; }
         #calc-close-btn { background: none; border: none; font-size: 1.8em; cursor: pointer; color: var(--text-light); transition: color 0.2s; }
         #calc-close-btn:hover { color: var(--primary-color); }
         .calc-content { padding: 25px; overflow-y: auto; }
@@ -436,7 +437,6 @@
         .calc-content textarea { min-height: 150px; resize: vertical; }
         #calc-results-area { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         #calc-breakdown-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        #calc-breakdown-header h3 { font-size: 1.3em; color: var(--accent-color); }
         #calc-total-display { background-color: var(--primary-color); color: #fff; padding: 8px 15px; border-radius: 8px; font-size: 1.2em; font-weight: 800; }
         [data-theme="dark"] #calc-total-display { color: #000000; }
         .calc-breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed var(--border-color); background-color: var(--card-bg); color: var(--text-dark); }
@@ -452,7 +452,7 @@
         /* 6. AI Chat Widget Styles */
         /* ---------------------------------- */
         #chat-widget-btn {
-            position: fixed; bottom: 80px; left: 25px; 
+            position: fixed; bottom: 30px; left: 25px; 
             width: 60px; height: 60px; border-radius: 50%;
             background-color: var(--primary-color); color: #fff;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
@@ -464,7 +464,7 @@
         #chat-widget-btn:hover { transform: scale(1.1); }
         
         .chat-window {
-            position: fixed; bottom: 150px; left: 25px;
+            position: fixed; bottom: 100px; left: 25px;
             width: 350px; height: 500px;
             background-color: var(--card-bg);
             border-radius: 16px;
@@ -536,7 +536,7 @@
         .typing-indicator { font-style: italic; color: var(--text-light); font-size: 0.8em; align-self: flex-start; margin-left: 10px; display: none; }
 
         /* ---------------------------------- */
-        /* 6. Responsive Design */
+        /* 6. Responsive Design (Mobile Optimization) */
         /* ---------------------------------- */
         @media (max-width: 1200px) {
             #sidebar { position: fixed; top: 0; right: 0; height: 100vh; transform: translateX(100%); z-index: 3000; border-radius: 0; border-left: 1px solid var(--border-color); }
@@ -545,27 +545,153 @@
             .site-body-wrapper { padding: 0 15px; } 
             .main-content { border-radius: 0; }
         }
+
         @media (max-width: 768px) {
-            :root { --header-height: 200px; } 
+            :root { 
+                /* Increased height to accommodate the mobile layout */
+                --header-height: 215px; 
+            } 
+            
             .header-content-wrapper { padding: 0 15px; }
             .header-main-content { gap: 10px; }
-            .logo-title-wrapper { justify-content: center; }
-            .header-main-content h1 { font-size: 1.6em; text-align: center; }
-            .header-top-row { justify-content: center; position: relative; }
-            #sidebar-toggle-btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
             
-            .search-actions-row { flex-direction: column; align-items: stretch; height: auto; }
-            .current-category-info, .search-bar, #open-calculator-btn { height: 45px; }
-            .product-grid { grid-template-columns: 1fr; }
-            .main-category-separator { font-size: 1.4em; }
-            .sub-category-title { font-size: 1.2em; }
-            .site-body-wrapper { padding: 0; margin-top: 20px; }
-            .main-content-area { border-radius: 0; }
+            /* Top Row: Flex distribution for Mobile */
+            .header-top-row { 
+                justify-content: space-between; 
+                flex-wrap: nowrap;
+                height: 60px;
+            }
             
-            #special-category-tabs-container { overflow-x: auto; white-space: nowrap; padding-bottom: 15px; }
+            /* Logo Center */
+            .logo-title-wrapper { 
+                order: 2; 
+                flex-grow: 1; 
+                justify-content: center; 
+            }
+            .header-main-content h1 { font-size: 1.5em; white-space: nowrap; }
+
+            /* Toggle Button (Sidebar) - Right side (RTL start) */
+            #sidebar-toggle-btn { 
+                position: static; 
+                transform: none; 
+                order: 1; /* First in RTL is Right side */
+                font-size: 1.4em;
+            }
+
+            /* Theme Toggle - Left side (RTL end) */
+            #theme-toggle-btn { 
+                position: static; 
+                transform: none; 
+                order: 3;
+            }
             
-            #chat-widget-btn { bottom: 20px; left: 20px; width: 50px; height: 50px; }
-            .chat-window { left: 10px; right: 10px; bottom: 80px; width: auto; height: 60vh; }
+            /* Search Row: Grid Layout for better space usage */
+            .search-actions-row { 
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 10px;
+                height: auto;
+                margin-top: 10px;
+            }
+            
+            /* Search Bar takes full top row */
+            .search-bar {
+                grid-column: 1 / -1; 
+                grid-row: 1;
+                height: 45px;
+            }
+            
+            /* Status Info takes bottom left (visually right in RTL) */
+            .current-category-info {
+                grid-row: 2;
+                grid-column: 1;
+                font-size: 0.85em;
+                padding: 0 10px;
+                height: 45px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            /* Calc Button takes bottom right (visually left in RTL) */
+            #open-calculator-btn {
+                grid-row: 2;
+                grid-column: 2;
+                margin-bottom: 0;
+                font-size: 0.85em;
+                padding: 0 10px;
+                height: 45px;
+                width: 100%;
+            }
+
+            /* Grid & Content */
+            .product-grid { grid-template-columns: 1fr; gap: 15px; }
+            .selling-tips-container { grid-template-columns: 1fr; }
+            .product-card { padding: 15px; }
+            
+            .main-category-separator { 
+                font-size: 1.3em; 
+                padding: 10px 20px;
+                margin-top: 25px;
+            }
+            .sub-category-title { 
+                font-size: 1.1em; 
+                padding: 10px 15px;
+                margin: 20px 0 15px 0;
+            }
+            
+            .site-body-wrapper { 
+                padding: 0 10px; 
+                margin-top: 15px; 
+            }
+            .main-content-area { border-radius: 0; padding: 15px; }
+            
+            /* Tabs Wrap on Mobile */
+            #special-category-tabs-container { 
+                display: flex;
+                flex-wrap: wrap; /* Wrap tabs to next line */
+                overflow-x: visible; 
+                white-space: normal; 
+                padding-bottom: 10px; 
+                margin-bottom: 15px;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            #special-category-tabs-container::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .special-category-tab { 
+                flex-shrink: 0;
+                flex: 1 1 auto; /* Grow to fill space */
+                padding: 8px 12px; 
+                font-size: 0.9em; 
+                justify-content: center;
+            }
+            
+            /* Chat Widget Mobile: Bottom Sheet */
+            #chat-widget-btn { bottom: 20px; left: 20px; width: 50px; height: 50px; font-size: 1.2em; }
+            
+            .chat-window { 
+                left: 0;
+                right: 0; 
+                bottom: 0; 
+                width: 100%; 
+                height: 85vh; /* Full bottom sheet */
+                z-index: 5000;
+                border-radius: 20px 20px 0 0;
+                border-bottom: none;
+            }
+            
+            .chat-header {
+                padding: 15px 20px;
+                border-radius: 20px 20px 0 0;
+            }
+            
+            /* Calculator Modal Mobile */
+            .calc-wrapper { width: 95%; max-height: 85vh; }
+            .calc-header h2 { font-size: 1.3em; }
         }
     </style>
 <script type="importmap">
@@ -582,11 +708,13 @@
         <div class="header-content-wrapper">
              <div class="header-main-content">
                 <div class="header-top-row">
+                    <!-- Mobile: Order changed via CSS flex order logic -->
+                    <button id="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+                    
                     <div class="logo-title-wrapper">
                         <h1>آل عبد اللطيف الطرشوبي</h1>
                     </div>
-                    <button id="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
-                    <!-- Theme Toggle Button Added Here -->
+                    
                     <button id="theme-toggle-btn"><i class="fas fa-moon"></i></button>
                 </div>
                 <div class="search-actions-row">
@@ -5994,7 +6122,7 @@
         }
     ]
 },
-    "تصفيف الشعر الكيرلي": {
+    "الشعر الكيرلى": {
 
 "معلومات هامة عن الشعر الكيرلي وكيفية العناية": [
         {
@@ -6069,7 +6197,7 @@
                             </div>`
         }
     ],
-"تصفيف الشعر الكيرلي": [
+"كريم الشعر الكيرلي": [
         {
             "name": "4MY HAIR CURLY ENHANCING CREAM SHEA BUT 250ML",
             "code": "121432",
@@ -6104,6 +6232,87 @@
             "name": "SUPER KIDS CURLY HAIR GEL (1+YEARS) 250MLL",
             "code": "120528",
             "usage": "<span class='complex-usage'>*جل مناسب للاطفال*</span>لتسريح الشعر وقت اللزوم"
+        }
+    ],
+"شامبو الشعر الكيرلي": [
+        {
+            "name": "DOVE BEAUTIFUL CURLS SHAMPO LOW SULFATE 350ML",
+            "code": "128255",
+            "usage": "شامبو مرتين اسبوعيا"
+        },
+        {
+            "name": "4MY HAIR CURLY SHAMPO SULFATE FREE 250ML",
+            "code": "121430",
+            "usage": "شامبو مرتين اسبوعيا"
+        },
+       {
+            "name": "PLMPY CURLS LOW SULFATE SHAMP 300ML",
+            "code": "137510",
+            "usage": "شامبو مرتين اسبوعيا"
+        },
+     {
+            "name": "TRESEMME SHAM PRO CURLS 250MLشامبو كيرلي",
+            "code": "120263",
+            "usage": "شامبو مرتين اسبوعيا"
+        },
+   {
+            "name": "SUPER KIDS SHAMP CURLY 300ML( 2YEARS)",
+            "code": "116123",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>شامبو مرتين اسبوعيا"
+        },
+   {
+            "name": "EVA  CLINIC AVOCADO&MARSHM SHAMPO(KIDS CURLS) 230M",
+            "code": "128247",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>شامبو مرتين اسبوعيا"
+        }
+    ],
+"بلسم الشعر الكيرلي": [
+        {
+            "name": "DOVE BEAUTIFUL CURLS COND DETANGLING 350ML",
+            "code": "128254",
+            "usage": "بلسم مرتين اسبوعيا"
+        },
+        {
+            "name": "PLMPY  CURLS COND SILICONE FREE 300ML",
+            "code": "137513",
+            "usage": "بلسم مرتين اسبوعيا"
+        },
+       {
+            "name": "EVA HAIR COND CURLS SHEA&LINSEED230M",
+            "code": "75388",
+            "usage": "بلسم مرتين اسبوعيا"
+        },
+     {
+            "name": "AMALFI COND (CURLY HAIR) 250ML",
+            "code": "129085",
+            "usage": "بلسم مرتين اسبوعيا"
+        },
+   {
+            "name": "PENDULINE KIDS COND CURLY SHEA&VITA B5 300ML",
+            "code": "111617",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>بلسم مرتين اسبوعيا"
+        },
+   {
+            "name": "PENDULINE KIDS COND CURLY DEEP CONDITIONER300ML",
+            "code": "25545",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>بلسم مرتين اسبوعيا"
+        }
+    ],
+"ماسك / حمام كريم الشعر الكيرلي": [
+        {
+            "name": "PLMPY  CURLS HAIR MASK SHEA BUTTER 250ML",
+            "code": "137514",
+            "usage": "حمام كريم مرتين اسبوعيا"
+        },
+        {
+            "name": "PENDULINE CURLY KIDS HAIR MASK450M",
+            "code": "72989",
+            "usage": "<span class='complex-usage'>*مناسب للاطفال*</span>حمام كريم مرتين اسبوعيا"
+        },
+        {
+            "name": "EVA HAIR MASK CURLS SHEA&LINSEED200G",
+            "code": "75991",
+            "usage": "حمام كريم مرتين اسبوعيا"
         }
     ],
 "routines": [
@@ -9294,7 +9503,6 @@
                     ]
                 }
             };
-    
     // Assign global for easy access (though module scope is separate)
     window.appData = appData;
 
