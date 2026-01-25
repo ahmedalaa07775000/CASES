@@ -512,19 +512,35 @@
             </header>
         );
 
-        const WelcomeScreen = ({ colleagueName, setColleagueName, onStart }) => {
+const WelcomeScreen = ({ colleagueName, setColleagueName, onStart }) => {
             const [error, setError] = useState('');
+   const handleSubmit = () => {
+    SoundSystem.play('select');
+    if (!colleagueName.trim()) {
+        setError('من فضلك أدخل اسمك للبدء');
+        SoundSystem.play('wrong');
+        return;
+    }
 
-            const handleSubmit = () => {
-                SoundSystem.play('select');
-                if (!colleagueName.trim()) {
-                    setError('من فضلك أدخل اسمك للبدء');
-                    SoundSystem.play('wrong');
-                    return;
-                }
-                SoundSystem.play('transition');
-                onStart();
-            };
+    // --- الجزء الجديد لإرسال الاسم لجوجل شيت ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx_9M-ujTzMPDoCfBC1kD-7uim06skxMduk4m3Vmx5kW_RCaIdQ5Qc-9stzReTOQoioKQ/exec';
+    
+    // إرسال البيانات في الخلفية بدون تعطيل المستخدم
+    const formData = new FormData();
+    formData.append('name', colleagueName);
+
+    fetch(scriptURL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: formData 
+    })
+    .then(() => console.log("Name saved!"))
+    .catch(err => console.error("Error saving name", err));
+    // ------------------------------------------
+
+    SoundSystem.play('transition');
+    onStart();
+};
 
             return (
                 <div className="flex flex-col items-center justify-center py-12 px-6 animate-fade-in">
@@ -867,4 +883,5 @@
     </script>
 </body>
 </html>
+
 
