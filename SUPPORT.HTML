@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmo Support</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3058/3058913.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #800020; /* عنابي فخم */
+            --primary-light: #a52a2a;
+            --secondary: #fdf2f2;
+            --glass: rgba(255, 255, 255, 0.9);
+            --shadow: 0 8px 32px 0 rgba(128, 0, 32, 0.1);
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f8f4f4 0%, #ede4e4 100%);
+            margin: 0;
+            padding: 15px;
+            color: #2d3436;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 480px; margin: auto; }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 25px 15px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(128, 0, 32, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+
+        .slogan {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(4px);
+            padding: 18px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1px solid rgba(128, 0, 32, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-val {
+            display: block;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #636e72;
+            font-weight: 500;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--primary);
+            padding-right: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-family: 'Tajawal';
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.05);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            background: var(--primary-light);
+            box-shadow: 0 5px 15px rgba(128, 0, 32, 0.3);
+        }
+
+        button:active { transform: scale(0.96); }
+
+        .details-box {
+            display: none;
+            background: white;
+            border: 1px solid var(--secondary);
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 5px;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 0.95em;
+        }
+
+        .section-header {
+            font-size: 0.85em;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 15px 0 10px;
+            background: var(--secondary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border-right: 3px solid var(--primary);
+        }
+
+        .success-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="slogan">آل عبد اللطيف الطرشوبي</span>
+        <h2 style="margin:0; font-size: 1.5em;">TEAM Support</h2>
+    </div>
+
+    <div class="dashboard">
+        <div class="stat-card" onclick="toggleDetails('todayDetails')">
+            <span class="stat-val" id="todayTotal">0</span>
+            <span class="stat-label">إجمالي اليوم ⚡</span>
+        </div>
+        <div class="stat-card" onclick="toggleDetails('monthDetails')">
+            <span class="stat-val" id="monthTotal">0</span>
+            <span class="stat-label">آخر 30 يوم 📅</span>
+        </div>
+    </div>
+
+    <div id="todayDetails" class="details-box">
+        <div class="section-header">أكثر 3 زملاء سألوا اليوم:</div>
+        <div id="todayAgents"></div>
+        <div class="section-header">تحليل الحالات:</div>
+        <div id="todayInquiries"></div>
+    </div>
+
+    <div id="monthDetails" class="details-box">
+        <div class="section-header">أكثر 3 زملاء سؤالاً (شهرياً):</div>
+        <div id="monthAgents"></div>
+        <div class="section-header">تحليل الحالات (شهرياً):</div>
+        <div id="monthInquiries"></div>
+    </div>
+
+    <div class="card">
+        <label>الزميل المستفسر</label>
+        <input type="text" id="agentName" placeholder="اسم الزميل...">
+
+        <label>نوع الخدمة المقدمة</label>
+        <select id="inquiryType">
+            <option value="منتج جديد">🆕 منتج جديد</option>
+            <option value="منتج متوفر">✅ منتج متوفر</option>
+            <option value="روشته">📝 روشته</option>
+            <option value="عرض بديل">♻️ عرض بديل</option>
+            <option value="استشارة شعر">💇 استشارة شعر</option>
+            <option value="استشارة بشره">✨ استشارة بشره</option>
+            <option value="عرض">🎁 عرض</option>
+        </select>
+
+        <label>عدد الحالات</label>
+        <input type="number" id="count" value="1" min="1">
+
+        <button onclick="sendData()" id="submitBtn">
+            <span>تسجيل وحفظ البيانات</span>
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="success-toast">تم الحفظ بنجاح! ✓</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxyMTNwH-cQjWS-5cOmlMBf42F1vBi15tKZDVC8CvjQwwIH6j0e857u7WgWJbnURHWc/exec";
+
+    window.onload = refreshStats;
+
+    function toggleDetails(id) {
+        const el = document.getElementById(id);
+        const all = document.querySelectorAll('.details-box');
+        all.forEach(box => { if(box.id !== id) box.style.display = 'none'; });
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    async function refreshStats() {
+        try {
+            const response = await fetch(WEB_APP_URL);
+            const data = await response.json();
+            
+            document.getElementById('todayTotal').innerText = data.today.total || 0;
+            document.getElementById('monthTotal').innerText = data.last30Days.total || 0;
+
+            renderList('todayAgents', data.today.topAgents);
+            renderInquiryStats('todayInquiries', data.today.inquiries);
+            renderList('monthAgents', data.last30Days.topAgents);
+            renderInquiryStats('monthInquiries', data.last30Days.inquiries);
+        } catch (e) { console.error("Update error"); }
+    }
+
+    function renderList(elementId, items) {
+        const el = document.getElementById(elementId);
+        if(!items || items.length === 0) { el.innerHTML = "لا يوجد بيانات."; return; }
+        el.innerHTML = items.map(item => `
+            <div class="item-row"><span>${item.name}</span><strong>${item.count}</strong></div>
+        `).join('');
+    }
+
+    function renderInquiryStats(elementId, obj) {
+        const el = document.getElementById(elementId);
+        const entries = Object.entries(obj);
+        if(entries.length === 0) { el.innerHTML = "لا يوجد بيانات."; return; }
+        el.innerHTML = entries.map(([type, count]) => `
+            <div class="item-row"><span>${type}</span><strong>${count}</strong></div>
+        `).join('');
+    }
+
+    async function sendData() {
+        const agentInput = document.getElementById('agentName');
+        const inquiryType = document.getElementById('inquiryType').value;
+        const countInput = document.getElementById('count');
+        const btn = document.getElementById('submitBtn');
+        const toast = document.getElementById('toast');
+
+        if (!agentInput.value.trim()) { alert("يرجى إدخال اسم الزميل"); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = "جاري الحفظ...";
+
+        try {
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                agentName: agentInput.value.trim(),
+                inquiryType: inquiryType,
+                count: parseInt(countInput.value)
+            })});
+            
+            agentInput.value = '';
+            countInput.value = '1';
+            
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            
+            refreshStats();
+        } catch (e) { alert("حدث خطأ"); }
+        finally {
+            btn.disabled = false;
+            btn.innerHTML = "تسجيل وحفظ البيانات";
+        }
+    }
+</script>
+</body>
+</html>
