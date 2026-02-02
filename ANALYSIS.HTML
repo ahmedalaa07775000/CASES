@@ -266,98 +266,175 @@
     };
 
     const FollowUpScreen = ({ data, onRefresh, showToast }) => {
-      const [startDate, setStartDate] = useState('');
-      const [endDate, setEndDate] = useState('');
+      const [tab, setTab] = useState('pending');
       const [updating, setUpdating] = useState(null);
 
-      const pending = useMemo(() => {
-        return data.reviews.filter(r => r.Category.includes("المتابعة مع العميل") && !data.followups.some(f => f.CustomerPhone === r.CustomerPhone));
-      }, [data.reviews, data.followups]);
+      const FOLLOWUP_RESULTS = ["لم يتم الرد اطلاقا", "تم الرد بدون نقاش", "نقاش بدون شراء", "العميل نفذ اوردر بعد المتابعة"];
 
-      const filtered = useMemo(() => {
-        if (!startDate || !endDate) return pending;
-        const s = new Date(startDate); const e = new Date(endDate);
-        return pending.filter(r => { const d = new Date(r.MessageDate); return d >= s && d <= e; });
-      }, [pending, startDate, endDate]);
+      const { pending, completed } = useMemo(() => {
+        const reviews = data.reviews.filter(r => r.Category.includes("المتابعة مع العميل"));
+        const p = [], c = [];
+        reviews.forEach(r => {
+          const info = data.followups.find(f => f.CustomerPhone === r.CustomerPhone);
+          if (info) c.push({ ...r, followUpInfo: info });
+          else p.push(r);
+        });
+        return { pending: p, completed: c };
+      }, [data]);
 
-      const handleDone = async (phone, result) => {
+      const items = tab === 'pending' ? pending : completed;
+
+      const handleUpdate = async (phone, result) => {
         setUpdating(phone);
-        await api.postData('addFollowUp', { customerPhone: phone, followUpResult: result });
-        showToast("تم تحديث المتابعة");
-        onRefresh();
-        setUpdating(null);
+        try {
+          await api.postData('addFollowUp', { customerPhone: phone, followUpResult: result });
+          showToast("تم تسجيل المتابعة بنجاح");
+          onRefresh();
+        } catch (e) { alert("Error"); }
+        finally { setUpdating(null); }
       };
 
       return (
-        <div className="animate-screen">
-          <ScreenHeader title="المتابعة" subtitle="متابعة العملاء" icon="📞" totalLabel="المطلوب" totalCount={pending.length} />
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex items-center gap-2">
-            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="flex-1 p-2 bg-gray-50 border rounded-lg text-[11px] font-black" />
-            <span className="text-[10px] text-gray-400">إلى</span>
-            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="flex-1 p-2 bg-gray-50 border rounded-lg text-[11px] font-black" />
+        <div className="animate-in space-y-6">
+          <ScreenHeader title="المتابعة" subtitle="إدارة وتتبع تواصل العملاء" icon="✨" totalLabel="بانتظار العمل" totalCount={pending.length} />
+          
+          <div className="flex bg-white p-1.5 rounded-[1.5rem] shadow-sm border border-gray-100">
+            <button onClick={() => setTab('pending')} className={`flex-1 py-4 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 ${tab === 'pending' ? 'bg-maroon text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}>
+              <span>قيد التنفيذ</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] ${tab === 'pending' ? 'bg-white/20' : 'bg-gray-100'}`}>{pending.length}</span>
+            </button>
+            <button onClick={() => setTab('completed')} className={`flex-1 py-4 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 ${tab === 'completed' ? 'bg-maroon text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}>
+              <span>مكتمل</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] ${tab === 'completed' ? 'bg-white/20' : 'bg-gray-100'}`}>{completed.length}</span>
+            </button>
           </div>
+
           <div className="space-y-4">
-            {filtered.map((item, i) => (
-              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100">
-                <div className="flex justify-between items-center mb-3">
-                  <p className="text-xl font-black text-gray-800">{item.CustomerPhone}</p>
-                  <button onClick={() => { navigator.clipboard.writeText(item.CustomerPhone); showToast("تم النسخ"); }} className="text-[10px] bg-gray-50 p-2 rounded-lg font-black">نسخ 📋</button>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-xl text-[10px] mb-4">
-                  <p className="font-bold text-gray-400 mb-1">الزميل: {item.EmployeeName}</p>
-                  <p className="italic text-gray-600 leading-relaxed">"{item.Comment}"</p>
-                </div>
-                <div className="grid grid-cols-1 gap-1.5">
-                  {FOLLOWUP_RESULTS.map(res => (
-                    <button key={res} disabled={updating === item.CustomerPhone} onClick={() => handleDone(item.CustomerPhone, res)} className="p-2.5 bg-white border border-gray-100 rounded-lg text-[10px] font-black hover:bg-maroon hover:text-white transition-all">
-                      {res}
-                    </button>
-                  ))}
-                </div>
+            {items.length === 0 ? (
+              <div className="bg-white p-12 rounded-3xl text-center border border-gray-100 opacity-40">
+                <p className="text-3xl mb-1">✅</p>
+                <p className="text-[11px] font-black uppercase">لا يوجد عملاء {tab === 'pending' ? 'للمتابعة' : 'في القائمة'}</p>
               </div>
-            ))}
+            ) : (
+              items.map((item, i) => (
+                <div key={i} className={`bg-white p-5 rounded-3xl shadow-sm border-r-[6px] transition-all border border-gray-100 ${tab === 'pending' ? 'border-r-maroon' : 'border-r-green-500'}`}>
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="text-xl font-black text-gray-800 tracking-wide">{item.CustomerPhone}</p>
+                    <button onClick={() => { navigator.clipboard.writeText(item.CustomerPhone); showToast("تم نسخ الرقم"); }} className="p-2 bg-gray-50 rounded-xl">📋</button>
+                  </div>
+                  <div className="bg-gray-50/80 p-4 rounded-2xl text-[11px] mb-5 border border-gray-100/50">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-black text-maroon">الزميل: {item.EmployeeName}</span>
+                      <span className="text-[9px] bg-white px-2 py-0.5 rounded-lg">المشرف: {item.SupervisorName}</span>
+                    </div>
+                    <p className="italic text-gray-600 leading-relaxed font-semibold">"{item.Comment}"</p>
+                  </div>
+                  {tab === 'pending' ? (
+                    <div className="grid grid-cols-1 gap-2">
+                      {FOLLOWUP_RESULTS.map(res => (
+                        <button key={res} disabled={updating === item.CustomerPhone} onClick={() => handleUpdate(item.CustomerPhone, res)} className="text-right p-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-black hover:bg-maroon hover:text-white transition-all flex justify-between items-center">
+                          <span>{res}</span>
+                          <span className="opacity-0 group-hover:opacity-100">✓</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 p-3 bg-green-50 text-green-700 rounded-2xl border border-green-100">
+                      <span className="text-lg">✅</span>
+                      <p className="text-xs font-black">{item.followUpInfo?.FollowUpResult}</p>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       );
     };
-
     const CoachingScreen = ({ data, onRefresh, showToast }) => {
       const [tab, setTab] = useState('pending');
-      const [updating, setUpdating] = useState(null);
+      const [isAddingNew, setIsAddingNew] = useState(false);
+      const [empSearch, setEmpSearch] = useState('');
+      const [selectedEmp, setSelectedEmp] = useState(null);
+      const [coachingDetails, setCoachingDetails] = useState('');
+      const [coachingDate, setCoachingDate] = useState(new Date().toISOString().split('T')[0]);
+      const [showDropdown, setShowDropdown] = useState(false);
+      const [isSubmitting, setIsSubmitting] = useState(false);
+      const dropdownRef = useRef(null);
 
-      const items = useMemo(() => {
-        return data.reviews.filter(r => tab === 'pending' ? r.CoachingStatus !== 'تم عمل كوتشينج' : r.CoachingStatus === 'تم عمل كوتشينج');
-      }, [data.reviews, tab]);
+      const items = useMemo(() => data.reviews.filter(r => tab === 'pending' ? r.CoachingStatus !== 'تم عمل كوتشينج' : r.CoachingStatus === 'تم عمل كوتشينج'), [data.reviews, tab]);
+      const filteredEmps = useMemo(() => empSearch ? data.employees.filter(e => e.EmployeeName.toLowerCase().includes(empSearch.toLowerCase())) : data.employees, [empSearch, data.employees]);
+
+      const handleSaveNew = async (e) => {
+        e.preventDefault();
+        if (!selectedEmp || !coachingDetails) return alert("أكمل البيانات");
+        setIsSubmitting(true);
+        try {
+          await api.postData('addReview', {
+            messageDate: coachingDate, customerPhone: 'يدوي', employeeName: selectedEmp.EmployeeName,
+            supervisorName: selectedEmp.SupervisorName, comment: coachingDetails, categories: 'كوتشينج يدوي',
+            reviewerName: 'إدخال يدوي', coachingStatus: 'تم عمل كوتشينج'
+          });
+          showToast("تم الحفظ بنجاح");
+          setIsAddingNew(false); setCoachingDetails(''); setSelectedEmp(null); setEmpSearch(''); onRefresh();
+        } catch (e) { alert("خطأ"); }
+        setIsSubmitting(false);
+      };
 
       const handleComplete = async (rev) => {
-        setUpdating(rev.CustomerPhone + rev.EmployeeName);
-        await api.postData('updateCoaching', { customerPhone: rev.CustomerPhone, employeeName: rev.EmployeeName });
-        showToast("تم إتمام الكوتشينج");
-        onRefresh();
-        setUpdating(null);
+        try {
+          await api.postData('updateCoaching', { customerPhone: rev.CustomerPhone, employeeName: rev.EmployeeName });
+          showToast("تم الإتمام"); onRefresh();
+        } catch (e) { alert("خطأ"); }
       };
 
       return (
-        <div className="animate-screen">
-          <ScreenHeader title="الكوتشينج" subtitle="تطوير آداء الزملاء" icon="👨‍🏫" totalLabel="الاجمالي" totalCount={data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length} />
-          <div className="flex bg-white p-1 rounded-2xl mb-6 shadow-sm border">
-            <button onClick={() => setTab('pending')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'pending' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>قيد التنفيذ ({data.reviews.filter(r => r.CoachingStatus !== 'تم عمل كوتشينج').length})</button>
-            <button onClick={() => setTab('completed')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
-          </div>
-          <div className="space-y-4">
-            {items.map((item, i) => (
-              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100">
-                <div className="flex justify-between items-center mb-3">
-                  <p className="font-black text-gray-800">{item.EmployeeName}</p>
-                  {tab === 'pending' && <button disabled={updating === item.CustomerPhone + item.EmployeeName} onClick={() => handleComplete(item)} className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black">إتمام ✓</button>}
+        <div className="animate-in space-y-6">
+          <ScreenHeader title="الكوتشينج" subtitle="تطوير الآداء" icon="👨‍🏫" totalLabel="مكتمل" totalCount={data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length} />
+          
+          <button onClick={() => setIsAddingNew(!isAddingNew)} className={`w-full py-4 rounded-2xl font-black shadow-lg ${isAddingNew ? 'bg-gray-100 text-gray-500' : 'bg-maroon text-white'}`}>
+            {isAddingNew ? 'إلغاء الإضافة' : '➕ إضافة كوتشينج جديد'}
+          </button>
+
+          {isAddingNew && (
+            <form onSubmit={handleSaveNew} className="bg-white p-6 rounded-3xl shadow-sm border space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative">
+                  <input type="text" placeholder="اسم الزميل..." value={selectedEmp ? selectedEmp.EmployeeName : empSearch} onChange={e => {setEmpSearch(e.target.value); setSelectedEmp(null); setShowDropdown(true);}} onFocus={() => setShowDropdown(true)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold outline-none" required />
+                  {showDropdown && filteredEmps.length > 0 && (
+                    <ul className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-2xl max-h-48 overflow-y-auto">
+                      {filteredEmps.map((emp, i) => (
+                        <li key={i} onClick={() => {setSelectedEmp(emp); setShowDropdown(false);}} className="p-3 hover:bg-maroon hover:text-white cursor-pointer font-bold border-b text-xs">{emp.EmployeeName}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <div className="text-[10px] text-gray-500 space-y-2">
-                  <p className="bg-gray-50 p-3 rounded-lg italic">"{item.Comment}"</p>
-                  <div className="flex justify-between px-1 opacity-60"><span>📱 {item.CustomerPhone}</span><span>📅 {new Date(item.MessageDate).toLocaleDateString('en-GB')}</span></div>
-                </div>
+                <input type="date" value={coachingDate} onChange={e => setCoachingDate(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold outline-none" required />
               </div>
-            ))}
-          </div>
+              <textarea value={coachingDetails} onChange={e => setCoachingDetails(e.target.value)} placeholder="تفاصيل الجلسة..." className="w-full p-4 bg-gray-50 border rounded-xl font-bold h-32" required />
+              <button type="submit" disabled={isSubmitting} className="w-full bg-green-600 text-white py-4 rounded-xl font-black">{isSubmitting ? 'جاري الحفظ...' : 'حفظ الكوتشينج'}</button>
+            </form>
+          )}
+
+          {!isAddingNew && (
+            <>
+              <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
+                           <button onClick={() => setTab('pending')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'pending' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>قيد التنفيذ ({data.reviews.filter(r => r.CoachingStatus !== 'تم عمل كوتشينج').length})</button>
+            <button onClick={() => setTab('completed')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
+              </div>
+              <div className="space-y-4">
+                {items.map((item, i) => (
+                  <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100 flex justify-between items-start">
+                    <div>
+                      <p className="font-black text-gray-800">{item.EmployeeName}</p>
+                      <p className="text-[10px] text-gray-500 italic mt-1">"{item.Comment}"</p>
+                    </div>
+                    {tab === 'pending' && <button onClick={() => handleComplete(item)} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">إتمام ✓</button>}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       );
     };
