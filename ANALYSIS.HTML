@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23800020%22/><text y=%22.75em%22 x=%2250%%22 font-size=%2280%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22serif%22>✦</text></svg>">
-  <title>Analysis</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23800020%22/><path d=%22M50 20 L80 50 L50 80 L20 50 Z%22 fill=%22white%22/><path d=%22M50 20 L80 50 L50 50 Z%22 fill=%22%23eeeeee%22/><path d=%22M20 50 L50 80 L50 50 Z%22 fill=%22%23cccccc%22/></svg>">  <title>Analysis</title>
   
   <!-- CDNs: React, Babel, Tailwind, Lucide, Fonts -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -517,7 +516,7 @@
 
       return (
         <div className="animate-screen space-y-10 pb-20">
-          <ScreenHeader title="التحليلات الذكية" subtitle="رؤية شاملة للأداء الفني" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
+          <ScreenHeader title="التحليلات" subtitle="رؤية شاملة لآداء الزملاء" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
           
           <div className="flex bg-maroon-dark p-1.5 rounded-2xl gap-1 mb-8 max-w-sm mx-auto shadow-xl">
             {['today', 'week', 'month', 'all'].map(f => (
@@ -799,4 +798,5 @@
     root.render(<App />);
   </script>
 </body>
+
 </html>
