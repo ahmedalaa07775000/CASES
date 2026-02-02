@@ -1,0 +1,802 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23800020%22/><text y=%22.75em%22 x=%2250%%22 font-size=%2280%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22serif%22>✦</text></svg>">
+  <title>Analysis</title>
+  
+  <!-- CDNs: React, Babel, Tailwind, Lucide, Fonts -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            maroon: {
+              DEFAULT: '#800020',
+              light: '#a52a2a',
+              dark: '#500010',
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          borderRadius: {
+            '4xl': '2rem',
+            '5xl': '2.5rem',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #800020;
+      border-radius: 10px;
+    }
+    
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-screen {
+      animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Custom Toast Animation */
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translate(-50%, -20px); }
+      15% { opacity: 1; transform: translate(-50%, 0); }
+      85% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, -20px); }
+    }
+    .toast-active {
+      animation: toastFade 3s ease-in-out forwards;
+    }
+
+    details > summary {
+      list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback, useRef } = React;
+
+    // --- Constants ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyMTNwH-cQjWS-5cOmlMBf42F1vBi15tKZDVC8CvjQwwIH6j0e857u7WgWJbnURHWc/exec";
+    
+    const CATEGORIES = [
+      "استشارة شعر", "استشارة بشرة", "توجيه العميل للطبيب بدون داعي",
+      "استخدام لينك من التطبيق بدون داعي", "عدم شرح طريقة الاستخدام",
+      "فرصة بيع ضائعة", "المتابعة مع العميل"
+    ];
+
+    const INQUIRY_TYPES = [
+      "منتج جديد", "منتج متوفر", "عرض بديل", "روشته", "استشارة بشرة", "استشارة شعر", "عروض"
+    ];
+
+    const FOLLOWUP_RESULTS = [
+      "لم يتم الرد اطلاقا", "تم الرد بدون نقاش", "نقاش بدون شراء", "العميل نفذ اوردر بعد المتابعة"
+    ];
+
+    const REVIEWERS = ["Ahmed Alaa", "Mariam Kamal"];
+
+    // --- API ---
+    const api = {
+      async fetchData() {
+        const res = await fetch(`${SCRIPT_URL}?action=readAll`);
+        return await res.json();
+      },
+      async postData(action, payload) {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action, ...payload }),
+          mode: 'no-cors'
+        });
+        return { status: 'success' };
+      }
+    };
+
+    // --- Components ---
+    const Toast = ({ message }) => {
+      if (!message) return null;
+      return (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] toast-active bg-maroon text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-2 font-bold border border-white/20">
+          <span className="text-lg">✨</span>
+          {message}
+        </div>
+      );
+    };
+
+    const ScreenHeader = ({ title, subtitle, icon, totalLabel, totalCount }) => (
+      <div className="bg-gradient-to-br from-maroon to-maroon-dark text-white p-5 md:p-6 rounded-3xl shadow-lg relative overflow-hidden flex justify-between items-center mb-6">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="z-10 text-right">
+          <h2 className="text-lg md:text-xl font-black flex items-center gap-2">
+            {icon} {title}
+          </h2>
+          <p className="text-[10px] md:text-[11px] opacity-70 font-bold tracking-wide">{subtitle}</p>
+        </div>
+        <div className="text-center z-10 bg-white/10 p-2 md:p-3 rounded-2xl backdrop-blur-md border border-white/5 min-w-[70px]">
+          <p className="text-[7px] opacity-80 font-black tracking-widest uppercase mb-0.5">{totalLabel}</p>
+          <p className="text-xl font-black">{totalCount}</p>
+        </div>
+      </div>
+    );
+
+    const ReviewScreen = ({ data, onRefresh, showToast }) => {
+      const [phone, setPhone] = useState('');
+      const [msgDate, setMsgDate] = useState(new Date().toISOString().split('T')[0]);
+      const [empSearch, setEmpSearch] = useState('');
+      const [selectedEmp, setSelectedEmp] = useState(null);
+      const [comment, setComment] = useState('');
+      const [reviewer, setReviewer] = useState(REVIEWERS[0]);
+      const [selectedCats, setSelectedCats] = useState([]);
+      const [isSubmitting, setIsSubmitting] = useState(false);
+      const [showDropdown, setShowDropdown] = useState(false);
+      const dropdownRef = useRef(null);
+
+      useEffect(() => {
+        const clickAway = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowDropdown(false); };
+        document.addEventListener('mousedown', clickAway);
+        return () => document.removeEventListener('mousedown', clickAway);
+      }, []);
+
+      const filteredEmps = useMemo(() => {
+        if (!empSearch) return data.employees;
+        return data.employees.filter(e => e.EmployeeName.toLowerCase().includes(empSearch.toLowerCase()));
+      }, [empSearch, data.employees]);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!selectedEmp || !phone || selectedCats.length === 0) return alert("برجاء إكمال البيانات");
+        setIsSubmitting(true);
+        try {
+          await api.postData('addReview', {
+            messageDate: msgDate,
+            customerPhone: phone,
+            employeeName: selectedEmp.EmployeeName,
+            supervisorName: selectedEmp.SupervisorName,
+            comment,
+            categories: selectedCats.join(', '),
+            reviewerName: reviewer
+          });
+          showToast("تم الحفظ بنجاح");
+          setPhone(''); setComment(''); setSelectedCats([]); setEmpSearch(''); setSelectedEmp(null);
+          onRefresh();
+        } catch (err) { alert("حدث خطأ"); }
+        setIsSubmitting(false);
+      };
+
+      return (
+        <div className="animate-screen">
+          <ScreenHeader title="مراجعة الاستشارات" subtitle="جودة رسائل الزملاء" icon="📝" totalLabel="الإجمالي" totalCount={data.reviews.length} />
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-3xl shadow-sm space-y-6 border border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-gray-500">المراجع</label>
+                <select value={reviewer} onChange={e => setReviewer(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none">
+                  {REVIEWERS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-gray-500">تاريخ اليوم</label>
+                <input type="date" value={msgDate} onChange={e => setMsgDate(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none" required />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-gray-500">رقم العميل</label>
+                <input type="text" placeholder="01xxxxxxxxx" value={phone} onChange={e => setPhone(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none" required />
+              </div>
+              <div className="space-y-1 relative" ref={dropdownRef}>
+                <label className="text-[11px] font-black text-gray-500">اسم الزميل</label>
+                <input type="text" placeholder="ابحث..." value={selectedEmp ? selectedEmp.EmployeeName : empSearch} onChange={e => { setEmpSearch(e.target.value); setSelectedEmp(null); setShowDropdown(true); }} onFocus={() => setShowDropdown(true)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none" required />
+                {showDropdown && filteredEmps.length > 0 && (
+                  <ul className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                    {filteredEmps.map((emp, i) => (
+                      <li key={i} onClick={() => { setSelectedEmp(emp); setShowDropdown(false); }} className="p-3 hover:bg-maroon hover:text-white cursor-pointer font-bold border-b text-xs">
+                        {emp.EmployeeName} <span className="text-[9px] opacity-60 block">المشرف: {emp.SupervisorName}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-gray-500">تصنيف الأخطاء</label>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map(cat => (
+                  <button key={cat} type="button" onClick={() => setSelectedCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])} className={`px-3 py-2 rounded-lg text-[10px] font-black transition-all border ${selectedCats.includes(cat) ? 'bg-maroon text-white border-maroon' : 'bg-white text-gray-500 border-gray-100'}`}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[11px] font-black text-gray-500">التفاصيل</label>
+              <textarea value={comment} onChange={e => setComment(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none h-24 resize-none" placeholder="اكتب تفاصيل الرسالة كاملة و التصرف الأمثل..." required />
+            </div>
+            <button type="submit" disabled={isSubmitting} className="w-full bg-maroon text-white py-4 rounded-xl font-black text-lg shadow-lg hover:bg-maroon-dark disabled:opacity-50">
+              {isSubmitting ? 'جاري الحفظ...' : 'حفظ المراجعة'}
+            </button>
+          </form>
+        </div>
+      );
+    };
+
+    const FollowUpScreen = ({ data, onRefresh, showToast }) => {
+      const [startDate, setStartDate] = useState('');
+      const [endDate, setEndDate] = useState('');
+      const [updating, setUpdating] = useState(null);
+
+      const pending = useMemo(() => {
+        return data.reviews.filter(r => r.Category.includes("المتابعة مع العميل") && !data.followups.some(f => f.CustomerPhone === r.CustomerPhone));
+      }, [data.reviews, data.followups]);
+
+      const filtered = useMemo(() => {
+        if (!startDate || !endDate) return pending;
+        const s = new Date(startDate); const e = new Date(endDate);
+        return pending.filter(r => { const d = new Date(r.MessageDate); return d >= s && d <= e; });
+      }, [pending, startDate, endDate]);
+
+      const handleDone = async (phone, result) => {
+        setUpdating(phone);
+        await api.postData('addFollowUp', { customerPhone: phone, followUpResult: result });
+        showToast("تم تحديث المتابعة");
+        onRefresh();
+        setUpdating(null);
+      };
+
+      return (
+        <div className="animate-screen">
+          <ScreenHeader title="المتابعة" subtitle="متابعة العملاء" icon="📞" totalLabel="المطلوب" totalCount={pending.length} />
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex items-center gap-2">
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="flex-1 p-2 bg-gray-50 border rounded-lg text-[11px] font-black" />
+            <span className="text-[10px] text-gray-400">إلى</span>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="flex-1 p-2 bg-gray-50 border rounded-lg text-[11px] font-black" />
+          </div>
+          <div className="space-y-4">
+            {filtered.map((item, i) => (
+              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <p className="text-xl font-black text-gray-800">{item.CustomerPhone}</p>
+                  <button onClick={() => { navigator.clipboard.writeText(item.CustomerPhone); showToast("تم النسخ"); }} className="text-[10px] bg-gray-50 p-2 rounded-lg font-black">نسخ 📋</button>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl text-[10px] mb-4">
+                  <p className="font-bold text-gray-400 mb-1">الزميل: {item.EmployeeName}</p>
+                  <p className="italic text-gray-600 leading-relaxed">"{item.Comment}"</p>
+                </div>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {FOLLOWUP_RESULTS.map(res => (
+                    <button key={res} disabled={updating === item.CustomerPhone} onClick={() => handleDone(item.CustomerPhone, res)} className="p-2.5 bg-white border border-gray-100 rounded-lg text-[10px] font-black hover:bg-maroon hover:text-white transition-all">
+                      {res}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const CoachingScreen = ({ data, onRefresh, showToast }) => {
+      const [tab, setTab] = useState('pending');
+      const [updating, setUpdating] = useState(null);
+
+      const items = useMemo(() => {
+        return data.reviews.filter(r => tab === 'pending' ? r.CoachingStatus !== 'تم عمل كوتشينج' : r.CoachingStatus === 'تم عمل كوتشينج');
+      }, [data.reviews, tab]);
+
+      const handleComplete = async (rev) => {
+        setUpdating(rev.CustomerPhone + rev.EmployeeName);
+        await api.postData('updateCoaching', { customerPhone: rev.CustomerPhone, employeeName: rev.EmployeeName });
+        showToast("تم إتمام الكوتشينج");
+        onRefresh();
+        setUpdating(null);
+      };
+
+      return (
+        <div className="animate-screen">
+          <ScreenHeader title="الكوتشينج" subtitle="تطوير آداء الزملاء" icon="👨‍🏫" totalLabel="الاجمالي" totalCount={data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length} />
+          <div className="flex bg-white p-1 rounded-2xl mb-6 shadow-sm border">
+            <button onClick={() => setTab('pending')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'pending' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>قيد التنفيذ ({data.reviews.filter(r => r.CoachingStatus !== 'تم عمل كوتشينج').length})</button>
+            <button onClick={() => setTab('completed')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
+          </div>
+          <div className="space-y-4">
+            {items.map((item, i) => (
+              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <p className="font-black text-gray-800">{item.EmployeeName}</p>
+                  {tab === 'pending' && <button disabled={updating === item.CustomerPhone + item.EmployeeName} onClick={() => handleComplete(item)} className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black">إتمام ✓</button>}
+                </div>
+                <div className="text-[10px] text-gray-500 space-y-2">
+                  <p className="bg-gray-50 p-3 rounded-lg italic">"{item.Comment}"</p>
+                  <div className="flex justify-between px-1 opacity-60"><span>📱 {item.CustomerPhone}</span><span>📅 {new Date(item.MessageDate).toLocaleDateString('en-GB')}</span></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const InquiryScreen = ({ data, onRefresh, showToast }) => {
+      const [empSearch, setEmpSearch] = useState('');
+      const [selectedEmp, setSelectedEmp] = useState(null);
+      const [type, setType] = useState(null);
+      const [showDropdown, setShowDropdown] = useState(false);
+      const [submitting, setSubmitting] = useState(false);
+      const dropRef = useRef(null);
+
+      useEffect(() => {
+        const clickAway = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setShowDropdown(false); };
+        document.addEventListener('mousedown', clickAway);
+        return () => document.removeEventListener('mousedown', clickAway);
+      }, []);
+
+      const filtered = useMemo(() => {
+        if (!empSearch) return data.employees;
+        return data.employees.filter(e => e.EmployeeName.toLowerCase().includes(empSearch.toLowerCase()));
+      }, [empSearch, data.employees]);
+
+      const handleSave = async () => {
+        if (!selectedEmp || !type) return alert("اختر الزميل والنوع");
+        setSubmitting(true);
+        await api.postData('addInquiry', { employeeName: selectedEmp.EmployeeName, type });
+        showToast("تم تسجيل الاستفسار");
+        setEmpSearch(''); setSelectedEmp(null); setType(null);
+        onRefresh();
+        setSubmitting(false);
+      };
+
+      return (
+        <div className="animate-screen">
+          <ScreenHeader title="الاستفسارات" subtitle="توثيق الاستفسارات اليومية" icon="❓" totalLabel="الكل" totalCount={data.inquiries.length} />
+          <div className="bg-white p-6 rounded-3xl shadow-sm border space-y-8">
+            <div className="space-y-1 relative" ref={dropRef}>
+              <label className="text-[11px] font-black text-gray-500">اسم الزميل</label>
+              <input type="text" placeholder="ابحث..." value={selectedEmp ? selectedEmp.EmployeeName : empSearch} onChange={e => { setEmpSearch(e.target.value); setSelectedEmp(null); setShowDropdown(true); }} onFocus={() => setShowDropdown(true)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold outline-none" />
+              {showDropdown && filtered.length > 0 && (
+                <ul className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                  {filtered.map((e, i) => <li key={i} onClick={() => { setSelectedEmp(e); setShowDropdown(false); }} className="p-3 hover:bg-maroon hover:text-white cursor-pointer font-bold border-b text-xs">{e.EmployeeName}</li>)}
+                </ul>
+              )}
+            </div>
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-gray-500">نوع الاستفسار</label>
+              <div className="grid grid-cols-1 gap-1.5">
+                {INQUIRY_TYPES.map(t => (
+                  <button key={t} onClick={() => setType(t)} className={`w-full p-3 rounded-xl border text-[11px] font-black transition-all flex justify-between items-center ${type === t ? 'bg-maroon text-white border-maroon' : 'bg-white text-gray-500 border-gray-100'}`}>
+                    <span>{t}</span> {type === t && '✓'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button onClick={handleSave} disabled={submitting} className="w-full bg-maroon text-white py-4 rounded-xl font-black text-lg shadow-lg disabled:opacity-50">تأكيد</button>
+          </div>
+        </div>
+      );
+    };
+
+    const AnalyticsScreen = ({ data }) => {
+      const [filter, setFilter] = useState('all');
+
+      const filtered = useMemo(() => {
+        const now = new Date();
+        const checkDate = (date) => {
+          if (!date) return false;
+          const d = new Date(date);
+          if (filter === 'today') return d.toDateString() === now.toDateString();
+          if (filter === 'week') { const w = new Date(); w.setDate(now.getDate() - 7); return d >= w; }
+          if (filter === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          return true;
+        };
+        const revs = data.reviews.filter(r => checkDate(r.ReviewDate || r.MessageDate));
+        return {
+          reviews: revs,
+          followups: data.followups.filter(f => checkDate(f.FollowUpDate)),
+          inquiries: data.inquiries.filter(i => checkDate(i.InquiryDate)),
+          coaching: revs.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length
+        };
+      }, [data, filter]);
+
+      // Categories and Leaders per Category
+      const leaders = useMemo(() => {
+        return CATEGORIES.map(cat => {
+          const counts = {};
+          filtered.reviews.forEach(r => { 
+            if (r.Category.includes(cat)) counts[r.EmployeeName] = (counts[r.EmployeeName] || 0) + 1; 
+          });
+          const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+          return { name: cat, top: top ? top[0] : 'لا يوجد', count: top ? top[1] : 0 };
+        });
+      }, [filtered.reviews]);
+
+      // Category overall stats
+      const catStats = useMemo(() => {
+        const total = filtered.reviews.length || 1;
+        return CATEGORIES.map(cat => {
+          const count = filtered.reviews.filter(r => r.Category.includes(cat)).length;
+          return { name: cat, count, pct: ((count / total) * 100).toFixed(1) };
+        });
+      }, [filtered.reviews]);
+
+      // Top 3 Employees (The "Repeat Offenders")
+      const topEmployees = useMemo(() => {
+        const counts = {};
+        filtered.reviews.forEach(r => {
+          if (!counts[r.EmployeeName]) counts[r.EmployeeName] = { count: 0, supervisor: r.SupervisorName, reviews: [] };
+          counts[r.EmployeeName].count++;
+          counts[r.EmployeeName].reviews.push(r);
+        });
+        return Object.entries(counts).sort((a, b) => b[1].count - a[1].count).slice(0, 3);
+      }, [filtered.reviews]);
+
+      // Inquiry types stats
+      const inquiryAnalysis = useMemo(() => {
+        const total = filtered.inquiries.length || 1;
+        return INQUIRY_TYPES.map(t => {
+          const count = filtered.inquiries.filter(i => i.InquiryType === t).length;
+          return { name: t, count, pct: ((count / total) * 100).toFixed(1) };
+        });
+      }, [filtered.inquiries]);
+
+      // Follow-up outcomes stats
+      const followUpOutcomes = useMemo(() => {
+        const total = filtered.followups.length || 1;
+        return FOLLOWUP_RESULTS.map(r => {
+          const count = filtered.followups.filter(f => f.FollowUpResult === r).length;
+          return { name: r, count, pct: ((count / total) * 100).toFixed(1) };
+        });
+      }, [filtered.followups]);
+
+      // Reviewer Productivity
+      const reviewerStats = useMemo(() => {
+        const total = filtered.reviews.length || 1;
+        return REVIEWERS.map(name => {
+          const count = filtered.reviews.filter(r => r.ReviewerName === name).length;
+          return { name, count, pct: ((count / total) * 100).toFixed(0) };
+        });
+      }, [filtered.reviews]);
+
+      // Supervisor detailed breakdown
+      const supervisors = useMemo(() => {
+        const counts = {};
+        filtered.reviews.forEach(r => {
+          if (!counts[r.SupervisorName]) counts[r.SupervisorName] = { count: 0, team: {} };
+          counts[r.SupervisorName].count++;
+          if (!counts[r.SupervisorName].team[r.EmployeeName]) counts[r.SupervisorName].team[r.EmployeeName] = { count: 0, reviews: [] };
+          counts[r.SupervisorName].team[r.EmployeeName].count++;
+          counts[r.SupervisorName].team[r.EmployeeName].reviews.push(r);
+        });
+        return Object.entries(counts).sort((a, b) => b[1].count - a[1].count);
+      }, [filtered.reviews]);
+
+      return (
+        <div className="animate-screen space-y-10 pb-20">
+          <ScreenHeader title="التحليلات الذكية" subtitle="رؤية شاملة للأداء الفني" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
+          
+          <div className="flex bg-maroon-dark p-1.5 rounded-2xl gap-1 mb-8 max-w-sm mx-auto shadow-xl">
+            {['today', 'week', 'month', 'all'].map(f => (
+              <button key={f} onClick={() => setFilter(f)} className={`flex-1 py-2 text-[10px] font-black rounded-xl transition-all ${filter === f ? 'bg-white text-maroon shadow-md' : 'text-white/40'}`}>
+                {f === 'today' ? 'اليوم' : f === 'week' ? 'أسبوع' : f === 'month' ? 'شهر' : 'الكل'}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: 'مراجعات', val: filtered.reviews.length, icon: '📝', c: 'text-maroon' },
+              { label: 'متابعات', val: filtered.followups.length, icon: '📞', c: 'text-blue-600' },
+              { label: 'كوتشينج', val: filtered.coaching, icon: '👨‍🏫', c: 'text-green-600' },
+              { label: 'استفسارات', val: filtered.inquiries.length, icon: '❓', c: 'text-orange-600' }
+            ].map((s, i) => (
+              <div key={i} className="bg-white p-3 rounded-2xl shadow-sm text-center border">
+                <p className="text-[8px] text-gray-400 font-black mb-1">{s.label}</p>
+                <p className={`text-lg font-black ${s.c}`}>{s.val}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-8">
+            {/* Top 3 Employees Section */}
+            <section className="bg-gradient-to-br from-maroon to-maroon-dark p-6 rounded-3xl text-white shadow-xl">
+              <h3 className="font-black text-sm mb-6 flex items-center gap-2">🚩 الزملاء الأكثر تكراراً للأخطاء (Top 3)</h3>
+              <div className="space-y-4">
+                {topEmployees.map(([name, stats]) => (
+                  <div key={name} className="bg-white/10 p-4 rounded-2xl border border-white/10 group">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-black text-md">{name}</p>
+                        <p className="text-[9px] opacity-60">المشرف: {stats.supervisor}</p>
+                      </div>
+                      <span className="bg-white text-maroon px-2 py-1 rounded-lg font-black text-[10px]">{stats.count} رسالة</span>
+                    </div>
+                    <details className="mt-3">
+                      <summary className="text-[9px] font-black text-white/40 cursor-pointer list-none flex items-center gap-1">عرض تفاصيل مراجعاته <span className="text-[7px]">▼</span></summary>
+                      <div className="mt-2 space-y-2 border-t border-white/10 pt-2">
+                        {stats.reviews.map((r, ri) => (
+                          <div key={ri} className="text-[9px] opacity-80 bg-black/10 p-2 rounded-lg italic">
+                             - {r.Category}: "{r.Comment}" ({r.CustomerPhone})
+                          </div>
+                        ))}
+                      </div>
+                    </details>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Error Leaders by Category */}
+            <section className="bg-gradient-to-br from-maroon to-maroon-dark p-8 rounded-4xl text-white shadow-xl">
+              <h3 className="font-black text-xl mb-6 flex items-center gap-3">🥇 أكتر زميل مخطئ حسب كل تصنيف</h3>
+              <div className="space-y-3">
+                {leaders.map(l => (
+                  <div key={l.name} className="glass p-4 rounded-2xl flex justify-between items-center bg-white/10 border-white/10">
+                    <div className="text-right">
+                      <p className="text-[9px] text-white/50 font-black uppercase tracking-widest">{l.name}</p>
+                      <p className="text-sm font-black">{l.top}</p>
+                    </div>
+                    <span className="bg-white text-maroon px-3 py-1 rounded-full font-black text-xs">{l.count} رسالة</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Category Results Progress Bars */}
+            <section className="bg-white p-8 rounded-4xl shadow-sm border">
+              <h3 className="font-black text-xl mb-6 text-gray-800 flex items-center gap-3">📝 تحليل المراجعات</h3>
+              <div className="space-y-6">
+                {catStats.map(cat => (
+                  <div key={cat.name} className="relative group">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-gray-700">{cat.name}</span>
+                      <span className="text-[10px] font-black text-maroon">{cat.count} ({cat.pct}%)</span>
+                    </div>
+                    <div className="overflow-hidden h-2.5 rounded-full bg-red-50">
+                      <div style={{ width: `${cat.pct}%` }} className="h-full bg-maroon transition-all duration-1000"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Inquiry Analysis Bars */}
+            <section className="bg-white p-8 rounded-4xl shadow-sm border">
+              <h3 className="font-black text-xl mb-6 text-gray-800">📊 تحليل الاستفسارات</h3>
+              <div className="space-y-4">
+                {inquiryAnalysis.map(i => (
+                  <div key={i.name} className="relative">
+                    <div className="flex justify-between mb-1 text-[11px] font-black text-gray-600">
+                      <span>{i.name}</span> <span>{i.count} ({i.pct}%)</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div style={{ width: `${i.pct}%` }} className="h-full bg-orange-400"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Follow-up Results Analysis */}
+            <section className="bg-white p-8 rounded-4xl shadow-sm border">
+              <h3 className="font-black text-xl mb-6 text-gray-800">📈 تحليل المتابعات</h3>
+              <div className="space-y-4">
+                {followUpOutcomes.map(o => (
+                  <div key={o.name} className="relative">
+                    <div className="flex justify-between mb-1 text-[11px] font-black text-gray-600">
+                      <span>{o.name}</span> <span>{o.count} ({o.pct}%)</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div style={{ width: `${o.pct}%` }} className="h-full bg-blue-500"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Reviewer Productivity Cards */}
+            <section className="bg-white p-8 rounded-4xl shadow-sm border text-center">
+              <h3 className="font-black text-xl mb-8">المراجع</h3>
+              <div className="grid grid-cols-2 gap-6">
+                {reviewerStats.map(rev => (
+                  <div key={rev.name} className="p-8 bg-maroon text-white rounded-3xl shadow-xl transform hover:-translate-y-1 transition-all">
+                    <p className="text-[10px] font-black opacity-60 uppercase mb-2">{rev.name}</p>
+                    <p className="text-4xl font-black mb-2">{rev.count}</p>
+                    <p className="text-[10px] font-bold opacity-40">%{rev.pct}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Supervisor Team Breakdown Section */}
+            <section className="bg-white p-8 rounded-4xl shadow-sm border">
+              <h3 className="font-black text-xl mb-6 text-gray-800 flex items-center gap-3">👥 المشرفين حسب أخطاء الزملاء</h3>
+              <div className="space-y-6">
+                {supervisors.slice(0, 5).map(([name, stats]) => (
+                  <div key={name} className="p-6 rounded-3xl border border-red-100 bg-red-50/20 group transition-all">
+                    <div className="flex justify-between items-center mb-4">
+                      <div>
+                        <p className="font-black text-maroon text-lg">{name}</p>
+                        <p className="text-[10px] text-gray-400 font-bold tracking-widest uppercase">إجمالي الرسائل: {stats.count}</p>
+                      </div>
+                      <div className="w-12 h-12 rounded-full bg-maroon/10 flex items-center justify-center text-maroon font-black">
+                        {Object.keys(stats.team).length}
+                      </div>
+                    </div>
+                    <div className="space-y-4 border-t border-maroon/5 pt-4">
+                      {Object.entries(stats.team).map(([empName, empStats]) => (
+                        <details key={empName} className="group/detail">
+                          <summary className="list-none cursor-pointer flex justify-between items-center p-3 bg-white rounded-xl border border-gray-100 hover:border-maroon/20 transition-all">
+                            <span className="font-bold text-gray-700 text-sm">{empName}</span>
+                            <span className="bg-maroon/10 text-maroon px-2 py-0.5 rounded-lg text-[10px] font-black">{empStats.count} رسالة</span>
+                          </summary>
+                          <div className="mt-2 p-3 bg-gray-50 rounded-xl space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+                            {empStats.reviews.map((r, ri) => (
+                              <div key={ri} className="text-[10px] border-b last:border-0 border-gray-200 pb-2 mb-2">
+                                <div className="flex justify-between text-maroon font-black mb-1">
+                                  <span>{new Date(r.MessageDate).toLocaleDateString('ar-EG')}</span>
+                                  <span>{r.CustomerPhone}</span>
+                                </div>
+                                <p className="text-gray-600 italic">"{r.Comment}"</p>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      );
+    };
+
+    // --- Main ---
+
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('reviews');
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [isAuthorized, setIsAuthorized] = useState(false);
+      const [pin, setPin] = useState('');
+      const [showPin, setShowPin] = useState(false);
+      const [targetTab, setTargetTab] = useState(null);
+      const [toastMsg, setToastMsg] = useState(null);
+
+      const showToast = (msg) => { setToastMsg(msg); setTimeout(() => setToastMsg(null), 3000); };
+      const refresh = useCallback(async () => { 
+        setLoading(true); 
+        try { 
+          const d = await api.fetchData(); 
+          setData(d); 
+        } catch (e) {
+          console.error("Fetch error", e);
+        } 
+        setLoading(false); 
+      }, []);
+
+      useEffect(() => { refresh(); }, [refresh]);
+      useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [activeTab]);
+
+      const handleNav = (tab) => {
+        if (tab === 'reviews' || isAuthorized) setActiveTab(tab);
+        else { setTargetTab(tab); setShowPin(true); }
+      };
+
+      const handleAuth = (e) => {
+        e.preventDefault();
+        if (pin === '0777') { 
+          setIsAuthorized(true); 
+          if (targetTab) setActiveTab(targetTab); 
+          setShowPin(false); 
+          showToast("تم التحقق بنجاح"); 
+        }
+        else { 
+          alert("رمز دخول غير صحيح"); 
+          setPin(''); 
+        }
+      };
+
+      if (loading && !data) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-12 h-12 border-4 border-maroon border-t-transparent rounded-full animate-spin"></div></div>;
+
+      return (
+        <div className="min-h-screen pb-32">
+          <Toast message={toastMsg} />
+          <header className="bg-maroon-dark text-white py-4 text-center sticky top-0 z-40 shadow-xl border-b border-white/10">
+            <h1 className="text-xl font-black flex justify-center items-center gap-2 animate-pulse">✦ Evaluation ✦</h1>
+          </header>
+
+          <main className="container mx-auto px-4 py-6 max-w-xl">
+            {activeTab === 'reviews' && <ReviewScreen data={data} onRefresh={refresh} showToast={showToast} />}
+            {activeTab === 'followups' && <FollowUpScreen data={data} onRefresh={refresh} showToast={showToast} />}
+            {activeTab === 'coaching' && <CoachingScreen data={data} onRefresh={refresh} showToast={showToast} />}
+            {activeTab === 'inquiries' && <InquiryScreen data={data} onRefresh={refresh} showToast={showToast} />}
+            {activeTab === 'analytics' && <AnalyticsScreen data={data} />}
+          </main>
+
+          <nav className="fixed bottom-0 left-0 right-0 h-20 bg-maroon text-white flex justify-around items-center px-4 rounded-t-3xl z-50 shadow-2xl">
+            {[
+              { id: 'reviews', icon: '📝', lbl: 'مراجعة' },
+              { id: 'followups', icon: '📞', lbl: 'متابعة' },
+              { id: 'coaching', icon: '👨‍🏫', lbl: 'كوتشنج' },
+              { id: 'inquiries', icon: '❓', lbl: 'استفسار' },
+              { id: 'analytics', icon: '📊', lbl: 'تحليل' }
+            ].map(t => (
+              <button key={t.id} onClick={() => handleNav(t.id)} className={`flex flex-col items-center justify-center flex-1 transition-all h-full gap-1 relative ${activeTab === t.id ? 'scale-105 opacity-100' : 'opacity-40 hover:opacity-70'}`}>
+                {activeTab === t.id && <div className="absolute inset-x-2 inset-y-3 bg-white/10 rounded-2xl blur-sm"></div>}
+                <span className="text-xl z-10">{t.icon}</span>
+                <span className="text-[9px] font-black z-10">{t.lbl}</span>
+              </button>
+            ))}
+          </nav>
+
+          {showPin && (
+            <div className="fixed inset-0 bg-maroon-dark/60 backdrop-blur-md z-[150] flex items-center justify-center p-6">
+              <div className="bg-white rounded-3xl p-8 w-full max-w-xs shadow-2xl text-center">
+                <h2 className="text-xl font-black text-maroon mb-2">دخول آمن</h2>
+                <p className="text-[10px] text-gray-400 mb-6 font-bold">أدخل الرمز السري للمتابعة</p>
+                <form onSubmit={handleAuth} className="space-y-4">
+                  <input autoFocus type="password" value={pin} onChange={e => setPin(e.target.value)} placeholder="••••" className="w-full text-center text-3xl py-3 bg-gray-50 border rounded-2xl focus:border-maroon outline-none font-black" maxLength={4} />
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setShowPin(false)} className="flex-1 py-3 font-black bg-gray-100 rounded-xl text-gray-500 text-xs">إلغاء</button>
+                    <button type="submit" className="flex-1 py-3 font-black bg-maroon text-white rounded-xl shadow-lg text-xs">دخول</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
