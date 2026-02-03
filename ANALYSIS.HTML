@@ -220,7 +220,7 @@
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-[11px] font-black text-gray-500">تاريخ اليوم</label>
+                <label className="text-[11px] font-black text-gray-500">تاريخ الرسالة</label>
                 <input type="date" value={msgDate} onChange={e => setMsgDate(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none" required />
               </div>
             </div>
@@ -323,11 +323,12 @@
                     <button onClick={() => { navigator.clipboard.writeText(item.CustomerPhone); showToast("تم نسخ الرقم"); }} className="p-2 bg-gray-50 rounded-xl">📋</button>
                   </div>
                   <div className="bg-gray-50/80 p-4 rounded-2xl text-[11px] mb-5 border border-gray-100/50">
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-2">           
                       <span className="font-black text-maroon">الزميل: {item.EmployeeName}</span>
                       <span className="text-[9px] bg-white px-2 py-0.5 rounded-lg">المشرف: {item.SupervisorName}</span>
                     </div>
                     <p className="italic text-gray-600 leading-relaxed font-semibold">"{item.Comment}"</p>
+      <span>{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</span>
                   </div>
                   {tab === 'pending' ? (
                     <div className="grid grid-cols-1 gap-2">
@@ -428,6 +429,12 @@
                     <div>
                       <p className="font-black text-gray-800">{item.EmployeeName}</p>
                       <p className="text-[10px] text-gray-500 italic mt-1">"{item.Comment}"</p>
+  <div className="flex justify-between text-maroon font-black mb-1">
+<p className="text-[10px] text-gray-500 italic mt-1">{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</p>
+<p className="text-[10px] text-gray-500 italic mt-1">{item.CustomerPhone}</p>
+                                  
+                                 
+</div>
                     </div>
                     {tab === 'pending' && <button onClick={() => handleComplete(item)} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">إتمام ✓</button>}
                   </div>
