@@ -268,8 +268,7 @@
     const FollowUpScreen = ({ data, onRefresh, showToast }) => {
       const [tab, setTab] = useState('pending');
       const [updating, setUpdating] = useState(null);
-
-      const FOLLOWUP_RESULTS = ["لم يتم الرد اطلاقا", "تم الرد بدون نقاش", "نقاش بدون شراء", "العميل نفذ اوردر بعد المتابعة"];
+      const [dateFilter, setDateFilter] = useState('');
 
       const { pending, completed } = useMemo(() => {
         const reviews = data.reviews.filter(r => r.Category.includes("المتابعة مع العميل"));
@@ -282,7 +281,19 @@
         return { pending: p, completed: c };
       }, [data]);
 
-      const items = tab === 'pending' ? pending : completed;
+      const baseItems = tab === 'pending' ? pending : completed;
+      
+      const filteredItems = useMemo(() => {
+        if (!dateFilter) return baseItems;
+        return baseItems.filter(item => {
+          // استخدام التنسيق المحلي لتجنب مشكلة إزاحة التاريخ (ISO shift)
+          const d = new Date(item.MessageDate);
+          const localDateStr = d.getFullYear() + '-' + 
+                              String(d.getMonth() + 1).padStart(2, '0') + '-' + 
+                              String(d.getDate()).padStart(2, '0');
+          return localDateStr === dateFilter;
+        });
+      }, [baseItems, dateFilter]);
 
       const handleUpdate = async (phone, result) => {
         setUpdating(phone);
@@ -296,7 +307,7 @@
 
       return (
         <div className="animate-in space-y-6">
-          <ScreenHeader title="المتابعة" subtitle="إدارة وتتبع تواصل العملاء" icon="✨" totalLabel="بانتظار العمل" totalCount={pending.length} />
+          <ScreenHeader title="المتابعة" subtitle="التواصل مع العملاء" icon="✨" totalLabel="بانتظار المتابعة" totalCount={pending.length} />
           
           <div className="flex bg-white p-1.5 rounded-[1.5rem] shadow-sm border border-gray-100">
             <button onClick={() => setTab('pending')} className={`flex-1 py-4 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 ${tab === 'pending' ? 'bg-maroon text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}>
@@ -309,49 +320,83 @@
             </button>
           </div>
 
+          <div className="bg-white p-4 rounded-3xl border border-gray-100 space-y-2">
+            <label className="text-[11px] font-black text-gray-500 px-1">البحث بتاريخ الرسالة</label>
+            <div className="flex gap-2">
+              <input 
+                type="date" 
+                value={dateFilter} 
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="flex-1 p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none text-xs"
+              />
+              {dateFilter && (
+                <button 
+                  onClick={() => setDateFilter('')}
+                  className="px-4 bg-gray-100 text-gray-500 rounded-xl font-black text-[10px] hover:bg-red-50 hover:text-red-500 transition-colors"
+                >
+                  مسح
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="space-y-4">
-            {items.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-white p-12 rounded-3xl text-center border border-gray-100 opacity-40">
-                <p className="text-3xl mb-1">✅</p>
-                <p className="text-[11px] font-black uppercase">لا يوجد عملاء {tab === 'pending' ? 'للمتابعة' : 'في القائمة'}</p>
+                <p className="text-3xl mb-1">🔍</p>
+                <p className="text-[11px] font-black uppercase">لا توجد نتائج تطابق تاريخ الرسالة</p>
               </div>
             ) : (
-              items.map((item, i) => (
-                <div key={i} className={`bg-white p-5 rounded-3xl shadow-sm border-r-[6px] transition-all border border-gray-100 ${tab === 'pending' ? 'border-r-maroon' : 'border-r-green-500'}`}>
-                  <div className="flex justify-between items-center mb-4">
-                    <p className="text-xl font-black text-gray-800 tracking-wide">{item.CustomerPhone}</p>
-                    <button onClick={() => { navigator.clipboard.writeText(item.CustomerPhone); showToast("تم نسخ الرقم"); }} className="p-2 bg-gray-50 rounded-xl">📋</button>
+              filteredItems.map((item, i) => (
+                <details key={i} className="group bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                  <summary className={`list-none cursor-pointer p-5 flex justify-between items-center border-r-[6px] transition-all ${tab === 'pending' ? 'border-r-maroon' : 'border-r-green-500'}`}>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-lg font-black text-gray-800 tracking-wide">{item.CustomerPhone}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] font-black text-maroon opacity-70">الزميل: {item.EmployeeName}</span>
+                        <span className="text-[9px] text-gray-400 font-bold bg-gray-50 px-1.5 py-0.5 rounded-md border border-gray-100">{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs group-open:rotate-180 transition-transform">▼</span>
+                    </div>
+                  </summary>
+                  
+                  <div className="p-5 border-t border-gray-50 animate-in space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="text-[10px] text-gray-500 font-bold">المشرف: {item.SupervisorName}</div>
+                      <button onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(item.CustomerPhone); showToast("تم نسخ الرقم"); }} className="p-2 bg-gray-100 rounded-xl text-xs">📋 نسخ الرقم</button>
+                    </div>
+
+                    <div className="bg-gray-50/80 p-4 rounded-2xl text-[11px] border border-gray-100/50">
+                      <p className="italic text-gray-600 leading-relaxed font-semibold">"{item.Comment}"</p>
+                      <div className="mt-3 text-[9px] text-gray-400 font-bold">{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</div>
+                    </div>
+
+                    {tab === 'pending' ? (
+                      <div className="grid grid-cols-1 gap-2 pt-2">
+                        {FOLLOWUP_RESULTS.map(res => (
+                          <button key={res} disabled={updating === item.CustomerPhone} onClick={() => handleUpdate(item.CustomerPhone, res)} className="text-right p-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-black hover:bg-maroon hover:text-white transition-all flex justify-between items-center group">
+                            <span>{res}</span>
+                            <span className="opacity-0 group-hover:opacity-100">✓</span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 bg-green-50 text-green-700 rounded-2xl border border-green-100">
+                        <span className="text-lg">✅</span>
+                        <p className="text-xs font-black">{item.followUpInfo?.FollowUpResult}</p>
+                      </div>
+                    )}
                   </div>
-                  <div className="bg-gray-50/80 p-4 rounded-2xl text-[11px] mb-5 border border-gray-100/50">
-                    <div className="flex justify-between items-center mb-2">           
-                      <span className="font-black text-maroon">الزميل: {item.EmployeeName}</span>
-                      <span className="text-[9px] bg-white px-2 py-0.5 rounded-lg">المشرف: {item.SupervisorName}</span>
-                    </div>
-                    <p className="italic text-gray-600 leading-relaxed font-semibold">"{item.Comment}"</p>
-      <span>{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</span>
-                  </div>
-                  {tab === 'pending' ? (
-                    <div className="grid grid-cols-1 gap-2">
-                      {FOLLOWUP_RESULTS.map(res => (
-                        <button key={res} disabled={updating === item.CustomerPhone} onClick={() => handleUpdate(item.CustomerPhone, res)} className="text-right p-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-black hover:bg-maroon hover:text-white transition-all flex justify-between items-center">
-                          <span>{res}</span>
-                          <span className="opacity-0 group-hover:opacity-100">✓</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 p-3 bg-green-50 text-green-700 rounded-2xl border border-green-100">
-                      <span className="text-lg">✅</span>
-                      <p className="text-xs font-black">{item.followUpInfo?.FollowUpResult}</p>
-                    </div>
-                  )}
-                </div>
+                </details>
               ))
             )}
           </div>
         </div>
       );
     };
+
     const CoachingScreen = ({ data, onRefresh, showToast }) => {
       const [tab, setTab] = useState('pending');
       const [isAddingNew, setIsAddingNew] = useState(false);
@@ -361,10 +406,38 @@
       const [coachingDate, setCoachingDate] = useState(new Date().toISOString().split('T')[0]);
       const [showDropdown, setShowDropdown] = useState(false);
       const [isSubmitting, setIsSubmitting] = useState(false);
+      
+      const [empFilter, setEmpFilter] = useState('all');
+      const [filterSearchTerm, setFilterSearchTerm] = useState('');
+      const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
       const dropdownRef = useRef(null);
+      const filterDropdownRef = useRef(null);
+
+      useEffect(() => {
+        const clickAway = (e) => { 
+          if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowDropdown(false); 
+          if (filterDropdownRef.current && !filterDropdownRef.current.contains(e.target)) setShowFilterDropdown(false);
+        };
+        document.addEventListener('mousedown', clickAway);
+        return () => document.removeEventListener('mousedown', clickAway);
+      }, []);
 
       const items = useMemo(() => data.reviews.filter(r => tab === 'pending' ? r.CoachingStatus !== 'تم عمل كوتشينج' : r.CoachingStatus === 'تم عمل كوتشينج'), [data.reviews, tab]);
+      
       const filteredEmps = useMemo(() => empSearch ? data.employees.filter(e => e.EmployeeName.toLowerCase().includes(empSearch.toLowerCase())) : data.employees, [empSearch, data.employees]);
+
+      // فلترة الزملاء للبحث في القائمة (تحميل كل الأسماء من الشيت)
+      const filteredFilterEmps = useMemo(() => {
+        const allEmps = data.employees || [];
+        if (!filterSearchTerm) return allEmps;
+        return allEmps.filter(e => e.EmployeeName.toLowerCase().includes(filterSearchTerm.toLowerCase()));
+      }, [filterSearchTerm, data.employees]);
+
+      const filteredItems = useMemo(() => {
+        if (empFilter === 'all') return items;
+        return items.filter(item => item.EmployeeName === empFilter);
+      }, [items, empFilter]);
 
       const handleSaveNew = async (e) => {
         e.preventDefault();
@@ -400,7 +473,7 @@
           {isAddingNew && (
             <form onSubmit={handleSaveNew} className="bg-white p-6 rounded-3xl shadow-sm border space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative">
+                <div className="relative" ref={dropdownRef}>
                   <input type="text" placeholder="اسم الزميل..." value={selectedEmp ? selectedEmp.EmployeeName : empSearch} onChange={e => {setEmpSearch(e.target.value); setSelectedEmp(null); setShowDropdown(true);}} onFocus={() => setShowDropdown(true)} className="w-full p-3 bg-gray-50 border rounded-xl font-bold outline-none" required />
                   {showDropdown && filteredEmps.length > 0 && (
                     <ul className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-2xl max-h-48 overflow-y-auto">
@@ -420,25 +493,87 @@
           {!isAddingNew && (
             <>
               <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
-                           <button onClick={() => setTab('pending')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'pending' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>قيد التنفيذ ({data.reviews.filter(r => r.CoachingStatus !== 'تم عمل كوتشينج').length})</button>
-            <button onClick={() => setTab('completed')} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
+                <button onClick={() => { setTab('pending'); setEmpFilter('all'); setFilterSearchTerm(''); }} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'pending' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>قيد التنفيذ ({data.reviews.filter(r => r.CoachingStatus !== 'تم عمل كوتشينج').length})</button>
+                <button onClick={() => { setTab('completed'); setEmpFilter('all'); setFilterSearchTerm(''); }} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
               </div>
-              <div className="space-y-4">
-                {items.map((item, i) => (
-                  <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100 flex justify-between items-start">
-                    <div>
-                      <p className="font-black text-gray-800">{item.EmployeeName}</p>
-                      <p className="text-[10px] text-gray-500 italic mt-1">"{item.Comment}"</p>
-  <div className="flex justify-between text-maroon font-black mb-1">
-<p className="text-[10px] text-gray-500 italic mt-1">{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</p>
-<p className="text-[10px] text-gray-500 italic mt-1">{item.CustomerPhone}</p>
-                                  
-                                 
-</div>
-                    </div>
-                    {tab === 'pending' && <button onClick={() => handleComplete(item)} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">إتمام ✓</button>}
+
+              {/* فلتر البحث المتطابق مع شاشة المراجعة */}
+              <div className="bg-white p-4 rounded-3xl border border-gray-100 space-y-2">
+                <label className="text-[11px] font-black text-gray-500 px-1">البحث باسم الزميل</label>
+                <div className="relative" ref={filterDropdownRef}>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="ابحث عن زميل..." 
+                      value={empFilter === 'all' ? filterSearchTerm : empFilter} 
+                      onChange={(e) => {
+                        setFilterSearchTerm(e.target.value);
+                        setEmpFilter('all');
+                        setShowFilterDropdown(true);
+                      }}
+                      onFocus={() => setShowFilterDropdown(true)}
+                      className="flex-1 p-3 bg-gray-50 border rounded-xl font-bold focus:border-maroon outline-none text-xs"
+                    />
+                    {empFilter !== 'all' && (
+                      <button 
+                        onClick={() => { setEmpFilter('all'); setFilterSearchTerm(''); }}
+                        className="px-4 bg-gray-100 text-gray-500 rounded-xl font-black text-[10px] hover:bg-red-50 hover:text-red-500 transition-colors"
+                      >
+                        إلغاء
+                      </button>
+                    )}
                   </div>
-                ))}
+                  {showFilterDropdown && filteredFilterEmps.length > 0 && (
+                    <ul className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-2xl max-h-48 overflow-y-auto">
+                      <li onClick={() => { setEmpFilter('all'); setFilterSearchTerm(''); setShowFilterDropdown(false); }} className="p-3 hover:bg-maroon hover:text-white cursor-pointer font-black border-b text-xs text-gray-400 italic">كل الزملاء</li>
+                      {filteredFilterEmps.map((emp, i) => (
+                        <li key={i} onClick={() => { setEmpFilter(emp.EmployeeName); setFilterSearchTerm(emp.EmployeeName); setShowFilterDropdown(false); }} className="p-3 hover:bg-maroon hover:text-white cursor-pointer font-bold border-b text-xs">
+                          {emp.EmployeeName}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {filteredItems.length === 0 ? (
+                  <div className="bg-white p-12 rounded-3xl text-center border border-gray-100 opacity-40">
+                    <p className="text-3xl mb-1">🔍</p>
+                    <p className="text-[11px] font-black uppercase">لا توجد سجلات كوتشينج لهذا الزميل</p>
+                  </div>
+                ) : (
+                  filteredItems.map((item, i) => (
+                    <details key={i} className="group bg-white rounded-2xl shadow-sm border-r-4 border-maroon border border-gray-100 overflow-hidden">
+                      <summary className="list-none cursor-pointer p-5 flex justify-between items-center">
+                        <div>
+                          <p className="font-black text-gray-800">{item.EmployeeName}</p>
+                          <p className="text-[10px] text-gray-400 font-bold">{new Date(item.MessageDate).toLocaleDateString('ar-EG')}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                           {tab === 'pending' && <span className="bg-red-50 text-maroon text-[8px] font-black px-2 py-0.5 rounded-full">معلق</span>}
+                           {tab === 'completed' && <span className="bg-green-50 text-green-600 text-[8px] font-black px-2 py-0.5 rounded-full">مكتمل</span>}
+                           <span className="text-[10px] group-open:rotate-180 transition-transform">▼</span>
+                        </div>
+                      </summary>
+                      <div className="p-5 border-t border-gray-50 bg-gray-50/30 space-y-4">
+                        <div className="bg-white p-4 rounded-xl border border-gray-100">
+                          <div className="flex justify-between items-center mb-2 border-b border-gray-50 pb-2">
+                             <span className="text-[10px] font-black text-maroon">رقم العميل: {item.CustomerPhone}</span>
+                             <span className="text-[10px] font-black text-gray-400">التصنيف: {item.Category}</span>
+                          </div>
+                          <p className="text-xs text-gray-600 italic leading-relaxed font-semibold">"{item.Comment}"</p>
+                        </div>
+                        
+                        {tab === 'pending' && (
+                          <button onClick={() => handleComplete(item)} className="w-full bg-green-600 text-white py-3 rounded-xl text-xs font-black shadow-lg hover:bg-green-700 transition-colors">
+                            تأكيد إتمام الكوتشينج ✓
+                          </button>
+                        )}
+                      </div>
+                    </details>
+                  ))
+                )}
               </div>
             </>
           )}
@@ -600,7 +735,7 @@
 
       return (
         <div className="animate-screen space-y-10 pb-20">
-          <ScreenHeader title="التحليلات" subtitle="رؤية شاملة لآداء الزملاء" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
+          <ScreenHeader title="التحليلات" subtitle="تحليل آداء الزملاء" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
           
           <div className="flex bg-maroon-dark p-1.5 rounded-2xl gap-1 mb-8 max-w-sm mx-auto shadow-xl">
             {['today', 'week', 'month', 'all'].map(f => (
@@ -882,5 +1017,4 @@
     root.render(<App />);
   </script>
 </body>
-
 </html>
