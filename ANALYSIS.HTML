@@ -427,7 +427,6 @@
       
       const filteredEmps = useMemo(() => empSearch ? data.employees.filter(e => e.EmployeeName.toLowerCase().includes(empSearch.toLowerCase())) : data.employees, [empSearch, data.employees]);
 
-      // فلترة الزملاء للبحث في القائمة (تحميل كل الأسماء من الشيت)
       const filteredFilterEmps = useMemo(() => {
         const allEmps = data.employees || [];
         if (!filterSearchTerm) return allEmps;
@@ -445,9 +444,9 @@
         setIsSubmitting(true);
         try {
           await api.postData('addReview', {
-            messageDate: coachingDate, customerPhone: 'يدوي', employeeName: selectedEmp.EmployeeName,
+            messageDate: coachingDate, customerPhone: 'لا يوجد', employeeName: selectedEmp.EmployeeName,
             supervisorName: selectedEmp.SupervisorName, comment: coachingDetails, categories: 'كوتشينج يدوي',
-            reviewerName: 'إدخال يدوي', coachingStatus: 'تم عمل كوتشينج'
+            reviewerName: 'Ahmed Alaa', coachingStatus: 'تم عمل كوتشينج', coachingDate: coachingDate
           });
           showToast("تم الحفظ بنجاح");
           setIsAddingNew(false); setCoachingDetails(''); setSelectedEmp(null); setEmpSearch(''); onRefresh();
@@ -456,15 +455,21 @@
       };
 
       const handleComplete = async (rev) => {
+        // إدخال تاريخ اليوم تلقائياً عند الضغط على الزر
+        const todayStr = new Date().toISOString().split('T')[0];
         try {
-          await api.postData('updateCoaching', { customerPhone: rev.CustomerPhone, employeeName: rev.EmployeeName });
-          showToast("تم الإتمام"); onRefresh();
+          await api.postData('updateCoaching', { 
+            customerPhone: rev.CustomerPhone, 
+            employeeName: rev.EmployeeName,
+            coachingDate: todayStr 
+          });
+          showToast("تم عمل الكوتشينج"); onRefresh();
         } catch (e) { alert("خطأ"); }
       };
 
       return (
         <div className="animate-in space-y-6">
-          <ScreenHeader title="الكوتشينج" subtitle="تطوير الآداء" icon="👨‍🏫" totalLabel="مكتمل" totalCount={data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length} />
+          <ScreenHeader title="الكوتشينج" subtitle="تطوير آداء الزملاء" icon="👨‍🏫" totalLabel="مكتمل" totalCount={data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length} />
           
           <button onClick={() => setIsAddingNew(!isAddingNew)} className={`w-full py-4 rounded-2xl font-black shadow-lg ${isAddingNew ? 'bg-gray-100 text-gray-500' : 'bg-maroon text-white'}`}>
             {isAddingNew ? 'إلغاء الإضافة' : '➕ إضافة كوتشينج جديد'}
@@ -497,7 +502,6 @@
                 <button onClick={() => { setTab('completed'); setEmpFilter('all'); setFilterSearchTerm(''); }} className={`flex-1 py-3 font-black text-xs rounded-xl transition-all ${tab === 'completed' ? 'bg-maroon text-white shadow-md' : 'text-gray-400'}`}>مكتمل ({data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length})</button>
               </div>
 
-              {/* فلتر البحث المتطابق مع شاشة المراجعة */}
               <div className="bg-white p-4 rounded-3xl border border-gray-100 space-y-2">
                 <label className="text-[11px] font-black text-gray-500 px-1">البحث باسم الزميل</label>
                 <div className="relative" ref={filterDropdownRef}>
@@ -563,12 +567,17 @@
                              <span className="text-[10px] font-black text-gray-400">التصنيف: {item.Category}</span>
                           </div>
                           <p className="text-xs text-gray-600 italic leading-relaxed font-semibold">"{item.Comment}"</p>
+                          {item.CoachingDate && (
+                             <p className="mt-2 text-[9px] font-black text-green-600">تاريخ الكوتشينج: {new Date(item.CoachingDate).toLocaleDateString('ar-EG')}</p>
+                          )}
                         </div>
                         
                         {tab === 'pending' && (
-                          <button onClick={() => handleComplete(item)} className="w-full bg-green-600 text-white py-3 rounded-xl text-xs font-black shadow-lg hover:bg-green-700 transition-colors">
-                            تأكيد إتمام الكوتشينج ✓
-                          </button>
+                          <div className="space-y-3">
+                             <button onClick={() => handleComplete(item)} className="w-full bg-green-600 text-white py-4 rounded-xl text-xs font-black shadow-lg hover:bg-green-700 transition-colors">
+                                تأكيد إتمام الكوتشينج ✓
+                             </button>
+                          </div>
                         )}
                       </div>
                     </details>
@@ -644,24 +653,45 @@
 
       const filtered = useMemo(() => {
         const now = new Date();
-        const checkDate = (date) => {
-          if (!date) return false;
-          const d = new Date(date);
-          if (filter === 'today') return d.toDateString() === now.toDateString();
-          if (filter === 'week') { const w = new Date(); w.setDate(now.getDate() - 7); return d >= w; }
-          if (filter === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        const checkDate = (dateStr) => {
+          if (!dateStr) return false;
+          const d = new Date(dateStr);
+          if (isNaN(d.getTime())) return false;
+
+          const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const startOfD = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+          if (filter === 'today') {
+            return startOfD.getTime() === startOfNow.getTime();
+          }
+          if (filter === 'week') {
+            const weekAgo = new Date(startOfNow);
+            weekAgo.setDate(startOfNow.getDate() - 7);
+            return startOfD >= weekAgo;
+          }
+          if (filter === 'month') {
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          }
           return true;
         };
+
         const revs = data.reviews.filter(r => checkDate(r.ReviewDate || r.MessageDate));
+        const folls = data.followups.filter(f => checkDate(f.FollowUpDate || f.Timestamp));
+        const inqs = data.inquiries.filter(i => checkDate(i.InquiryDate || i.Timestamp));
+        
+        // التحليل يعتمد حصرياً على تاريخ الكوتشينج CoachingDate
+        const coachingList = data.reviews.filter(r => 
+          r.CoachingStatus === 'تم عمل كوتشينج' && checkDate(r.CoachingDate)
+        );
+
         return {
           reviews: revs,
-          followups: data.followups.filter(f => checkDate(f.FollowUpDate)),
-          inquiries: data.inquiries.filter(i => checkDate(i.InquiryDate)),
-          coaching: revs.filter(r => r.CoachingStatus === 'تم عمل كوتشينج').length
+          followups: folls,
+          inquiries: inqs,
+          coaching: coachingList.length
         };
       }, [data, filter]);
 
-      // Categories and Leaders per Category
       const leaders = useMemo(() => {
         return CATEGORIES.map(cat => {
           const counts = {};
@@ -673,7 +703,6 @@
         });
       }, [filtered.reviews]);
 
-      // Category overall stats
       const catStats = useMemo(() => {
         const total = filtered.reviews.length || 1;
         return CATEGORIES.map(cat => {
@@ -682,7 +711,6 @@
         });
       }, [filtered.reviews]);
 
-      // Top 3 Employees (The "Repeat Offenders")
       const topEmployees = useMemo(() => {
         const counts = {};
         filtered.reviews.forEach(r => {
@@ -693,7 +721,6 @@
         return Object.entries(counts).sort((a, b) => b[1].count - a[1].count).slice(0, 3);
       }, [filtered.reviews]);
 
-      // Inquiry types stats
       const inquiryAnalysis = useMemo(() => {
         const total = filtered.inquiries.length || 1;
         return INQUIRY_TYPES.map(t => {
@@ -702,7 +729,6 @@
         });
       }, [filtered.inquiries]);
 
-      // Follow-up outcomes stats
       const followUpOutcomes = useMemo(() => {
         const total = filtered.followups.length || 1;
         return FOLLOWUP_RESULTS.map(r => {
@@ -711,7 +737,6 @@
         });
       }, [filtered.followups]);
 
-      // Reviewer Productivity
       const reviewerStats = useMemo(() => {
         const total = filtered.reviews.length || 1;
         return REVIEWERS.map(name => {
@@ -720,7 +745,6 @@
         });
       }, [filtered.reviews]);
 
-      // Supervisor detailed breakdown
       const supervisors = useMemo(() => {
         const counts = {};
         filtered.reviews.forEach(r => {
@@ -735,7 +759,7 @@
 
       return (
         <div className="animate-screen space-y-10 pb-20">
-          <ScreenHeader title="التحليلات" subtitle="تحليل آداء الزملاء" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : filter} />
+          <ScreenHeader title="التحليلات" subtitle="تحليل آداء الزملاء" icon="📊" totalLabel="الفلتر" totalCount={filter === 'all' ? 'الكل' : (filter === 'today' ? 'اليوم' : filter === 'week' ? 'أسبوع' : 'شهر')} />
           
           <div className="flex bg-maroon-dark p-1.5 rounded-2xl gap-1 mb-8 max-w-sm mx-auto shadow-xl">
             {['today', 'week', 'month', 'all'].map(f => (
@@ -760,7 +784,6 @@
           </div>
 
           <div className="space-y-8">
-            {/* Top 3 Employees Section */}
             <section className="bg-gradient-to-br from-maroon to-maroon-dark p-6 rounded-3xl text-white shadow-xl">
               <h3 className="font-black text-sm mb-6 flex items-center gap-2">🚩 الزملاء الأكثر تكراراً للأخطاء (Top 3)</h3>
               <div className="space-y-4">
@@ -788,7 +811,6 @@
               </div>
             </section>
 
-            {/* Error Leaders by Category */}
             <section className="bg-gradient-to-br from-maroon to-maroon-dark p-8 rounded-4xl text-white shadow-xl">
               <h3 className="font-black text-xl mb-6 flex items-center gap-3">🥇 أكتر زميل مخطئ حسب كل تصنيف</h3>
               <div className="space-y-3">
@@ -804,7 +826,6 @@
               </div>
             </section>
 
-            {/* Category Results Progress Bars */}
             <section className="bg-white p-8 rounded-4xl shadow-sm border">
               <h3 className="font-black text-xl mb-6 text-gray-800 flex items-center gap-3">📝 تحليل المراجعات</h3>
               <div className="space-y-6">
@@ -822,7 +843,6 @@
               </div>
             </section>
 
-            {/* Inquiry Analysis Bars */}
             <section className="bg-white p-8 rounded-4xl shadow-sm border">
               <h3 className="font-black text-xl mb-6 text-gray-800">📊 تحليل الاستفسارات</h3>
               <div className="space-y-4">
@@ -839,7 +859,6 @@
               </div>
             </section>
 
-            {/* Follow-up Results Analysis */}
             <section className="bg-white p-8 rounded-4xl shadow-sm border">
               <h3 className="font-black text-xl mb-6 text-gray-800">📈 تحليل المتابعات</h3>
               <div className="space-y-4">
@@ -856,7 +875,6 @@
               </div>
             </section>
 
-            {/* Reviewer Productivity Cards */}
             <section className="bg-white p-8 rounded-4xl shadow-sm border text-center">
               <h3 className="font-black text-xl mb-8">المراجع</h3>
               <div className="grid grid-cols-2 gap-6">
@@ -870,7 +888,6 @@
               </div>
             </section>
 
-            {/* Supervisor Team Breakdown Section */}
             <section className="bg-white p-8 rounded-4xl shadow-sm border">
               <h3 className="font-black text-xl mb-6 text-gray-800 flex items-center gap-3">👥 المشرفين حسب أخطاء الزملاء</h3>
               <div className="space-y-6">
