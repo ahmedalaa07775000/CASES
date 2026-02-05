@@ -291,6 +291,33 @@
           </section>
 
           <section className="space-y-4">
+            <h3 className="text-md font-black px-2 flex items-center gap-2 text-green-700">👨‍🏫 جلسات الكوتشينج المنفذة اليوم</h3>
+            {todayCoaching.length === 0 ? (
+              <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
+                <p className="text-xs font-black">لم يتم تنفيذ جلسات كوتشينج اليوم</p>
+              </div>
+            ) : (
+              todayCoaching.map((coach, idx) => (
+                <div key={idx} className="bg-green-50/50 p-5 rounded-3xl shadow-sm border-r-4 border-green-600 border border-green-100">
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="font-black text-green-800 text-sm">{coach.EmployeeName}</p>
+                    <span className="text-[8px] font-black text-green-600/60">{coach.Category}</span>
+                  </div>
+                  <div className="bg-white/60 p-3 rounded-2xl border border-green-200">
+                     <p className="text-[9px] font-black text-green-800/40 uppercase mb-1">تفاصيل الخطأ المعالج:</p>
+                     <p className="text-[11px] text-green-700 leading-relaxed font-semibold italic">
+                        "{coach.Comment}"
+                     </p>
+                  </div>
+                  <div className="mt-2 text-[8px] font-bold text-green-600/50">
+                    تمت المراجعة والتوجيه بنجاح ✓
+                  </div>
+                </div>
+              ))
+            )}
+          </section>
+
+          <section className="space-y-4">
             <h3 className="text-md font-black px-2 flex items-center gap-2">📝 تفاصيل مراجعات اليوم</h3>
             {todayReviews.length === 0 ? (
               <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
@@ -312,33 +339,6 @@
                   <div className="mt-3 flex justify-between items-center text-[8px] font-black text-gray-300">
                     <span>المراجع: {rev.ReviewerName}</span>
                     <span>{new Date(rev.MessageDate).toLocaleDateString('ar-EG')}</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-md font-black px-2 flex items-center gap-2 text-green-700">👨‍🏫 جلسات الكوتشينج المنفذة اليوم</h3>
-            {todayCoaching.length === 0 ? (
-              <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
-                <p className="text-xs font-black">لم يتم تنفيذ جلسات كوتشينج اليوم</p>
-              </div>
-            ) : (
-              todayCoaching.map((coach, idx) => (
-                <div key={idx} className="bg-green-50/50 p-5 rounded-3xl shadow-sm border-r-4 border-green-600 border border-green-100">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="font-black text-green-800 text-sm">{coach.EmployeeName}</p>
-                    <span className="text-[8px] font-black text-green-600/60">{coach.Category}</span>
-                  </div>
-                  <div className="bg-white/60 p-3 rounded-2xl border border-green-200">
-                     <p className="text-[9px] font-black text-green-800/40 uppercase mb-1">تفاصيل الخطأ المعالج:</p>
-                     <p className="text-[11px] text-green-700 leading-relaxed font-semibold italic">
-                        "{coach.Comment}"
-                     </p>
-                  </div>
-                  <div className="mt-2 text-[8px] font-bold text-green-600/50">
-                    تمت المراجعة والتوجيه بنجاح ✓
                   </div>
                 </div>
               ))
@@ -1220,4 +1220,5 @@
     root.render(<App />);
   </script>
 </body>
+
 </html>
