@@ -163,39 +163,69 @@
         </div>
       </div>
     );
-    const DailyReport = ({ data }) => {
-      const todayStr = new Date().toLocaleDateString('en-CA');
-      const isToday = (dateStr) => {
-        if (!dateStr) return false;
-        const d = new Date(dateStr);
-        return d.toLocaleDateString('en-CA') === todayStr;
-      };
+  const DailyReport = ({ data }) => {
+  // 1. تحديد التاريخ المستهدف (اليوم الحالي أو أمس لو قبل الساعة 4 فجرًا)
+  const targetDateStr = useMemo(() => {
+    const now = new Date();
+    const currentHour = now.getHours();
 
-      const todayReviews = useMemo(() => data.reviews.filter(r => isToday(r.ReviewDate || r.MessageDate)), [data.reviews]);
-      const todayFollowUps = useMemo(() => data.followups.filter(f => isToday(f.FollowUpDate || f.Timestamp)), [data.followups]);
-      const todayInquiries = useMemo(() => data.inquiries.filter(i => isToday(i.InquiryDate || i.Timestamp)), [data.inquiries]);
-      const todayCoaching = useMemo(() => data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج' && isToday(r.CoachingDate)), [data.reviews]);
+    // إذا كانت الساعة بين 12 منتصف الليل و 4 فجرًا، نعتبرنا في "يوم العمل" السابق
+    if (currentHour < 4) {
+      now.setDate(now.getDate() - 1);
+    }
+    
+    return now.toLocaleDateString('en-CA'); // تنسيق YYYY-MM-DD
+  }, []);
 
-      const errorAnalysis = useMemo(() => {
-        return CATEGORIES.map(cat => ({
-          name: cat,
-          count: todayReviews.filter(r => r.Category.includes(cat)).length
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-      }, [todayReviews]);
+  // 2. دالة التحقق من التاريخ
+  const isTargetDate = (dateStr) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-CA') === targetDateStr;
+  };
 
-      const followUpAnalysis = useMemo(() => {
-        return FOLLOWUP_RESULTS.map(res => ({
-          name: res,
-          count: todayFollowUps.filter(f => f.FollowUpResult === res).length
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-      }, [todayFollowUps]);
+  // 3. فلترة البيانات بناءً على التاريخ المستهدف
+  const todayReviews = useMemo(() => 
+    data.reviews.filter(r => isTargetDate(r.ReviewDate || r.MessageDate)), 
+    [data.reviews, targetDateStr]
+  );
 
-      const inquiryAnalysis = useMemo(() => {
-        return INQUIRY_TYPES.map(type => ({
-          name: type,
-          count: todayInquiries.filter(i => i.InquiryType === type).length
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-      }, [todayInquiries]);
+  const todayFollowUps = useMemo(() => 
+    data.followups.filter(f => isTargetDate(f.FollowUpDate || f.Timestamp)), 
+    [data.followups, targetDateStr]
+  );
+
+  const todayInquiries = useMemo(() => 
+    data.inquiries.filter(i => isTargetDate(i.InquiryDate || i.Timestamp)), 
+    [data.inquiries, targetDateStr]
+  );
+
+  const todayCoaching = useMemo(() => 
+    data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج' && isTargetDate(r.CoachingDate)), 
+    [data.reviews, targetDateStr]
+  );
+
+  // 4. التحليلات الإحصائية (بناءً على البيانات المفلترة أعلاه)
+  const errorAnalysis = useMemo(() => {
+    return CATEGORIES.map(cat => ({
+      name: cat,
+      count: todayReviews.filter(r => r.Category && r.Category.includes(cat)).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayReviews]);
+
+  const followUpAnalysis = useMemo(() => {
+    return FOLLOWUP_RESULTS.map(res => ({
+      name: res,
+      count: todayFollowUps.filter(f => f.FollowUpResult === res).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayFollowUps]);
+
+  const inquiryAnalysis = useMemo(() => {
+    return INQUIRY_TYPES.map(type => ({
+      name: type,
+      count: todayInquiries.filter(i => i.InquiryType === type).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayInquiries]);
 
       return (
 <div className="animate-screen space-y-8 pb-10">
@@ -1222,6 +1252,7 @@
 </body>
 
 </html>
+
 
 
 
