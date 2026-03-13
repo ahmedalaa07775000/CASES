@@ -163,222 +163,209 @@
         </div>
       </div>
     );
- const DailyReport = ({ data }) => {
+const DailyReport = ({ data }) => {
+  // --- منطق الوقت والتاريخ الجديد ---
+  const effectiveDate = useMemo(() => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
 
-      const todayStr = new Date().toLocaleDateString('en-CA');
+    // التحقق من الفترة بين 12:00 صباحاً و 1:15 صباحاً
+    const isEarlyMorning = hours === 0 || (hours === 1 && minutes <= 15);
 
-      const isToday = (dateStr) => {
+    if (isEarlyMorning) {
+      const yesterday = new Date();
+      yesterday.setDate(now.getDate() - 1);
+      return yesterday;
+    }
+    return now;
+  }, []);
 
-        if (!dateStr) return false;
+  const effectiveDateStr = effectiveDate.toLocaleDateString('en-CA');
 
-        const d = new Date(dateStr);
+  const isToday = (dateStr) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-CA') === effectiveDateStr;
+  };
+  // --------------------------------
 
-        return d.toLocaleDateString('en-CA') === todayStr;
+  const todayReviews = useMemo(() => data.reviews.filter(r => isToday(r.ReviewDate || r.MessageDate)), [data.reviews, effectiveDateStr]);
+  const todayFollowUps = useMemo(() => data.followups.filter(f => isToday(f.FollowUpDate || f.Timestamp)), [data.followups, effectiveDateStr]);
+  const todayInquiries = useMemo(() => data.inquiries.filter(i => isToday(i.InquiryDate || i.Timestamp)), [data.inquiries, effectiveDateStr]);
+  const todayCoaching = useMemo(() => data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج' && isToday(r.CoachingDate)), [data.reviews, effectiveDateStr]);
 
-      };
+  const errorAnalysis = useMemo(() => {
+    return CATEGORIES.map(cat => ({
+      name: cat,
+      count: todayReviews.filter(r => r.Category.includes(cat)).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayReviews]);
 
+  const followUpAnalysis = useMemo(() => {
+    return FOLLOWUP_RESULTS.map(res => ({
+      name: res,
+      count: todayFollowUps.filter(f => f.FollowUpResult === res).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayFollowUps]);
 
+  const inquiryAnalysis = useMemo(() => {
+    return INQUIRY_TYPES.map(type => ({
+      name: type,
+      count: todayInquiries.filter(i => i.InquiryType === type).length
+    })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+  }, [todayInquiries]);
 
-      const todayReviews = useMemo(() => data.reviews.filter(r => isToday(r.ReviewDate || r.MessageDate)), [data.reviews]);
+  return (
+    <div className="animate-screen space-y-8 pb-10">
+      <div className="bg-gradient-to-br from-red-950 via-red-900 to-slate-950 text-white p-8 rounded-4xl shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+        <h2 className="text-2xl font-black mb-2 flex items-center gap-3">
+          <span>📅</span> تقرير اليوم التفصيلي
+        </h2>
+        <p className="text-xs opacity-70 font-bold uppercase tracking-widest">
+          {/* تعديل لعرض التاريخ المنطقي المحسوب */}
+          {effectiveDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        </p>
+      </div>
 
-      const todayFollowUps = useMemo(() => data.followups.filter(f => isToday(f.FollowUpDate || f.Timestamp)), [data.followups]);
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'المراجعات', val: todayReviews.length, color: 'text-maroon', bg: 'bg-maroon/5' },
+          { label: 'المتابعات', val: todayFollowUps.length, color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: 'الكوتشينج', val: todayCoaching.length, color: 'text-green-600', bg: 'bg-green-50' },
+          { label: 'الاستفسارات', val: todayInquiries.length, color: 'text-orange-600', bg: 'bg-orange-50' }
+        ].map((item, idx) => (
+          <div key={idx} className={`${item.bg} p-5 rounded-3xl border border-white/20 shadow-sm text-center`}>
+            <p className="text-[10px] font-black text-gray-500 mb-1 uppercase">{item.label}</p>
+            <p className={`text-3xl font-black ${item.color}`}>{item.val}</p>
+          </div>
+        ))}
+      </div>
 
-      const todayInquiries = useMemo(() => data.inquiries.filter(i => isToday(i.InquiryDate || i.Timestamp)), [data.inquiries]);
-
-      const todayCoaching = useMemo(() => data.reviews.filter(r => r.CoachingStatus === 'تم عمل كوتشينج' && isToday(r.CoachingDate)), [data.reviews]);
-
-
-
-      const errorAnalysis = useMemo(() => {
-
-        return CATEGORIES.map(cat => ({
-
-          name: cat,
-
-          count: todayReviews.filter(r => r.Category.includes(cat)).length
-
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-
-      }, [todayReviews]);
-
-
-
-      const followUpAnalysis = useMemo(() => {
-
-        return FOLLOWUP_RESULTS.map(res => ({
-
-          name: res,
-
-          count: todayFollowUps.filter(f => f.FollowUpResult === res).length
-
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-
-      }, [todayFollowUps]);
-
-
-
-      const inquiryAnalysis = useMemo(() => {
-
-        return INQUIRY_TYPES.map(type => ({
-
-          name: type,
-
-          count: todayInquiries.filter(i => i.InquiryType === type).length
-
-        })).filter(c => c.count > 0).sort((a, b) => b.count - a.count);
-
-      }, [todayInquiries]);
-
-      return (
-<div className="animate-screen space-y-8 pb-10">
-  <div className="bg-gradient-to-br from-red-950 via-red-900 to-slate-950 text-white p-8 rounded-4xl shadow-2xl relative overflow-hidden">
-    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
-    <h2 className="text-2xl font-black mb-2 flex items-center gap-3">
-      <span>📅</span> تقرير اليوم التفصيلي
-    </h2>
-    <p className="text-xs opacity-70 font-bold uppercase tracking-widest">
-      {new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-    </p>
-  
-</div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'المراجعات', val: todayReviews.length, color: 'text-maroon', bg: 'bg-maroon/5' },
-              { label: 'المتابعات', val: todayFollowUps.length, color: 'text-blue-600', bg: 'bg-blue-50' },
-              { label: 'الكوتشينج', val: todayCoaching.length, color: 'text-green-600', bg: 'bg-green-50' },
-              { label: 'الاستفسارات', val: todayInquiries.length, color: 'text-orange-600', bg: 'bg-orange-50' }
-            ].map((item, idx) => (
-              <div key={idx} className={`${item.bg} p-5 rounded-3xl border border-white/20 shadow-sm text-center`}>
-                <p className="text-[10px] font-black text-gray-500 mb-1 uppercase">{item.label}</p>
-                <p className={`text-3xl font-black ${item.color}`}>{item.val}</p>
+      {/* Error Analysis Section */}
+      <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
+        <h3 className="text-md font-black mb-6 text-gray-800 flex items-center gap-2">📊 تحليل الأخطاء المرصودة اليوم</h3>
+        {errorAnalysis.length === 0 ? (
+          <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد أخطاء مرصودة اليوم حتى الآن</p>
+        ) : (
+          <div className="space-y-4">
+            {errorAnalysis.map((err, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[11px] font-black mb-1">
+                  <span className="text-gray-600">{err.name}</span>
+                  <span className="text-maroon">{err.count}</span>
+                </div>
+                <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
+                  <div className="h-full bg-maroon rounded-full transition-all duration-1000" style={{ width: `${(err.count / todayReviews.length) * 100}%` }}></div>
+                </div>
               </div>
             ))}
           </div>
+        )}
+      </section>
 
-          {/* Error Analysis Section */}
-          <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
-            <h3 className="text-md font-black mb-6 text-gray-800 flex items-center gap-2">📊 تحليل الأخطاء المرصودة اليوم</h3>
-            {errorAnalysis.length === 0 ? (
-              <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد أخطاء مرصودة اليوم حتى الآن</p>
-            ) : (
-              <div className="space-y-4">
-                {errorAnalysis.map((err, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-[11px] font-black mb-1">
-                      <span className="text-gray-600">{err.name}</span>
-                      <span className="text-maroon">{err.count}</span>
-                    </div>
-                    <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
-                      <div className="h-full bg-maroon rounded-full transition-all duration-1000" style={{ width: `${(err.count / todayReviews.length) * 100}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Follow-up Results Analysis */}
-          <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
-            <h3 className="text-md font-black mb-6 text-blue-800 flex items-center gap-2">📈 تحليل نتائج المتابعات اليوم</h3>
-            {followUpAnalysis.length === 0 ? (
-              <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد متابعات مسجلة اليوم</p>
-            ) : (
-              <div className="space-y-4">
-                {followUpAnalysis.map((res, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-[11px] font-black mb-1">
-                      <span className="text-gray-600">{res.name}</span>
-                      <span className="text-blue-600">{res.count}</span>
-                    </div>
-                    <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(res.count / todayFollowUps.length) * 100}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Inquiry Types Analysis */}
-          <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
-            <h3 className="text-md font-black mb-6 text-orange-800 flex items-center gap-2">❓ توزيع الاستفسارات اليوم</h3>
-            {inquiryAnalysis.length === 0 ? (
-              <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد استفسارات مسجلة اليوم</p>
-            ) : (
-              <div className="space-y-4">
-                {inquiryAnalysis.map((type, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-[11px] font-black mb-1">
-                      <span className="text-gray-600">{type.name}</span>
-                      <span className="text-orange-600">{type.count}</span>
-                    </div>
-                    <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
-                      <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(type.count / todayInquiries.length) * 100}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-md font-black px-2 flex items-center gap-2 text-green-700">👨‍🏫 جلسات الكوتشينج المنفذة اليوم</h3>
-            {todayCoaching.length === 0 ? (
-              <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
-                <p className="text-xs font-black">لم يتم تنفيذ جلسات كوتشينج اليوم</p>
-              </div>
-            ) : (
-              todayCoaching.map((coach, idx) => (
-                <div key={idx} className="bg-green-50/50 p-5 rounded-3xl shadow-sm border-r-4 border-green-600 border border-green-100">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="font-black text-green-800 text-sm">{coach.EmployeeName}</p>
-                    <span className="text-[8px] font-black text-green-600/60">{coach.Category}</span>
-                  </div>
-                  <div className="bg-white/60 p-3 rounded-2xl border border-green-200">
-                     <p className="text-[9px] font-black text-green-800/40 uppercase mb-1">تفاصيل الخطأ المعالج:</p>
-                     <p className="text-[11px] text-green-700 leading-relaxed font-semibold italic">
-                        "{coach.Comment}"
-                     </p>
-                  </div>
-                  <div className="mt-2 text-[8px] font-bold text-green-600/50">
-                    تمت المراجعة والتوجيه بنجاح ✓
-                  </div>
+      {/* Follow-up Results Analysis */}
+      <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
+        <h3 className="text-md font-black mb-6 text-blue-800 flex items-center gap-2">📈 تحليل نتائج المتابعات اليوم</h3>
+        {followUpAnalysis.length === 0 ? (
+          <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد متابعات مسجلة اليوم</p>
+        ) : (
+          <div className="space-y-4">
+            {followUpAnalysis.map((res, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[11px] font-black mb-1">
+                  <span className="text-gray-600">{res.name}</span>
+                  <span className="text-blue-600">{res.count}</span>
                 </div>
-              ))
-            )}
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-md font-black px-2 flex items-center gap-2">📝 تفاصيل مراجعات اليوم</h3>
-            {todayReviews.length === 0 ? (
-              <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
-                <p className="text-xs font-black">لا توجد مراجعات مسجلة اليوم</p>
-              </div>
-            ) : (
-              todayReviews.map((rev, idx) => (
-                <div key={idx} className="bg-white p-5 rounded-3xl shadow-sm border-r-4 border-maroon border border-gray-100">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-black text-gray-800 text-sm">{rev.EmployeeName}</p>
-                      <p className="text-[9px] text-gray-400 font-bold uppercase">المشرف: {rev.SupervisorName}</p>
-                    </div>
-                    <span className="bg-maroon/10 text-maroon text-[9px] font-black px-3 py-1 rounded-full">{rev.Category}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-2xl border border-gray-100 italic">
-                    "{rev.Comment}"
-                  </p>
-                  <div className="mt-3 flex justify-between items-center text-[8px] font-black text-gray-300">
-                    <span>المراجع: {rev.ReviewerName}</span>
-                    <span>{new Date(rev.MessageDate).toLocaleDateString('ar-EG')}</span>
-                  </div>
+                <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(res.count / todayFollowUps.length) * 100}%` }}></div>
                 </div>
-              ))
-            )}
-          </section>
-        </div>
-      );
-    };
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Inquiry Types Analysis */}
+      <section className="bg-white p-6 rounded-4xl shadow-sm border border-gray-100">
+        <h3 className="text-md font-black mb-6 text-orange-800 flex items-center gap-2">❓ توزيع الاستفسارات اليوم</h3>
+        {inquiryAnalysis.length === 0 ? (
+          <p className="text-center text-xs text-gray-400 font-bold py-4">لا توجد استفسارات مسجلة اليوم</p>
+        ) : (
+          <div className="space-y-4">
+            {inquiryAnalysis.map((type, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[11px] font-black mb-1">
+                  <span className="text-gray-600">{type.name}</span>
+                  <span className="text-orange-600">{type.count}</span>
+                </div>
+                <div className="h-2 bg-gray-50 rounded-full overflow-hidden">
+                  <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(type.count / todayInquiries.length) * 100}%` }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-4">
+        <h3 className="text-md font-black px-2 flex items-center gap-2 text-green-700">👨‍🏫 جلسات الكوتشينج المنفذة اليوم</h3>
+        {todayCoaching.length === 0 ? (
+          <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
+            <p className="text-xs font-black">لم يتم تنفيذ جلسات كوتشينج اليوم</p>
+          </div>
+        ) : (
+          todayCoaching.map((coach, idx) => (
+            <div key={idx} className="bg-green-50/50 p-5 rounded-3xl shadow-sm border-r-4 border-green-600 border border-green-100">
+              <div className="flex justify-between items-start mb-2">
+                <p className="font-black text-green-800 text-sm">{coach.EmployeeName}</p>
+                <span className="text-[8px] font-black text-green-600/60">{coach.Category}</span>
+              </div>
+              <div className="bg-white/60 p-3 rounded-2xl border border-green-200">
+                <p className="text-[9px] font-black text-green-800/40 uppercase mb-1">تفاصيل الخطأ المعالج:</p>
+                <p className="text-[11px] text-green-700 leading-relaxed font-semibold italic">
+                  "{coach.Comment}"
+                </p>
+              </div>
+              <div className="mt-2 text-[8px] font-bold text-green-600/50">
+                تمت المراجعة والتوجيه بنجاح ✓
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+
+      <section className="space-y-4">
+        <h3 className="text-md font-black px-2 flex items-center gap-2">📝 تفاصيل مراجعات اليوم</h3>
+        {todayReviews.length === 0 ? (
+          <div className="bg-white p-10 rounded-4xl text-center border border-gray-100 opacity-50">
+            <p className="text-xs font-black">لا توجد مراجعات مسجلة اليوم</p>
+          </div>
+        ) : (
+          todayReviews.map((rev, idx) => (
+            <div key={idx} className="bg-white p-5 rounded-3xl shadow-sm border-r-4 border-maroon border border-gray-100">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <p className="font-black text-gray-800 text-sm">{rev.EmployeeName}</p>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase">المشرف: {rev.SupervisorName}</p>
+                </div>
+                <span className="bg-maroon/10 text-maroon text-[9px] font-black px-3 py-1 rounded-full">{rev.Category}</span>
+              </div>
+              <p className="text-[11px] text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-2xl border border-gray-100 italic">
+                "{rev.Comment}"
+              </p>
+              <div className="mt-3 flex justify-between items-center text-[8px] font-black text-gray-300">
+                <span>المراجع: {rev.ReviewerName}</span>
+                <span>{new Date(rev.MessageDate).toLocaleDateString('ar-EG')}</span>
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+    </div>
+  );
+};
 
     const ReviewScreen = ({ data, onRefresh, showToast }) => {
       const [phone, setPhone] = useState('');
